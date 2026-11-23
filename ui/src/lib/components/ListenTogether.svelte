@@ -23,6 +23,7 @@
 	import { lt } from '$lib/lt.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { makeInvite, parseInvite } from '$lib/invite';
+	import QrCode from '$lib/components/QrCode.svelte';
 
 	let mode = $state<'join' | 'host'>('join');
 	let name = $state('');
@@ -292,6 +293,11 @@
 					<div class="mt-3 select-all pl-[0.3em] font-mono text-3xl font-semibold tracking-[0.3em]">
 						{lt.roomCode ?? '······'}
 					</div>
+					{#if invite}
+						<div class="mt-3 flex justify-center">
+							<QrCode text={invite} size={112} />
+						</div>
+					{/if}
 					{#if onCustomServer}
 						<div class="mt-1.5 select-all truncate font-mono text-[11px] text-muted-foreground">
 							{invite}

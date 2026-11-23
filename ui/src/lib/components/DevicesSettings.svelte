@@ -19,7 +19,7 @@
 	import { makeInvite } from '$lib/invite';
 	import { thumb } from '$lib/thumb';
 	import { t } from '$lib/i18n.svelte';
-	import { encode } from 'uqr';
+	import QrCode from '$lib/components/QrCode.svelte';
 	import type { LinkDevice } from '$lib/api';
 
 	const GROUP = 'mb-7 last:mb-1';
@@ -67,14 +67,6 @@
 	/// bare code on the default one (invite.ts, parsed the same way on the phone).
 	const invite = $derived(
 		link.pairing && !expired ? makeInvite(link.server, link.pairing.code) : ''
-	);
-	const qr = $derived(invite ? encode(invite) : null);
-	const qrPath = $derived(
-		qr
-			? qr.data
-					.flatMap((row, y) => row.map((on, x) => (on ? `M${x},${y}h1v1h-1z` : '')))
-					.join('')
-			: ''
 	);
 
 	// What this computer is doing, for its own card.
@@ -220,21 +212,10 @@
 								{/if}
 							</div>
 							<!-- The same invite as a QR: the phone's Devices screen scans it instead of
-							     typing the code. Centered on its own line — the tiles already fill the
-							     row — and on a white ground so any camera reads it in either theme. -->
-							{#if qr}
+							     typing the code. Centered on its own line — the tiles already fill the row. -->
+							{#if invite}
 								<div class="mt-4 flex flex-col items-center gap-1.5">
-									<div class="rounded-lg bg-white p-2 leading-none" title={t('settings.devices.scan_qr_hint')}>
-										<svg
-											viewBox="0 0 {qr.size} {qr.size}"
-											class="size-32"
-											shape-rendering="crispEdges"
-											role="img"
-											aria-label={t('settings.devices.scan_qr_hint')}
-										>
-											<path d={qrPath} fill="black" />
-										</svg>
-									</div>
+									<QrCode text={invite} size={128} />
 									<p class="text-xs text-muted-foreground">{t('settings.devices.scan_qr_hint')}</p>
 								</div>
 							{/if}

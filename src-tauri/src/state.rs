@@ -5550,7 +5550,10 @@ impl AppState {
             LinkCommand::TakeOver => self.link_continue_here().await,
             LinkCommand::Changed => self.link_remote_refresh().await,
             LinkCommand::HostLost => {
-                if self.is_playing.load(Ordering::Relaxed) {
+                // In a Listen Together room this playback is that session's sync, not this
+                // device's own choice: pausing here would fight the room, and a room started
+                // between two linked devices lost its first track a beat after it began.
+                if !self.lt.in_room().await && self.is_playing.load(Ordering::Relaxed) {
                     let _ = self.player.pause();
                 }
             }
