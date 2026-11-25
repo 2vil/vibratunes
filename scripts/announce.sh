@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Post a finished release to the Limusic Discord: the first paragraph of its notes, a link to the
+# Post a finished release to the Vibratunes Discord: the first paragraph of its notes, a link to the
 # rest, and a ping for the members who opted in. A release goes to #announcements and pings Desktop
 # Pings; a release candidate goes to #betas and pings Desktop Beta Pings.
 #
@@ -7,13 +7,13 @@
 # failed build re-dispatched by hand), post it yourself once every binary is attached:
 #   scripts/announce.sh v1.4.0
 #
-# The webhook URLs stay out of the repo: one line each in ~/.config/limusic/discord-releases and
-# ~/.config/limusic/discord-betas. Without the file this does nothing, so it never posts from
+# The webhook URLs stay out of the repo: one line each in ~/.config/vibratunes/discord-releases and
+# ~/.config/vibratunes/discord-betas. Without the file this does nothing, so it never posts from
 # anyone else's machine.
 set -euo pipefail
 
-REPO="SimoHypers/limusic"
-TITLE="Limusic"
+REPO="2vil/vibratunes"
+TITLE="Vibratunes"
 RELEASE_ROLE="1571649724526633040" # Desktop Pings
 BETA_ROLE="1571660378113446048"    # Desktop Beta Pings
 BETA_SETTING="Settings ▸ About ▸ Beta versions"
@@ -27,7 +27,7 @@ else
   KIND=releases ROLE="$RELEASE_ROLE" HEAD="$TITLE $TAG is out"
   GET="Update from inside the app, or download it here"
 fi
-HOOK_FILE="${LIMUSIC_DISCORD_HOOK_DIR:-$HOME/.config/limusic}/discord-$KIND"
+HOOK_FILE="${VIBRATUNES_DISCORD_HOOK_DIR:-$HOME/.config/vibratunes}/discord-$KIND"
 [ -f "$HOOK_FILE" ] || { echo "    no $HOOK_FILE, not posting to Discord"; exit 0; }
 
 # The notes open with an overview paragraph, so that is the post. Discord caps a message at 2000

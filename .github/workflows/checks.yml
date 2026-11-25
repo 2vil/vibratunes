@@ -10,7 +10,7 @@ name: Checks
 # the contributor had no way to know. `rustfmt.toml` is committed now and the tree was normalised
 # to it, which means the drift is detectable mechanically instead of during review.
 #
-# WHY THE rustfmt JOB DOES NOT BUILD OR TEST: `limusic-app` links libmpv and webkit2gtk, so testing
+# WHY THE rustfmt JOB DOES NOT BUILD OR TEST: `vibratunes-app` links libmpv and webkit2gtk, so testing
 # it needs the full Tauri system-dependency install and a cold Rust compile. That job needs
 # neither: rustfmt parses the source and never builds it, so it finishes in seconds on a bare
 # runner and stays cheap enough to run on every push. The tests live in the `test` job below for
@@ -93,12 +93,12 @@ jobs:
         working-directory: ui
         run: pnpm test
 
-  # The Rust half. `limusic-app` links libmpv and webkit2gtk, so this job pays for an apt install
+  # The Rust half. `vibratunes-app` links libmpv and webkit2gtk, so this job pays for an apt install
   # and a cold compile that the rustfmt job deliberately avoids. That is why it is a separate job:
   # rustfmt still answers in seconds while this one runs.
   #
   # `cargo test --all` and not a pure-Rust subset: `crates/player` depends on libmpv2, so it
-  # needs the same system libraries `limusic-app` does. The subset that builds bare is
+  # needs the same system libraries `vibratunes-app` does. The subset that builds bare is
   # `-p innertube -p listen-protocol`, which is not worth a second job.
   #
   # This is also the only place `macos_window_config_mirrors_the_base_window` runs. Nobody here
@@ -213,23 +213,23 @@ jobs:
           if (-not (Test-Path "$env:MPV_DIR\mpv.lib")) { throw "lib.exe did not produce mpv.lib" }
           Copy-Item "$env:MPV_DIR\libmpv-2.dll" "$env:GITHUB_WORKSPACE\src-tauri\libmpv-2.dll" -Force
 
-      - name: cargo build -p limusic-app
-        run: cargo build -p limusic-app
+      - name: cargo build -p vibratunes-app
+        run: cargo build -p vibratunes-app
 
       # The lib test binary links on its own, so it only gets the manifest build.rs adds.
       # MPV_DIR goes on PATH because the test binary imports libmpv-2.dll at load.
-      - name: cargo test -p limusic-app --lib
+      - name: cargo test -p vibratunes-app --lib
         shell: pwsh
         run: |
           $env:PATH = "$env:MPV_DIR;$env:PATH"
-          cargo test -p limusic-app --lib
+          cargo test -p vibratunes-app --lib
 
       - name: cargo test -p karaoke
         run: cargo test -p karaoke
 
       - name: Import table check
         shell: pwsh
-        run: ./scripts/check-windows-imports.ps1 -Exe target/debug/limusic-app.exe
+        run: ./scripts/check-windows-imports.ps1 -Exe target/debug/vibratunes-app.exe
 
   # Nobody here can run a Mac, so this job is the only check of the macOS-only karaoke code (the
   # CoreML backend) and of the macOS runtime download.

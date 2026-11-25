@@ -38,7 +38,7 @@
   "bundle": {
     "active": true,
     "category": "Music",
-    "targets": ["deb", "rpm", "appimage"],
+    "targets": ["all"],
     "createUpdaterArtifacts": true,
     "icon": [
       "icons/icon.png",
@@ -66,9 +66,9 @@
   "plugins": {
     "updater": {
       "endpoints": [
-        "https://github.com/SimoHypers/limusic/releases/latest/download/latest.json"
+        "https://github.com/2vil/vibratunes/releases/latest/download/latest.json"
       ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk0MENDMzA1NUFGMDI0NTQKUldSVUpQQmFCY01NbENPbW9XOTRvVU9YQ2lCQytOU2RyeDhHNFhkWHlNc1dITkFmbkd1ZTBlM1gK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IERDNENCNkQ4MEVFNTgxMjgKUldRb2dlVU8yTFpNM1BNN0RHVDk4b1kzdkJBK3NlNTYvWk15Rlk4Y2VzcW9LT0R1VXoxVElEelQK",
       "windows": {
         "installMode": "passive"
       }
