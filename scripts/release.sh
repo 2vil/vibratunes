@@ -201,9 +201,11 @@ RUN_MAC="$(wait_for_run "macOS release binaries" "$BEFORE_MAC" || true)"
 echo "    linux run ${RUN_LINUX:-?}, windows run ${RUN_WIN:-?}, macos run ${RUN_MAC:-?}"
 
 # No rpm for a release candidate: an rpm install can't take an update, so it can't be on the beta
-# channel, and the RC's only audience is the beta channel.
+# channel, and the RC's only audience is the beta channel. Also skip if rpmbuild is not available.
 if [ "$RC" = 1 ]; then
   echo "==> Release candidate: no rpm"
+elif ! command -v rpmbuild >/dev/null 2>&1; then
+  echo "==> Skipping local rpm build (rpmbuild is not installed on this system)"
 else
   echo "==> Building the rpm locally while CI runs…"
   if ! cargo tauri build --bundles rpm; then
