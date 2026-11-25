@@ -457,7 +457,7 @@ jobs:
             set -euo pipefail
             pacman -Sy --noconfirm --needed base-devel pacman-contrib >/dev/null 2>&1
             useradd -m builder && chown -R builder:builder /pkg
-            su builder -c "cd /pkg && makepkg -f"
+            su builder -c "cd /pkg && makepkg -fd"
             PKG="$(ls /pkg/vibratunes-*.pkg.tar.zst 2>/dev/null | head -1)"
             pacman -U --noconfirm "$PKG"
             echo "Installed $(basename "$PKG") successfully in Arch Linux"
