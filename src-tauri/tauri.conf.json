@@ -38,7 +38,7 @@
   "bundle": {
     "active": true,
     "category": "Music",
-    "targets": ["all"],
+    "targets": "all",
     "createUpdaterArtifacts": true,
     "icon": [
       "icons/icon.png",
