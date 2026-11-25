@@ -15,6 +15,7 @@
 		Smartphone,
 		ChevronRight,
 		Palette,
+		Library,
 	} from "@lucide/svelte";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Badge } from "$lib/components/ui/badge/index.js";
@@ -278,19 +279,14 @@
 						Vibratunes se connecte directement à l'API interne de
 						YouTube et lit l'audio via libmpv et Media3. Zéro
 						Electron, zéro publicité, avec téléchargements
-						hors-ligne, karaoké IA et tunnel WARP intégré.
+						hors-ligne, karaoké IA et VPN WireGuard intégré sur PC.
 					</p>
 
 					<div
 						class="mt-9 flex flex-wrap items-center justify-center gap-3"
 					>
-						<InteractiveHoverButton
-							href={primaryDownload.url}
-							
-						>
-							Télécharger pour {platformLabels[
-								selectedPlatform
-							]}
+						<InteractiveHoverButton href={primaryDownload.url}>
+							Télécharger pour {platformLabels[selectedPlatform]}
 						</InteractiveHoverButton>
 
 						<Button
@@ -435,15 +431,27 @@
 		<!-- Dedicated Sync & WARP Section (AnimatedBeam) -->
 		<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
 			<div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
-				<BlurFade offset={12} class="lg:col-span-5">
-					<p class="text-xs font-semibold tracking-widest text-primary uppercase">
-						Écoute synchronisée & Réseau
+				<BlurFade offset={12} class="lg:col-span-5 text-pretty">
+					<p
+						class="text-xs font-semibold tracking-widest text-primary uppercase"
+					>
+						Écoute simultanée entre plusieurs appareils
 					</p>
-					<h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
+					<h2
+						class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl"
+					>
 						Un seul flux entre votre PC et votre téléphone.
 					</h2>
-					<p class="mt-4 text-base leading-relaxed text-muted-foreground">
-						Liez votre smartphone Android à votre ordinateur avec Play Anywhere, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic.
+					<p
+						class="mt-4 text-base leading-relaxed text-muted-foreground"
+					>
+						Liez votre smartphone Android à votre ordinateur avec <b
+							class="text-primary">Play Anywhere</b
+						>
+						pour controler votre musique depuis votre téléphone et inversement
+						et partagez des salons d'écoute simultanée avec vos amis
+						en temps réel avec
+						<b class="text-primary">Listen Together</b>
 					</p>
 				</BlurFade>
 				<BlurFade delay={100} offset={14} class="lg:col-span-7">
@@ -464,100 +472,154 @@
 					<p
 						class="text-xs font-semibold tracking-widest text-primary uppercase"
 					>
-						Architecture & Fonctions
+						Accessibilité & Fonctions
 					</p>
 					<h2
 						class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl"
 					>
-						Conçu pour l'écoute, pas pour alourdir votre machine.
+						Pensé pour écouter partout, même avec une connexion difficile.
 					</h2>
 					<p class="mt-3 text-base text-muted-foreground">
-						Chaque composant privilégie la réactivité, la fidélité
-						audio et le contrôle local de votre bibliothèque.
+						Vibratunes a été conçu pour celles et ceux qui subissent une
+						connexion instable ou les restrictions géographiques de
+						YouTube Music : téléchargez vos morceaux pour les écouter
+						hors-ligne, et contournez les blocages sur PC grâce au VPN
+						WireGuard intégré.
 					</p>
 				</div>
 			</BlurFade>
 
-			<div class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+			<div
+				class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
+			>
 				<BlurFade delay={40}>
-					<Card.Root class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35">
+					<Card.Root
+						class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35"
+					>
 						<Card.Header>
-							<div class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary">
+							<div
+								class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary"
+							>
 								<HardDriveDownload class="size-5" />
 							</div>
-							<Card.Title class="text-lg">Téléchargements hors-ligne</Card.Title>
+							<Card.Title class="text-lg"
+								>Téléchargements hors-ligne</Card.Title
+							>
 							<Card.Description>
-								Enregistrez vos titres, albums et playlists avec leurs pochettes haute résolution et métadonnées complètes pour écouter sans connexion.
+								Enregistrez vos titres, albums et playlists avec
+								leurs pochettes haute résolution et métadonnées
+								complètes pour écouter sans connexion.
 							</Card.Description>
 						</Card.Header>
 					</Card.Root>
 				</BlurFade>
 
 				<BlurFade delay={80}>
-					<Card.Root class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35">
+					<Card.Root
+						class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35"
+					>
 						<Card.Header>
-							<div class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary">
+							<div
+								class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary"
+							>
 								<MicVocal class="size-5" />
 							</div>
-							<Card.Title class="text-lg">Paroles & Karaoké IA local</Card.Title>
+							<Card.Title class="text-lg"
+								>Paroles & Karaoké IA local</Card.Title
+							>
 							<Card.Description>
-								Paroles synchronisées mot-à-mot multi-sources et séparation vocale en temps réel sur votre GPU (Vulkan, DirectML, CoreML) sans aucun serveur externe.
+								Paroles synchronisées mot-à-mot multi-sources et
+								séparation vocale en temps réel sur votre GPU
+								(Vulkan, DirectML, CoreML) sans aucun serveur
+								externe.
 							</Card.Description>
 						</Card.Header>
 					</Card.Root>
 				</BlurFade>
 
 				<BlurFade delay={120}>
-					<Card.Root class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35">
+					<Card.Root
+						class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35"
+					>
 						<Card.Header>
-							<div class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary">
+							<div
+								class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary"
+							>
 								<ShieldCheck class="size-5" />
 							</div>
-							<Card.Title class="text-lg">Tunnel WARP intégré</Card.Title>
+							<Card.Title class="text-lg"
+								>VPN WireGuard intégré (PC)</Card.Title
+							>
 							<Card.Description>
-								Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques.
+								Activez un tunnel WireGuard directement depuis
+								les paramètres sur ordinateur pour contourner le
+								bridage réseau ou les restrictions géographiques.
 							</Card.Description>
 						</Card.Header>
 					</Card.Root>
 				</BlurFade>
 
 				<BlurFade delay={160}>
-					<Card.Root class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35">
+					<Card.Root
+						class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35"
+					>
 						<Card.Header>
-							<div class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary">
-								<Radio class="size-5" />
+							<div
+								class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary"
+							>
+								<Library class="size-5" />
 							</div>
-							<Card.Title class="text-lg">Listen Together & Play Anywhere</Card.Title>
+							<Card.Title class="text-lg"
+								>Bibliothèque locale & Multi-comptes</Card.Title
+							>
 							<Card.Description>
-								Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance.
+								Gérez vos playlists et favoris même sans compte
+								Google, importez vos fichiers audio locaux ou
+								basculez entre plusieurs comptes en un clic.
 							</Card.Description>
 						</Card.Header>
 					</Card.Root>
 				</BlurFade>
 
 				<BlurFade delay={200}>
-					<Card.Root class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35">
+					<Card.Root
+						class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35"
+					>
 						<Card.Header>
-							<div class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary">
+							<div
+								class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary"
+							>
 								<Cpu class="size-5" />
 							</div>
-							<Card.Title class="text-lg">Moteur natif Rust & Kotlin</Card.Title>
+							<Card.Title class="text-lg"
+								>Moteur natif Rust & Kotlin</Card.Title
+							>
 							<Card.Description>
-								Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Transitions gapless, normalisation sonore, pitch, vitesse et égaliseur 10 bandes.
+								Tauri 2 + libmpv sur Desktop, Kotlin + Media3
+								sur Android. Transitions gapless, normalisation
+								sonore, pitch, vitesse et égaliseur 10 bandes.
 							</Card.Description>
 						</Card.Header>
 					</Card.Root>
 				</BlurFade>
 
 				<BlurFade delay={240}>
-					<Card.Root class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35">
+					<Card.Root
+						class="h-full border-border/80 bg-card/70 transition-colors hover:border-primary/35"
+					>
 						<Card.Header>
-							<div class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary">
+							<div
+								class="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary"
+							>
 								<Palette class="size-5" />
 							</div>
-							<Card.Title class="text-lg">Thèmes adaptatifs & Scrobbling</Card.Title>
+							<Card.Title class="text-lg"
+								>Thèmes adaptatifs & Scrobbling</Card.Title
+							>
 							<Card.Description>
-								Couleurs extraites de la pochette en cours, support Matugen / pywal / wallust sous Linux, Discord Rich Presence, Last.fm et ListenBrainz.
+								Couleurs extraites de la pochette en cours,
+								support Matugen / pywal / wallust sous Linux,
+								Discord Rich Presence, Last.fm et ListenBrainz.
 							</Card.Description>
 						</Card.Header>
 					</Card.Root>

@@ -41,7 +41,6 @@ msgstr "Linux"
 msgid "Windows"
 msgstr "Windows"
 
-#: src/lib/components/SyncBeamVisual.svelte
 #: src/routes/+page.svelte
 msgid "Android"
 msgstr "Android"
@@ -92,9 +91,8 @@ msgstr "Todas las plataformas"
 msgid "Votre musique YouTube, native, hors-ligne et sans pub."
 msgstr "Tu música de YouTube, nativa, sin conexión y sin anuncios."
 
-#: src/routes/+page.svelte
-msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne, karaoké IA et tunnel WARP intégré."
-msgstr "Vibratunes se conecta directamente a la API interna de YouTube y reproduce audio con libmpv y Media3. Cero Electron, cero anuncios, con descargas sin conexión, karaoke con IA y túnel WARP integrado."
+#~ msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne, karaoké IA et tunnel WARP intégré."
+#~ msgstr "Vibratunes se conecta directamente a la API interna de YouTube y reproduce audio con libmpv y Media3. Cero Electron, cero anuncios, con descargas sin conexión, karaoke con IA y túnel WARP integrado."
 
 #: src/routes/+page.svelte
 msgid "Open-source GPL-3.0 • Linux, Windows, macOS Apple Silicon & Android 8.0+"
@@ -140,17 +138,14 @@ msgstr "Reproductor Vibratunes Android"
 msgid "Paroles synchronisées sur Android"
 msgstr "Letras sincronizadas en Android"
 
-#: src/routes/+page.svelte
-msgid "Architecture & Fonctions"
-msgstr "Arquitectura y Funciones"
+#~ msgid "Architecture & Fonctions"
+#~ msgstr "Arquitectura y Funciones"
 
-#: src/routes/+page.svelte
-msgid "Conçu pour l'écoute, pas pour alourdir votre machine."
-msgstr "Diseñado para escuchar, no para sobrecargar tu equipo."
+#~ msgid "Conçu pour l'écoute, pas pour alourdir votre machine."
+#~ msgstr "Diseñado para escuchar, no para sobrecargar tu equipo."
 
-#: src/routes/+page.svelte
-msgid "Chaque composant privilégie la réactivité, la fidélité audio et le contrôle local de votre bibliothèque."
-msgstr "Cada componente prioriza la fluidez, la fidelidad de audio y el control local de tu biblioteca."
+#~ msgid "Chaque composant privilégie la réactivité, la fidélité audio et le contrôle local de votre bibliothèque."
+#~ msgstr "Cada componente prioriza la fluidez, la fidelidad de audio y el control local de tu biblioteca."
 
 #: src/routes/+page.svelte
 msgid "Téléchargements hors-ligne"
@@ -168,21 +163,17 @@ msgstr "Letras y Karaoke IA local"
 msgid "Paroles synchronisées mot-à-mot multi-sources et séparation vocale en temps réel sur votre GPU (Vulkan, DirectML, CoreML) sans aucun serveur externe."
 msgstr "Letras sincronizadas palabra por palabra de múltiples fuentes y separación vocal en tiempo real en tu GPU (Vulkan, DirectML, CoreML) sin servidores externos."
 
-#: src/routes/+page.svelte
-msgid "Tunnel WARP intégré"
-msgstr "Túnel WARP integrado"
+#~ msgid "Tunnel WARP intégré"
+#~ msgstr "Túnel WARP integrado"
 
-#: src/routes/+page.svelte
-msgid "Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
-msgstr "Activa un túnel WireGuard de Cloudflare directamente desde los ajustes para evitar bloqueos de red o restricciones geográficas."
+#~ msgid "Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
+#~ msgstr "Activa un túnel WireGuard de Cloudflare directamente desde los ajustes para evitar bloqueos de red o restricciones geográficas."
 
-#: src/routes/+page.svelte
-msgid "Listen Together & Play Anywhere"
-msgstr "Listen Together y Play Anywhere"
+#~ msgid "Listen Together & Play Anywhere"
+#~ msgstr "Listen Together y Play Anywhere"
 
-#: src/routes/+page.svelte
-msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance."
-msgstr "Escucha en sincronía con amigos o vincula tu teléfono Android a tu ordenador para controlar la reproducción a distancia."
+#~ msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance."
+#~ msgstr "Escucha en sincronía con amigos o vincula tu teléfono Android a tu ordenador para controlar la reproducción a distancia."
 
 #: src/routes/+page.svelte
 msgid "Moteur natif Rust & Kotlin"
@@ -316,7 +307,7 @@ msgstr "Matugen"
 msgid "Navigation principale"
 msgstr "Navegación principal"
 
-#. 0: platformLabels[ selectedPlatform ]
+#. 0: platformLabels[selectedPlatform]
 #: src/routes/+page.svelte
 msgid "Télécharger pour {0}"
 msgstr "Descargar para {0}"
@@ -385,13 +376,11 @@ msgstr "Descargar para {0}"
 msgid "<0/> Télécharger"
 msgstr "<0/> Descargar"
 
-#: src/lib/components/SyncBeamVisual.svelte
-msgid "WARP / Relais"
-msgstr "WARP / Relay"
+#~ msgid "WARP / Relais"
+#~ msgstr "WARP / Relay"
 
-#: src/lib/components/SyncBeamVisual.svelte
-msgid "Desktop"
-msgstr "Desktop"
+#~ msgid "Desktop"
+#~ msgstr "Desktop"
 
 #: src/routes/+layout.svelte
 msgid "Vibratunes - Client YouTube Music natif, hors-ligne et sans pub"
@@ -403,14 +392,154 @@ msgstr "Vibratunes - Cliente nativo de YouTube Music, sin conexión y sin anunci
 #~ msgid "Télécharger pour gh {0}"
 #~ msgstr ""
 
-#: src/routes/+page.svelte
-msgid "Écoute synchronisée & Réseau"
-msgstr "Escucha sincronizada y Red"
+#~ msgid "Écoute synchronisée & Réseau"
+#~ msgstr "Escucha sincronizada y Red"
 
 #: src/routes/+page.svelte
 msgid "Un seul flux entre votre PC et votre téléphone."
 msgstr "Un solo flujo entre tu PC y tu teléfono."
 
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec Play Anywhere, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr "Vincula tu Android con tu ordenador mediante Play Anywhere, comparte salas Listen Together en tiempo real y activa el túnel WireGuard WARP integrado con un clic."
+
+#~ msgid "Écoute synchronisée entre app"
+#~ msgstr ""
+
+#~ msgid "Écoute synchronisée entre appareils"
+#~ msgstr ""
+
+#~ msgid "Écoute simultanée sur plusieurs appareils"
+#~ msgstr ""
+
 #: src/routes/+page.svelte
-msgid "Liez votre smartphone Android à votre ordinateur avec Play Anywhere, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
-msgstr "Vincula tu Android con tu ordenador mediante Play Anywhere, comparte salas Listen Together en tiempo real y activa el túnel WireGuard WARP integrado con un clic."
+msgid "Écoute simultanée entre plusieurs appareils"
+msgstr "Escucha simultánea entre dispositivos"
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0>, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour contro, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour control, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controller votre , partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controller votre musique depuis , partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et , partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et invers, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons <1>Listen Together</1> en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'ecoute simultanée <1>Listen Together</1> en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'ecoute simultanée avec vos proc <1>Listen Together</1> en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'écoute simultanée avec vos a <1>Listen Together</1> en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'écoute simultanée avec vos <1>Listen Together</1> en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'écoute simultanée avec vos amis <1>Listen Together</1> en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'écoute simultanée avec vos amis en temps <1>Listen Together</1> en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'écoute simultanée avec vos amis <1>Listen Together</1> et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'écoute simultanée avec vos amis en temps réel <1>Listen Together</1> et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'écoute simultanée avec vos amis en temps réel avec <1>Listen Together</1> et activez le tunnel WireGuard WARP intégré en un clic."
+#~ msgstr ""
+
+#~ msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement, partagez des salons d'écoute simultanée avec vos amis en temps réel avec <1>Listen Together</1>"
+#~ msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Liez votre smartphone Android à votre ordinateur avec <0>Play Anywhere</0> pour controler votre musique depuis votre téléphone et inversement et partagez des salons d'écoute simultanée avec vos amis en temps réel avec <1>Listen Together</1>"
+msgstr "Vincula tu Android a tu ordenador con <0>Play Anywhere</0> para controlar la música desde ambos dispositivos y comparte salas de escucha simultánea con amigos en <1>Listen Together</1>"
+
+#: src/lib/components/SyncBeamVisual.svelte
+msgid "Internet"
+msgstr "Internet"
+
+#~ msgid "Votre téléphone"
+#~ msgstr "Tu teléfono"
+
+#~ msgid "Votre PC"
+#~ msgstr "Tu PC"
+
+#: src/lib/components/SyncBeamVisual.svelte
+msgid "Téléphone de Mamale"
+msgstr "Teléfono de Mamale"
+
+#: src/lib/components/SyncBeamVisual.svelte
+msgid "Téléphone de Apitabodo"
+msgstr "Teléfono de Apitabodo"
+
+#: src/lib/components/SyncBeamVisual.svelte
+msgid "Téléphone de Denzu"
+msgstr "Teléfono de Denzu"
+
+#: src/routes/+page.svelte
+msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne, karaoké IA et VPN WireGuard intégré sur PC."
+msgstr "Vibratunes se conecta directamente a la API interna de YouTube y reproduce audio con libmpv y Media3. Cero Electron, cero anuncios, con descargas sin conexión, karaoke con IA y VPN WireGuard integrada en PC."
+
+#: src/routes/+page.svelte
+msgid "Accessibilité & Fonctions"
+msgstr "Accesibilidad y Funciones"
+
+#: src/routes/+page.svelte
+msgid "Pensé pour écouter partout, même avec une connexion difficile."
+msgstr "Pensado para escuchar en cualquier lugar, incluso con mala conexión."
+
+#: src/routes/+page.svelte
+msgid "Vibratunes a été conçu pour celles et ceux qui subissent une connexion instable ou les restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
+msgstr "Vibratunes fue diseñado para quienes sufren conexiones inestables o restricciones geográficas de YouTube Music: descarga tus canciones para escucharlas sin conexión y evita bloqueos en PC con la VPN WireGuard integrada."
+
+#: src/routes/+page.svelte
+msgid "VPN WireGuard intégré (PC)"
+msgstr "VPN WireGuard integrada (PC)"
+
+#: src/routes/+page.svelte
+msgid "Activez un tunnel WireGuard directement depuis les paramètres sur ordinateur pour contourner le bridage réseau ou les restrictions géographiques."
+msgstr "Activa un túnel WireGuard directamente desde los ajustes en ordenador para evitar bloqueos de red o restricciones geográficas."
+
+#: src/routes/+page.svelte
+msgid "Bibliothèque locale & Multi-comptes"
+msgstr "Biblioteca local y Multicuenta"
+
+#: src/routes/+page.svelte
+msgid "Gérez vos playlists et favoris même sans compte Google, importez vos fichiers audio locaux ou basculez entre plusieurs comptes en un clic."
+msgstr "Gestiona tus playlists y favoritos incluso sin cuenta de Google, importa archivos locales o cambia entre varias cuentas en un clic."
+
+#: src/lib/components/SyncBeamVisual.svelte
+msgid "Mon téléphone"
+msgstr ""
+
+#: src/lib/components/SyncBeamVisual.svelte
+msgid "Mon PC"
+msgstr ""
