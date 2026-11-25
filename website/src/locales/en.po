@@ -65,7 +65,6 @@ msgstr "Preview"
 
 #: src/routes/+page.svelte
 #: src/routes/+page.svelte
-#: src/routes/+page.svelte
 msgid "Télécharger"
 msgstr "Download"
 
@@ -153,43 +152,53 @@ msgstr "Built for listening, not for weighing down your machine."
 msgid "Chaque composant privilégie la réactivité, la fidélité audio et le contrôle local de votre bibliothèque."
 msgstr "Every component prioritizes responsiveness, audio fidelity, and local control over your library."
 
-#~ msgid "Téléchargements hors-ligne"
-#~ msgstr "Offline downloads"
+#: src/routes/+page.svelte
+msgid "Téléchargements hors-ligne"
+msgstr "Offline downloads"
 
-#~ msgid "Enregistrez vos titres, albums et playlists avec leurs pochettes haute résolution et métadonnées complètes pour écouter sans connexion."
-#~ msgstr "Save tracks, albums, and playlists with high-res cover art and full metadata to listen without an internet connection."
+#: src/routes/+page.svelte
+msgid "Enregistrez vos titres, albums et playlists avec leurs pochettes haute résolution et métadonnées complètes pour écouter sans connexion."
+msgstr "Save tracks, albums, and playlists with high-res cover art and full metadata to listen without an internet connection."
 
 #: src/routes/+page.svelte
 msgid "Paroles & Karaoké IA local"
 msgstr "Lyrics & Local AI Karaoke"
 
-#~ msgid "Paroles synchronisées mot-à-mot multi-sources et séparation vocale en temps réel sur votre GPU (Vulkan, DirectML, CoreML) sans aucun serveur externe."
-#~ msgstr "Multi-source word-by-word synced lyrics and real-time vocal separation on your GPU (Vulkan, DirectML, CoreML) with no external server."
+#: src/routes/+page.svelte
+msgid "Paroles synchronisées mot-à-mot multi-sources et séparation vocale en temps réel sur votre GPU (Vulkan, DirectML, CoreML) sans aucun serveur externe."
+msgstr "Multi-source word-by-word synced lyrics and real-time vocal separation on your GPU (Vulkan, DirectML, CoreML) with no external server."
 
-#~ msgid "Tunnel WARP intégré"
-#~ msgstr "Built-in WARP Tunnel"
+#: src/routes/+page.svelte
+msgid "Tunnel WARP intégré"
+msgstr "Built-in WARP Tunnel"
 
-#~ msgid "Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
-#~ msgstr "Toggle a Cloudflare WireGuard tunnel right from Settings to bypass network throttling or geo-restrictions."
+#: src/routes/+page.svelte
+msgid "Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
+msgstr "Toggle a Cloudflare WireGuard tunnel right from Settings to bypass network throttling or geo-restrictions."
 
 #: src/routes/+page.svelte
 msgid "Listen Together & Play Anywhere"
 msgstr "Listen Together & Play Anywhere"
 
-#~ msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance."
-#~ msgstr "Listen in sync with friends or link your Android phone to your computer to control playback remotely."
+#: src/routes/+page.svelte
+msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance."
+msgstr "Listen in sync with friends or link your Android phone to your computer to control playback remotely."
 
-#~ msgid "Moteur natif Rust & Kotlin"
-#~ msgstr "Native Rust & Kotlin Engine"
+#: src/routes/+page.svelte
+msgid "Moteur natif Rust & Kotlin"
+msgstr "Native Rust & Kotlin Engine"
 
-#~ msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Transitions gapless, normalisation sonore, pitch, vitesse et égaliseur 10 bandes."
-#~ msgstr "Tauri 2 + libmpv on Desktop, Kotlin + Media3 on Android. Gapless transitions, loudness normalization, pitch, speed, and 10-band equalizer."
+#: src/routes/+page.svelte
+msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Transitions gapless, normalisation sonore, pitch, vitesse et égaliseur 10 bandes."
+msgstr "Tauri 2 + libmpv on Desktop, Kotlin + Media3 on Android. Gapless transitions, loudness normalization, pitch, speed, and 10-band equalizer."
 
-#~ msgid "Thèmes adaptatifs & Scrobbling"
-#~ msgstr "Adaptive Themes & Scrobbling"
+#: src/routes/+page.svelte
+msgid "Thèmes adaptatifs & Scrobbling"
+msgstr "Adaptive Themes & Scrobbling"
 
-#~ msgid "Couleurs extraites de la pochette en cours, support Matugen / pywal / wallust sous Linux, Discord Rich Presence, Last.fm et ListenBrainz."
-#~ msgstr "Colors extracted from the current cover art, Matugen / pywal / wallust support on Linux, Discord Rich Presence, Last.fm, and ListenBrainz."
+#: src/routes/+page.svelte
+msgid "Couleurs extraites de la pochette en cours, support Matugen / pywal / wallust sous Linux, Discord Rich Presence, Last.fm et ListenBrainz."
+msgstr "Colors extracted from the current cover art, Matugen / pywal / wallust support on Linux, Discord Rich Presence, Last.fm, and ListenBrainz."
 
 #: src/routes/+page.svelte
 msgid "Téléchargements"
@@ -288,16 +297,13 @@ msgid "CoreML"
 msgstr "CoreML"
 
 #: src/routes/+page.svelte
-#: src/routes/+page.svelte
 msgid "Last.fm"
 msgstr "Last.fm"
 
 #: src/routes/+page.svelte
-#: src/routes/+page.svelte
 msgid "ListenBrainz"
 msgstr "ListenBrainz"
 
-#: src/routes/+page.svelte
 #: src/routes/+page.svelte
 msgid "Discord RPC"
 msgstr "Discord RPC"
@@ -310,90 +316,70 @@ msgstr "Matugen"
 msgid "Navigation principale"
 msgstr "Main navigation"
 
-#. 0: platformLabels[selectedPlatform]
+#. 0: platformLabels[ selectedPlatform ]
 #: src/routes/+page.svelte
 msgid "Télécharger pour {0}"
 msgstr "Download for {0}"
 
-#: src/routes/+page.svelte
-msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur via le relais ou le tunnel WARP intégré."
-msgstr "Listen in sync with friends or link your Android phone to your computer via the relay or built-in WARP tunnel."
+#~ msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur via le relais ou le tunnel WARP intégré."
+#~ msgstr "Listen in sync with friends or link your Android phone to your computer via the relay or built-in WARP tunnel."
 
-#: src/routes/+page.svelte
-msgid "Découvrir"
-msgstr "Explore"
+#~ msgid "Découvrir"
+#~ msgstr "Explore"
 
-#: src/routes/+page.svelte
-msgid "Paroles mot-à-mot multi-sources et séparation vocale temps réel sur GPU (Vulkan, DirectML, CoreML)."
-msgstr "Multi-source word-by-word lyrics and real-time GPU vocal separation (Vulkan, DirectML, CoreML)."
+#~ msgid "Paroles mot-à-mot multi-sources et séparation vocale temps réel sur GPU (Vulkan, DirectML, CoreML)."
+#~ msgstr "Multi-source word-by-word lyrics and real-time GPU vocal separation (Vulkan, DirectML, CoreML)."
 
-#: src/routes/+page.svelte
-msgid "Voir l'aperçu"
-msgstr "View preview"
+#~ msgid "Voir l'aperçu"
+#~ msgstr "View preview"
 
-#: src/routes/+page.svelte
-msgid "Feel the rhythm in the night"
-msgstr "Feel the rhythm in the night"
+#~ msgid "Feel the rhythm in the night"
+#~ msgstr "Feel the rhythm in the night"
 
-#: src/routes/+page.svelte
-msgid "<0>Vibratunes</0> keeps the music <1>alive</1>"
-msgstr "<0>Vibratunes</0> keeps the music <1>alive</1>"
+#~ msgid "<0>Vibratunes</0> keeps the music <1>alive</1>"
+#~ msgstr "<0>Vibratunes</0> keeps the music <1>alive</1>"
 
-#: src/routes/+page.svelte
-msgid "Every word synced on your GPU"
-msgstr "Every word synced on your GPU"
+#~ msgid "Every word synced on your GPU"
+#~ msgstr "Every word synced on your GPU"
 
-#: src/routes/+page.svelte
-msgid "Hors-ligne & Tunnel WARP"
-msgstr "Offline & WARP Tunnel"
+#~ msgid "Hors-ligne & Tunnel WARP"
+#~ msgstr "Offline & WARP Tunnel"
 
-#: src/routes/+page.svelte
-msgid "Téléchargez titres, albums et playlists en haute qualité et contournez les blocages grâce au tunnel WireGuard Cloudflare."
-msgstr "Download tracks, albums, and playlists in high quality and bypass blocks with the Cloudflare WireGuard tunnel."
+#~ msgid "Téléchargez titres, albums et playlists en haute qualité et contournez les blocages grâce au tunnel WireGuard Cloudflare."
+#~ msgstr "Download tracks, albums, and playlists in high quality and bypass blocks with the Cloudflare WireGuard tunnel."
 
-#: src/routes/+page.svelte
-msgid "FLAC / Opus Offline"
-msgstr "FLAC / Opus Offline"
+#~ msgid "FLAC / Opus Offline"
+#~ msgstr "FLAC / Opus Offline"
 
-#: src/routes/+page.svelte
-msgid "<0/> WireGuard WARP"
-msgstr "<0/> WireGuard WARP"
+#~ msgid "<0/> WireGuard WARP"
+#~ msgstr "<0/> WireGuard WARP"
 
-#: src/routes/+page.svelte
-msgid "ON"
-msgstr "ON"
+#~ msgid "ON"
+#~ msgstr "ON"
 
-#: src/routes/+page.svelte
-msgid "Moteur natif & Thèmes adaptatifs"
-msgstr "Native Engine & Adaptive Themes"
+#~ msgid "Moteur natif & Thèmes adaptatifs"
+#~ msgstr "Native Engine & Adaptive Themes"
 
-#: src/routes/+page.svelte
-msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Égaliseur 10 bandes, Last.fm, Discord RPC, Matugen et pywal."
-msgstr "Tauri 2 + libmpv on Desktop, Kotlin + Media3 on Android. 10-band equalizer, Last.fm, Discord RPC, Matugen, and pywal."
+#~ msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Égaliseur 10 bandes, Last.fm, Discord RPC, Matugen et pywal."
+#~ msgstr "Tauri 2 + libmpv on Desktop, Kotlin + Media3 on Android. 10-band equalizer, Last.fm, Discord RPC, Matugen, and pywal."
 
-#: src/routes/+page.svelte
-msgid "Installer"
-msgstr "Install"
+#~ msgid "Installer"
+#~ msgstr "Install"
 
-#: src/routes/+page.svelte
-msgid "Equalizer 10-Band"
-msgstr "Equalizer 10-Band"
+#~ msgid "Equalizer 10-Band"
+#~ msgstr "Equalizer 10-Band"
 
-#: src/routes/+page.svelte
-msgid "Gapless Playback"
-msgstr "Gapless Playback"
+#~ msgid "Gapless Playback"
+#~ msgstr "Gapless Playback"
 
-#: src/routes/+page.svelte
-msgid "Loudness Norm"
-msgstr "Loudness Norm"
+#~ msgid "Loudness Norm"
+#~ msgstr "Loudness Norm"
 
-#: src/routes/+page.svelte
-msgid "Matugen / pywal"
-msgstr "Matugen / pywal"
+#~ msgid "Matugen / pywal"
+#~ msgstr "Matugen / pywal"
 
-#: src/routes/+page.svelte
-msgid "Android Auto"
-msgstr "Android Auto"
+#~ msgid "Android Auto"
+#~ msgstr "Android Auto"
 
 #: src/routes/+page.svelte
 msgid "<0/> Télécharger"
@@ -410,3 +396,21 @@ msgstr "Desktop"
 #: src/routes/+layout.svelte
 msgid "Vibratunes - Client YouTube Music natif, hors-ligne et sans pub"
 msgstr "Vibratunes - Native, offline, ad-free YouTube Music client"
+
+#~ msgid "Télécharger pour {0}ù"
+#~ msgstr ""
+
+#~ msgid "Télécharger pour gh {0}"
+#~ msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Écoute synchronisée & Réseau"
+msgstr "Synced Listening & Network"
+
+#: src/routes/+page.svelte
+msgid "Un seul flux entre votre PC et votre téléphone."
+msgstr "One seamless stream between your PC and phone."
+
+#: src/routes/+page.svelte
+msgid "Liez votre smartphone Android à votre ordinateur avec Play Anywhere, partagez des salons Listen Together en temps réel et activez le tunnel WireGuard WARP intégré en un clic."
+msgstr "Link your Android phone to your computer with Play Anywhere, share real-time Listen Together rooms, and toggle the built-in WireGuard WARP tunnel in one click."
