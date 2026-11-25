@@ -404,6 +404,65 @@ jobs:
             echo "every library the binary needs came from the declared Depends"
           '
 
+      - name: Build and verify Arch Linux package (.pkg.tar.zst)
+        id: arch_check
+        if: ${{ env.PRERELEASE == 'false' }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          BIN="target/release/vibratunes-app"
+          [ -f "$BIN" ] || BIN="target/release/limusic-app"
+          PKGROOT="target/packaging/vibratunes"
+          rm -rf "$PKGROOT"
+          mkdir -p "$PKGROOT/usr/bin" "$PKGROOT/usr/share/applications" \
+                   "$PKGROOT/usr/share/licenses/vibratunes"
+          for size in 32x32 64x64 128x128 256x256; do
+            mkdir -p "$PKGROOT/usr/share/icons/hicolor/$size/apps"
+          done
+          install -Dm755 "$BIN" "$PKGROOT/usr/bin/vibratunes"
+          install -Dm644 src-tauri/icons/32x32.png     "$PKGROOT/usr/share/icons/hicolor/32x32/apps/vibratunes.png"
+          install -Dm644 src-tauri/icons/64x64.png     "$PKGROOT/usr/share/icons/hicolor/64x64/apps/vibratunes.png"
+          install -Dm644 src-tauri/icons/128x128.png   "$PKGROOT/usr/share/icons/hicolor/128x128/apps/vibratunes.png"
+          [ -f src-tauri/icons/128x128@2x.png ] && \
+            install -Dm644 src-tauri/icons/128x128@2x.png "$PKGROOT/usr/share/icons/hicolor/256x256/apps/vibratunes.png"
+          install -Dm644 LICENSE "$PKGROOT/usr/share/licenses/vibratunes/LICENSE"
+          cat > "$PKGROOT/usr/share/applications/vibratunes.desktop" <<'DESKTOP'
+          [Desktop Entry]
+          Type=Application
+          Name=Vibratunes
+          GenericName=Music Player
+          Comment=YouTube Music client with offline downloads
+          Exec=env GDK_BACKEND=x11 vibratunes %u
+          Icon=vibratunes
+          Terminal=false
+          Categories=Audio;Music;AudioVideo;
+          MimeType=x-scheme-handler/vibratunes;
+          StartupWMClass=vibratunes
+          DESKTOP
+          sed -i 's/^          //' "$PKGROOT/usr/share/applications/vibratunes.desktop"
+          PKGVER="${VERSION//-/_}"
+          cat > "$PKGROOT/PKGBUILD" <<EOF
+          pkgname=vibratunes
+          pkgver=${PKGVER}
+          pkgrel=1
+          pkgdesc="Vibratunes — YouTube Music client with offline downloads"
+          arch=('x86_64')
+          license=('GPL-3.0-or-later')
+          depends=('mpv' 'webkit2gtk-4.1' 'gtk3')
+          options=(!debug)
+          package() { cp -a "\$startdir/usr" "\$pkgdir"/; }
+          EOF
+          sed -i 's/^          //' "$PKGROOT/PKGBUILD"
+          docker run --rm -v "$PWD/$PKGROOT:/pkg" archlinux:latest bash -c '
+            set -euo pipefail
+            pacman -Sy --noconfirm --needed base-devel pacman-contrib >/dev/null 2>&1
+            useradd -m builder && chown -R builder:builder /pkg
+            su builder -c "cd /pkg && makepkg -f"
+            PKG="$(ls /pkg/vibratunes-*.pkg.tar.zst 2>/dev/null | head -1)"
+            pacman -U --noconfirm "$PKG"
+            echo "Installed $(basename "$PKG") successfully in Arch Linux"
+          '
+
       - name: Dry run — built and verified, attaching nothing
         if: ${{ inputs.dry_run }}
         run: echo "dry_run - every build step and guard passed; release assets left untouched."
@@ -533,6 +592,18 @@ jobs:
             echo "::warning::no deb for $VERSION in target/release/bundle/deb — nothing attached"
           else
             retry 3 upload "$DEB"
+          fi
+
+          # Arch Linux package (.pkg.tar.zst)
+          ARCH_PKG="$(ls target/packaging/vibratunes/vibratunes-*.pkg.tar.zst 2>/dev/null | head -1 || true)"
+          if [ "$PRERELEASE" = true ]; then
+            echo "release candidate: no arch package"
+          elif [ "${{ steps.arch_check.outcome }}" != "success" ]; then
+            echo "::warning::the arch package failed its check and was NOT attached"
+          elif [ -z "$ARCH_PKG" ]; then
+            echo "::warning::no arch package in target/packaging/vibratunes"
+          else
+            retry 3 upload "$ARCH_PKG"
           fi
 
           # latest.json is the one thing both release workflows write, and they now run in parallel.
