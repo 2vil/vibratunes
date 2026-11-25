@@ -30,9 +30,8 @@ msgstr ""
 msgid "Client YouTube Music open-source pour Linux, Windows, macOS et Android. Téléchargements hors-ligne, karaoké IA, paroles mot-à-mot et tunnel WARP intégré."
 msgstr "Esaleli ya YouTube Music ya ofele mpo na Linux, Windows, macOS mpe Android. Kobomba miziki kozanga internet, karaoké ya IA, maloba ya nzembo mpe nzela ya WARP na kati."
 
-#: src/routes/+layout.svelte
-msgid "Vibratunes — Client YouTube Music natif, hors-ligne et sans pub"
-msgstr "Vibratunes — Esaleli ya YouTube Music, kozanga internet mpe kozanga bapiblisite"
+#~ msgid "Vibratunes — Client YouTube Music natif, hors-ligne et sans pub"
+#~ msgstr "Vibratunes — Esaleli ya YouTube Music, kozanga internet mpe kozanga bapiblisite"
 
 #: src/routes/+page.svelte
 msgid "Linux"
@@ -42,6 +41,7 @@ msgstr "Linux"
 msgid "Windows"
 msgstr "Windows"
 
+#: src/lib/components/SyncBeamVisual.svelte
 #: src/routes/+page.svelte
 msgid "Android"
 msgstr "Android"
@@ -64,6 +64,8 @@ msgid "Aperçu"
 msgstr "Botali"
 
 #: src/routes/+page.svelte
+#: src/routes/+page.svelte
+#: src/routes/+page.svelte
 msgid "Télécharger"
 msgstr "Kokita"
 
@@ -80,10 +82,8 @@ msgstr "GitHub <0/>"
 msgid "Version {0} disponible sur Desktop & Android"
 msgstr "Modɛlɛ {0} ezali mpo na Ordinatɛrɛ mpe Android"
 
-#. 0: platformLabels[selectedPlatform]
-#: src/routes/+page.svelte
-msgid "<0/> Télécharger pour {0}"
-msgstr "<0/> Kokita mpo na {0}"
+#~ msgid "<0/> Télécharger pour {0}"
+#~ msgstr "<0/> Kokita mpo na {0}"
 
 #: src/routes/+page.svelte
 msgid "Toutes les plateformes"
@@ -153,53 +153,43 @@ msgstr "Esalami mpo na koyoka miziki, te mpo na kokomisa masini kilo."
 msgid "Chaque composant privilégie la réactivité, la fidélité audio et le contrôle local de votre bibliothèque."
 msgstr "Eteni nyonso etyaka mbangu, mongongo ya kitoko mpe bokonzi ya nzembo na yo liboso."
 
-#: src/routes/+page.svelte
-msgid "Téléchargements hors-ligne"
-msgstr "Kobomba nzembo kozanga internet"
+#~ msgid "Téléchargements hors-ligne"
+#~ msgstr "Kobomba nzembo kozanga internet"
 
-#: src/routes/+page.svelte
-msgid "Enregistrez vos titres, albums et playlists avec leurs pochettes haute résolution et métadonnées complètes pour écouter sans connexion."
-msgstr "Bomba nzembo, ba-alubume mpe baliste na yo elongo na bililingi ya kitoko mpo na koyoka ata internet ezali te."
+#~ msgid "Enregistrez vos titres, albums et playlists avec leurs pochettes haute résolution et métadonnées complètes pour écouter sans connexion."
+#~ msgstr "Bomba nzembo, ba-alubume mpe baliste na yo elongo na bililingi ya kitoko mpo na koyoka ata internet ezali te."
 
 #: src/routes/+page.svelte
 msgid "Paroles & Karaoké IA local"
 msgstr "Maloba & Karaoké ya IA na masini"
 
-#: src/routes/+page.svelte
-msgid "Paroles synchronisées mot-à-mot multi-sources et séparation vocale en temps réel sur votre GPU (Vulkan, DirectML, CoreML) sans aucun serveur externe."
-msgstr "Maloba ya nzembo liloba na liloba mpe kokabola mongongo na GPU na yo (Vulkan, DirectML, CoreML) kozanga kosalela serveur ya libanda."
+#~ msgid "Paroles synchronisées mot-à-mot multi-sources et séparation vocale en temps réel sur votre GPU (Vulkan, DirectML, CoreML) sans aucun serveur externe."
+#~ msgstr "Maloba ya nzembo liloba na liloba mpe kokabola mongongo na GPU na yo (Vulkan, DirectML, CoreML) kozanga kosalela serveur ya libanda."
 
-#: src/routes/+page.svelte
-msgid "Tunnel WARP intégré"
-msgstr "Nzela ya WARP na kati"
+#~ msgid "Tunnel WARP intégré"
+#~ msgstr "Nzela ya WARP na kati"
 
-#: src/routes/+page.svelte
-msgid "Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
-msgstr "Fungola nzela ya WireGuard Cloudflare mbala moko na ba-paramètres mpo na koleka bipekiseli ya rezo."
+#~ msgid "Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
+#~ msgstr "Fungola nzela ya WireGuard Cloudflare mbala moko na ba-paramètres mpo na koleka bipekiseli ya rezo."
 
 #: src/routes/+page.svelte
 msgid "Listen Together & Play Anywhere"
 msgstr "Koyoka Elongo & Kobeta Epai Nyonso"
 
-#: src/routes/+page.svelte
-msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance."
-msgstr "Yoka nzembo elongo na baninga to kangisa telefone na yo ya Android na ordinatɛrɛ mpo na koyangela miziki mosika."
+#~ msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance."
+#~ msgstr "Yoka nzembo elongo na baninga to kangisa telefone na yo ya Android na ordinatɛrɛ mpo na koyangela miziki mosika."
 
-#: src/routes/+page.svelte
-msgid "Moteur natif Rust & Kotlin"
-msgstr "Motɛrɛ ya Rust mpe Kotlin"
+#~ msgid "Moteur natif Rust & Kotlin"
+#~ msgstr "Motɛrɛ ya Rust mpe Kotlin"
 
-#: src/routes/+page.svelte
-msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Transitions gapless, normalisation sonore, pitch, vitesse et égaliseur 10 bandes."
-msgstr "Tauri 2 + libmpv na Ordinatɛrɛ, Kotlin + Media3 na Android. Koleka nzembo kozanga kokatana, kobongisa mongongo mpe égaliseur ya banzela 10."
+#~ msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Transitions gapless, normalisation sonore, pitch, vitesse et égaliseur 10 bandes."
+#~ msgstr "Tauri 2 + libmpv na Ordinatɛrɛ, Kotlin + Media3 na Android. Koleka nzembo kozanga kokatana, kobongisa mongongo mpe égaliseur ya banzela 10."
 
-#: src/routes/+page.svelte
-msgid "Thèmes adaptatifs & Scrobbling"
-msgstr "Balangi ya nzembo & Scrobbling"
+#~ msgid "Thèmes adaptatifs & Scrobbling"
+#~ msgstr "Balangi ya nzembo & Scrobbling"
 
-#: src/routes/+page.svelte
-msgid "Couleurs extraites de la pochette en cours, support Matugen / pywal / wallust sous Linux, Discord Rich Presence, Last.fm et ListenBrainz."
-msgstr "Balangi ezwami na elilingi ya nzembo, Matugen / pywal / wallust na Linux, Discord Rich Presence, Last.fm mpe ListenBrainz."
+#~ msgid "Couleurs extraites de la pochette en cours, support Matugen / pywal / wallust sous Linux, Discord Rich Presence, Last.fm et ListenBrainz."
+#~ msgstr "Balangi ezwami na elilingi ya nzembo, Matugen / pywal / wallust na Linux, Discord Rich Presence, Last.fm mpe ListenBrainz."
 
 #: src/routes/+page.svelte
 msgid "Téléchargements"
@@ -264,3 +254,159 @@ msgstr "Bavɛrsio"
 #: src/routes/+page.svelte
 msgid "Inspiré par Limusic, Metrolist & SimpMusic. Indépendant de YouTube et Google LLC."
 msgstr "Ezwami makanisi na Limusic, Metrolist & SimpMusic. Ezali ya YouTube to Google LLC te."
+
+#: src/routes/+page.svelte
+msgid "Rust"
+msgstr "Rust"
+
+#: src/routes/+page.svelte
+msgid "Tauri 2"
+msgstr "Tauri 2"
+
+#: src/routes/+page.svelte
+msgid "Kotlin"
+msgstr "Kotlin"
+
+#: src/routes/+page.svelte
+msgid "Media3"
+msgstr "Media3"
+
+#: src/routes/+page.svelte
+msgid "WireGuard WARP"
+msgstr "WireGuard WARP"
+
+#: src/routes/+page.svelte
+msgid "Vulkan Karaoke"
+msgstr "Vulkan Karaoke"
+
+#: src/routes/+page.svelte
+msgid "DirectML"
+msgstr "DirectML"
+
+#: src/routes/+page.svelte
+msgid "CoreML"
+msgstr "CoreML"
+
+#: src/routes/+page.svelte
+#: src/routes/+page.svelte
+msgid "Last.fm"
+msgstr "Last.fm"
+
+#: src/routes/+page.svelte
+#: src/routes/+page.svelte
+msgid "ListenBrainz"
+msgstr "ListenBrainz"
+
+#: src/routes/+page.svelte
+#: src/routes/+page.svelte
+msgid "Discord RPC"
+msgstr "Discord RPC"
+
+#: src/routes/+page.svelte
+msgid "Matugen"
+msgstr "Matugen"
+
+#: src/routes/+page.svelte
+msgid "Navigation principale"
+msgstr "Botali ya liboso"
+
+#. 0: platformLabels[selectedPlatform]
+#: src/routes/+page.svelte
+msgid "Télécharger pour {0}"
+msgstr "Kokita mpo na {0}"
+
+#: src/routes/+page.svelte
+msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur via le relais ou le tunnel WARP intégré."
+msgstr "Yoka nzembo elongo na baninga to kangisa Android na yo na ordinatɛrɛ na nzela ya WARP."
+
+#: src/routes/+page.svelte
+msgid "Découvrir"
+msgstr "Tala makambo"
+
+#: src/routes/+page.svelte
+msgid "Paroles mot-à-mot multi-sources et séparation vocale temps réel sur GPU (Vulkan, DirectML, CoreML)."
+msgstr "Maloba ya nzembo liloba na liloba mpe kokabola mongongo na GPU (Vulkan, DirectML, CoreML)."
+
+#: src/routes/+page.svelte
+msgid "Voir l'aperçu"
+msgstr "Tala emoniseli"
+
+#: src/routes/+page.svelte
+msgid "Feel the rhythm in the night"
+msgstr "Feel the rhythm in the night"
+
+#: src/routes/+page.svelte
+msgid "<0>Vibratunes</0> keeps the music <1>alive</1>"
+msgstr "<0>Vibratunes</0> keeps the music <1>alive</1>"
+
+#: src/routes/+page.svelte
+msgid "Every word synced on your GPU"
+msgstr "Every word synced on your GPU"
+
+#: src/routes/+page.svelte
+msgid "Hors-ligne & Tunnel WARP"
+msgstr "Kozanga internet & Nzela ya WARP"
+
+#: src/routes/+page.svelte
+msgid "Téléchargez titres, albums et playlists en haute qualité et contournez les blocages grâce au tunnel WireGuard Cloudflare."
+msgstr "Bomba nzembo, ba-alubume mpe baliste na mongongo ya kitoko mpe leka bipekiseli na WireGuard Cloudflare."
+
+#: src/routes/+page.svelte
+msgid "FLAC / Opus Offline"
+msgstr "FLAC / Opus Offline"
+
+#: src/routes/+page.svelte
+msgid "<0/> WireGuard WARP"
+msgstr "<0/> WireGuard WARP"
+
+#: src/routes/+page.svelte
+msgid "ON"
+msgstr "ON"
+
+#: src/routes/+page.svelte
+msgid "Moteur natif & Thèmes adaptatifs"
+msgstr "Motɛrɛ ya pɛto & Balangi ya nzembo"
+
+#: src/routes/+page.svelte
+msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Égaliseur 10 bandes, Last.fm, Discord RPC, Matugen et pywal."
+msgstr "Tauri 2 + libmpv na Ordinatɛrɛ, Kotlin + Media3 na Android. Égaliseur ya banzela 10, Last.fm, Discord RPC, Matugen mpe pywal."
+
+#: src/routes/+page.svelte
+msgid "Installer"
+msgstr "Kotya na masini"
+
+#: src/routes/+page.svelte
+msgid "Equalizer 10-Band"
+msgstr "Equalizer 10-Band"
+
+#: src/routes/+page.svelte
+msgid "Gapless Playback"
+msgstr "Gapless Playback"
+
+#: src/routes/+page.svelte
+msgid "Loudness Norm"
+msgstr "Loudness Norm"
+
+#: src/routes/+page.svelte
+msgid "Matugen / pywal"
+msgstr "Matugen / pywal"
+
+#: src/routes/+page.svelte
+msgid "Android Auto"
+msgstr "Android Auto"
+
+#: src/routes/+page.svelte
+msgid "<0/> Télécharger"
+msgstr "<0/> Kokita"
+
+#: src/lib/components/SyncBeamVisual.svelte
+msgid "WARP / Relais"
+msgstr "WARP / Relais"
+
+#: src/lib/components/SyncBeamVisual.svelte
+msgid "Desktop"
+msgstr "Desktop"
+
+#: src/routes/+layout.svelte
+msgid "Vibratunes - Client YouTube Music natif, hors-ligne et sans pub"
+msgstr "Vibratunes - Esaleli ya YouTube Music, kozanga internet mpe kozanga bapiblisite"

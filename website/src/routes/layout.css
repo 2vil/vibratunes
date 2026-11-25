@@ -54,6 +54,43 @@
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
+	--animate-gradient: gradient 8s linear infinite;
+	--animate-marquee: marquee var(--duration, 35s) infinite linear;
+	--animate-marquee-vertical: marquee-vertical var(--duration, 35s) linear infinite;
+	--animate-shine: shine var(--duration, 14s) infinite linear;
+
+	@keyframes gradient {
+		to {
+			background-position: var(--bg-size, 300%) 0;
+		}
+	}
+	@keyframes marquee {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(calc(-100% - var(--gap, 1rem)));
+		}
+	}
+	@keyframes marquee-vertical {
+		from {
+			transform: translateY(0);
+		}
+		to {
+			transform: translateY(calc(-100% - var(--gap, 1rem)));
+		}
+	}
+	@keyframes shine {
+		0% {
+			background-position: 0% 0%;
+		}
+		50% {
+			background-position: 100% 100%;
+		}
+		to {
+			background-position: 0% 0%;
+		}
+	}
 }
 
 @layer base {

@@ -1,11 +1,13 @@
 <script lang="ts">
-	import './layout.css';
+	import "./layout.css";
 
 	let { children } = $props();
 </script>
 
 <svelte:head>
-	<title>Vibratunes — Client YouTube Music natif, hors-ligne et sans pub</title>
+	<title
+		>Vibratunes - Client YouTube Music natif, hors-ligne et sans pub</title
+	>
 	<meta
 		name="description"
 		content="Client YouTube Music open-source pour Linux, Windows, macOS et Android. Téléchargements hors-ligne, karaoké IA, paroles mot-à-mot et tunnel WARP intégré."
