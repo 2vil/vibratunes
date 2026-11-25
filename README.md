@@ -125,7 +125,7 @@ Vibratunes provides an automated cross-platform build and install script:
 
 ```bash
 # Clone the repository
-git clone https://github.com/2vil/limusic.git vibratunes
+git clone https://github.com/2vil/vibratunes.git
 cd vibratunes
 
 # Install frontend dependencies
