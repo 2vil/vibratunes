@@ -44,7 +44,6 @@ libmpv-2.dll
 ntdll.dll
 ole32.dll
 oleaut32.dll
-secur32.dll
 shell32.dll
 shlwapi.dll
 user32.dll
