@@ -1,0 +1,266 @@
+msgid ""
+msgstr ""
+"Source-Language: fr\n"
+"Language: ln\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2\n"
+"X-Plurals-Order: one, other\n"
+
+#~ msgid "Welcome to SvelteKit"
+#~ msgstr ""
+
+#~ msgid "Visit <0>svelte.dev/docs/kit</0> to read the documentation"
+#~ msgstr ""
+
+#~ msgid "Français"
+#~ msgstr "Français"
+
+#~ msgid "English"
+#~ msgstr "English"
+
+#~ msgid "Español"
+#~ msgstr "Español"
+
+#~ msgid "Lingála"
+#~ msgstr "Lingála"
+
+#: src/routes/+layout.svelte
+msgid "Client YouTube Music open-source pour Linux, Windows, macOS et Android. Téléchargements hors-ligne, karaoké IA, paroles mot-à-mot et tunnel WARP intégré."
+msgstr "Esaleli ya YouTube Music ya ofele mpo na Linux, Windows, macOS mpe Android. Kobomba miziki kozanga internet, karaoké ya IA, maloba ya nzembo mpe nzela ya WARP na kati."
+
+#: src/routes/+layout.svelte
+msgid "Vibratunes — Client YouTube Music natif, hors-ligne et sans pub"
+msgstr "Vibratunes — Esaleli ya YouTube Music, kozanga internet mpe kozanga bapiblisite"
+
+#: src/routes/+page.svelte
+msgid "Linux"
+msgstr "Linux"
+
+#: src/routes/+page.svelte
+msgid "Windows"
+msgstr "Windows"
+
+#: src/routes/+page.svelte
+msgid "Android"
+msgstr "Android"
+
+#: src/routes/+page.svelte
+msgid "Logo Vibratunes"
+msgstr "Elembo ya Vibratunes"
+
+#: src/routes/+page.svelte
+#: src/routes/+page.svelte
+msgid "Vibratunes"
+msgstr "Vibratunes"
+
+#: src/routes/+page.svelte
+msgid "Fonctionnalités"
+msgstr "Makambo ya esaleli"
+
+#: src/routes/+page.svelte
+msgid "Aperçu"
+msgstr "Botali"
+
+#: src/routes/+page.svelte
+msgid "Télécharger"
+msgstr "Kokita"
+
+#: src/routes/+page.svelte
+msgid "Choisir la langue"
+msgstr "Pona monoko"
+
+#: src/routes/+page.svelte
+msgid "GitHub <0/>"
+msgstr "GitHub <0/>"
+
+#. 0: DESKTOP_VERSION
+#: src/routes/+page.svelte
+msgid "Version {0} disponible sur Desktop & Android"
+msgstr "Modɛlɛ {0} ezali mpo na Ordinatɛrɛ mpe Android"
+
+#. 0: platformLabels[selectedPlatform]
+#: src/routes/+page.svelte
+msgid "<0/> Télécharger pour {0}"
+msgstr "<0/> Kokita mpo na {0}"
+
+#: src/routes/+page.svelte
+msgid "Toutes les plateformes"
+msgstr "Bimasini nyonso"
+
+#: src/routes/+page.svelte
+msgid "Votre musique YouTube, native, hors-ligne et sans pub."
+msgstr "Miziki na yo ya YouTube, ya pɛto, kozanga internet mpe kozanga bapiblisite."
+
+#: src/routes/+page.svelte
+msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne, karaoké IA et tunnel WARP intégré."
+msgstr "Vibratunes ekangamaka mbala moko na API ya YouTube mpe ebetaka miziki na libmpv mpe Media3. Electron ezali te, bapiblisite ezali te, ezali na kobomba nzembo kozanga internet, karaoké ya IA mpe nzela ya WARP."
+
+#: src/routes/+page.svelte
+msgid "Open-source GPL-3.0 • Linux, Windows, macOS Apple Silicon & Android 8.0+"
+msgstr "Open-source GPL-3.0 • Linux, Windows, macOS Apple Silicon mpe Android 8.0+"
+
+#: src/routes/+page.svelte
+msgid "Interface Desktop"
+msgstr "Emoniseli ya Ordinatɛrɛ"
+
+#: src/routes/+page.svelte
+msgid "Paroles & Karaoké"
+msgstr "Maloba mpe Karaoké"
+
+#: src/routes/+page.svelte
+msgid "Mode Vidéo"
+msgstr "Lolenge ya Video"
+
+#: src/routes/+page.svelte
+msgid "Application Android"
+msgstr "Esaleli ya Android"
+
+#: src/routes/+page.svelte
+msgid "Vue playlist dans Vibratunes Desktop"
+msgstr "Emoniseli ya liste ya nzembo na Vibratunes Desktop"
+
+#: src/routes/+page.svelte
+msgid "Paroles synchronisées mot-à-mot dans Vibratunes"
+msgstr "Maloba ya nzembo ekokani na mongongo na Vibratunes"
+
+#: src/routes/+page.svelte
+msgid "Lecture de clip vidéo à côté des paroles"
+msgstr "Kobeta video pembeni ya maloba ya nzembo"
+
+#: src/routes/+page.svelte
+msgid "Accueil Vibratunes Android"
+msgstr "Ebandeli ya Vibratunes Android"
+
+#: src/routes/+page.svelte
+msgid "Lecteur Vibratunes Android"
+msgstr "Ebɛtɛli ya Vibratunes Android"
+
+#: src/routes/+page.svelte
+msgid "Paroles synchronisées sur Android"
+msgstr "Maloba ya nzembo na Android"
+
+#: src/routes/+page.svelte
+msgid "Architecture & Fonctions"
+msgstr "Ndenge esalaka & Makambo"
+
+#: src/routes/+page.svelte
+msgid "Conçu pour l'écoute, pas pour alourdir votre machine."
+msgstr "Esalami mpo na koyoka miziki, te mpo na kokomisa masini kilo."
+
+#: src/routes/+page.svelte
+msgid "Chaque composant privilégie la réactivité, la fidélité audio et le contrôle local de votre bibliothèque."
+msgstr "Eteni nyonso etyaka mbangu, mongongo ya kitoko mpe bokonzi ya nzembo na yo liboso."
+
+#: src/routes/+page.svelte
+msgid "Téléchargements hors-ligne"
+msgstr "Kobomba nzembo kozanga internet"
+
+#: src/routes/+page.svelte
+msgid "Enregistrez vos titres, albums et playlists avec leurs pochettes haute résolution et métadonnées complètes pour écouter sans connexion."
+msgstr "Bomba nzembo, ba-alubume mpe baliste na yo elongo na bililingi ya kitoko mpo na koyoka ata internet ezali te."
+
+#: src/routes/+page.svelte
+msgid "Paroles & Karaoké IA local"
+msgstr "Maloba & Karaoké ya IA na masini"
+
+#: src/routes/+page.svelte
+msgid "Paroles synchronisées mot-à-mot multi-sources et séparation vocale en temps réel sur votre GPU (Vulkan, DirectML, CoreML) sans aucun serveur externe."
+msgstr "Maloba ya nzembo liloba na liloba mpe kokabola mongongo na GPU na yo (Vulkan, DirectML, CoreML) kozanga kosalela serveur ya libanda."
+
+#: src/routes/+page.svelte
+msgid "Tunnel WARP intégré"
+msgstr "Nzela ya WARP na kati"
+
+#: src/routes/+page.svelte
+msgid "Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
+msgstr "Fungola nzela ya WireGuard Cloudflare mbala moko na ba-paramètres mpo na koleka bipekiseli ya rezo."
+
+#: src/routes/+page.svelte
+msgid "Listen Together & Play Anywhere"
+msgstr "Koyoka Elongo & Kobeta Epai Nyonso"
+
+#: src/routes/+page.svelte
+msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance."
+msgstr "Yoka nzembo elongo na baninga to kangisa telefone na yo ya Android na ordinatɛrɛ mpo na koyangela miziki mosika."
+
+#: src/routes/+page.svelte
+msgid "Moteur natif Rust & Kotlin"
+msgstr "Motɛrɛ ya Rust mpe Kotlin"
+
+#: src/routes/+page.svelte
+msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Transitions gapless, normalisation sonore, pitch, vitesse et égaliseur 10 bandes."
+msgstr "Tauri 2 + libmpv na Ordinatɛrɛ, Kotlin + Media3 na Android. Koleka nzembo kozanga kokatana, kobongisa mongongo mpe égaliseur ya banzela 10."
+
+#: src/routes/+page.svelte
+msgid "Thèmes adaptatifs & Scrobbling"
+msgstr "Balangi ya nzembo & Scrobbling"
+
+#: src/routes/+page.svelte
+msgid "Couleurs extraites de la pochette en cours, support Matugen / pywal / wallust sous Linux, Discord Rich Presence, Last.fm et ListenBrainz."
+msgstr "Balangi ezwami na elilingi ya nzembo, Matugen / pywal / wallust na Linux, Discord Rich Presence, Last.fm mpe ListenBrainz."
+
+#: src/routes/+page.svelte
+msgid "Téléchargements"
+msgstr "Kokita esaleli"
+
+#: src/routes/+page.svelte
+msgid "Choisissez votre plateforme"
+msgstr "Pona masini na yo"
+
+#: src/routes/+page.svelte
+msgid "Binaires signés et mises à jour automatiques intégrées sur Desktop et Android."
+msgstr "Baprogramɛ oyo ekoki kotyelama motema mpe kobongisa yango moko na Ordinatɛrɛ mpe Android."
+
+#: src/routes/+page.svelte
+msgid "<0/> Linux"
+msgstr "<0/> Linux"
+
+#: src/routes/+page.svelte
+msgid "<0/> Windows"
+msgstr "<0/> Windows"
+
+#: src/routes/+page.svelte
+msgid "<0/> macOS"
+msgstr "<0/> macOS"
+
+#: src/routes/+page.svelte
+msgid "<0/> Android"
+msgstr "<0/> Android"
+
+#: src/routes/+page.svelte
+msgid "Recommandé"
+msgstr "Eponami"
+
+#: src/routes/+page.svelte
+msgid "Compiler et installer depuis les sources (Arch, Fedora, Debian, macOS)"
+msgstr "Kotonga mpe kotya na masini banda na code (Arch, Fedora, Debian, macOS)"
+
+#: src/routes/+page.svelte
+msgid "Copié"
+msgstr "Ekopiami"
+
+#: src/routes/+page.svelte
+msgid "Copier"
+msgstr "Kokopia"
+
+#: src/routes/+page.svelte
+msgid "Vibratunes • Licence GPL-3.0"
+msgstr "Vibratunes • Ndako ya mikanda GPL-3.0"
+
+#: src/routes/+page.svelte
+msgid "Dépôt Desktop"
+msgstr "Esika ya code Ordinatɛrɛ"
+
+#: src/routes/+page.svelte
+msgid "Dépôt Android"
+msgstr "Esika ya code Android"
+
+#: src/routes/+page.svelte
+msgid "Releases"
+msgstr "Bavɛrsio"
+
+#: src/routes/+page.svelte
+msgid "Inspiré par Limusic, Metrolist & SimpMusic. Indépendant de YouTube et Google LLC."
+msgstr "Ezwami makanisi na Limusic, Metrolist & SimpMusic. Ezali ya YouTube to Google LLC te."

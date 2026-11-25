@@ -1,0 +1,266 @@
+msgid ""
+msgstr ""
+"Source-Language: fr\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3\n"
+"X-Plurals-Order: one, many, other\n"
+
+#~ msgid "Welcome to SvelteKit"
+#~ msgstr ""
+
+#~ msgid "Visit <0>svelte.dev/docs/kit</0> to read the documentation"
+#~ msgstr ""
+
+#~ msgid "Français"
+#~ msgstr "Français"
+
+#~ msgid "English"
+#~ msgstr "English"
+
+#~ msgid "Español"
+#~ msgstr "Español"
+
+#~ msgid "Lingála"
+#~ msgstr "Lingála"
+
+#: src/routes/+layout.svelte
+msgid "Client YouTube Music open-source pour Linux, Windows, macOS et Android. Téléchargements hors-ligne, karaoké IA, paroles mot-à-mot et tunnel WARP intégré."
+msgstr "Cliente de YouTube Music de código abierto para Linux, Windows, macOS y Android. Descargas sin conexión, karaoke con IA, letras palabra por palabra y túnel WARP integrado."
+
+#: src/routes/+layout.svelte
+msgid "Vibratunes — Client YouTube Music natif, hors-ligne et sans pub"
+msgstr "Vibratunes — Cliente nativo de YouTube Music, sin conexión y sin anuncios"
+
+#: src/routes/+page.svelte
+msgid "Linux"
+msgstr "Linux"
+
+#: src/routes/+page.svelte
+msgid "Windows"
+msgstr "Windows"
+
+#: src/routes/+page.svelte
+msgid "Android"
+msgstr "Android"
+
+#: src/routes/+page.svelte
+msgid "Logo Vibratunes"
+msgstr "Logo de Vibratunes"
+
+#: src/routes/+page.svelte
+#: src/routes/+page.svelte
+msgid "Vibratunes"
+msgstr "Vibratunes"
+
+#: src/routes/+page.svelte
+msgid "Fonctionnalités"
+msgstr "Funciones"
+
+#: src/routes/+page.svelte
+msgid "Aperçu"
+msgstr "Vista previa"
+
+#: src/routes/+page.svelte
+msgid "Télécharger"
+msgstr "Descargar"
+
+#: src/routes/+page.svelte
+msgid "Choisir la langue"
+msgstr "Elegir idioma"
+
+#: src/routes/+page.svelte
+msgid "GitHub <0/>"
+msgstr "GitHub <0/>"
+
+#. 0: DESKTOP_VERSION
+#: src/routes/+page.svelte
+msgid "Version {0} disponible sur Desktop & Android"
+msgstr "Versión {0} disponible en Escritorio y Android"
+
+#. 0: platformLabels[selectedPlatform]
+#: src/routes/+page.svelte
+msgid "<0/> Télécharger pour {0}"
+msgstr "<0/> Descargar para {0}"
+
+#: src/routes/+page.svelte
+msgid "Toutes les plateformes"
+msgstr "Todas las plataformas"
+
+#: src/routes/+page.svelte
+msgid "Votre musique YouTube, native, hors-ligne et sans pub."
+msgstr "Tu música de YouTube, nativa, sin conexión y sin anuncios."
+
+#: src/routes/+page.svelte
+msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne, karaoké IA et tunnel WARP intégré."
+msgstr "Vibratunes se conecta directamente a la API interna de YouTube y reproduce audio con libmpv y Media3. Cero Electron, cero anuncios, con descargas sin conexión, karaoke con IA y túnel WARP integrado."
+
+#: src/routes/+page.svelte
+msgid "Open-source GPL-3.0 • Linux, Windows, macOS Apple Silicon & Android 8.0+"
+msgstr "Código abierto GPL-3.0 • Linux, Windows, macOS Apple Silicon y Android 8.0+"
+
+#: src/routes/+page.svelte
+msgid "Interface Desktop"
+msgstr "Interfaz de Escritorio"
+
+#: src/routes/+page.svelte
+msgid "Paroles & Karaoké"
+msgstr "Letras y Karaoke"
+
+#: src/routes/+page.svelte
+msgid "Mode Vidéo"
+msgstr "Modo Video"
+
+#: src/routes/+page.svelte
+msgid "Application Android"
+msgstr "Aplicación Android"
+
+#: src/routes/+page.svelte
+msgid "Vue playlist dans Vibratunes Desktop"
+msgstr "Vista de lista de reproducción en Vibratunes Desktop"
+
+#: src/routes/+page.svelte
+msgid "Paroles synchronisées mot-à-mot dans Vibratunes"
+msgstr "Letras sincronizadas palabra por palabra en Vibratunes"
+
+#: src/routes/+page.svelte
+msgid "Lecture de clip vidéo à côté des paroles"
+msgstr "Reproducción de videoclip junto a las letras"
+
+#: src/routes/+page.svelte
+msgid "Accueil Vibratunes Android"
+msgstr "Inicio de Vibratunes Android"
+
+#: src/routes/+page.svelte
+msgid "Lecteur Vibratunes Android"
+msgstr "Reproductor Vibratunes Android"
+
+#: src/routes/+page.svelte
+msgid "Paroles synchronisées sur Android"
+msgstr "Letras sincronizadas en Android"
+
+#: src/routes/+page.svelte
+msgid "Architecture & Fonctions"
+msgstr "Arquitectura y Funciones"
+
+#: src/routes/+page.svelte
+msgid "Conçu pour l'écoute, pas pour alourdir votre machine."
+msgstr "Diseñado para escuchar, no para sobrecargar tu equipo."
+
+#: src/routes/+page.svelte
+msgid "Chaque composant privilégie la réactivité, la fidélité audio et le contrôle local de votre bibliothèque."
+msgstr "Cada componente prioriza la fluidez, la fidelidad de audio y el control local de tu biblioteca."
+
+#: src/routes/+page.svelte
+msgid "Téléchargements hors-ligne"
+msgstr "Descargas sin conexión"
+
+#: src/routes/+page.svelte
+msgid "Enregistrez vos titres, albums et playlists avec leurs pochettes haute résolution et métadonnées complètes pour écouter sans connexion."
+msgstr "Guarda canciones, álbumes y playlists con portadas en alta resolución y metadatos completos para escuchar sin internet."
+
+#: src/routes/+page.svelte
+msgid "Paroles & Karaoké IA local"
+msgstr "Letras y Karaoke IA local"
+
+#: src/routes/+page.svelte
+msgid "Paroles synchronisées mot-à-mot multi-sources et séparation vocale en temps réel sur votre GPU (Vulkan, DirectML, CoreML) sans aucun serveur externe."
+msgstr "Letras sincronizadas palabra por palabra de múltiples fuentes y separación vocal en tiempo real en tu GPU (Vulkan, DirectML, CoreML) sin servidores externos."
+
+#: src/routes/+page.svelte
+msgid "Tunnel WARP intégré"
+msgstr "Túnel WARP integrado"
+
+#: src/routes/+page.svelte
+msgid "Activez un tunnel WireGuard Cloudflare directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
+msgstr "Activa un túnel WireGuard de Cloudflare directamente desde los ajustes para evitar bloqueos de red o restricciones geográficas."
+
+#: src/routes/+page.svelte
+msgid "Listen Together & Play Anywhere"
+msgstr "Listen Together y Play Anywhere"
+
+#: src/routes/+page.svelte
+msgid "Écoutez en synchronisation avec vos amis ou liez votre téléphone Android à votre ordinateur pour contrôler la lecture à distance."
+msgstr "Escucha en sincronía con amigos o vincula tu teléfono Android a tu ordenador para controlar la reproducción a distancia."
+
+#: src/routes/+page.svelte
+msgid "Moteur natif Rust & Kotlin"
+msgstr "Motor nativo Rust y Kotlin"
+
+#: src/routes/+page.svelte
+msgid "Tauri 2 + libmpv sur Desktop, Kotlin + Media3 sur Android. Transitions gapless, normalisation sonore, pitch, vitesse et égaliseur 10 bandes."
+msgstr "Tauri 2 + libmpv en Escritorio, Kotlin + Media3 en Android. Transiciones sin pausas, normalización de volumen, tono, velocidad y ecualizador de 10 bandas."
+
+#: src/routes/+page.svelte
+msgid "Thèmes adaptatifs & Scrobbling"
+msgstr "Temas adaptativos y Scrobbling"
+
+#: src/routes/+page.svelte
+msgid "Couleurs extraites de la pochette en cours, support Matugen / pywal / wallust sous Linux, Discord Rich Presence, Last.fm et ListenBrainz."
+msgstr "Colores extraídos de la portada actual, soporte para Matugen / pywal / wallust en Linux, Discord Rich Presence, Last.fm y ListenBrainz."
+
+#: src/routes/+page.svelte
+msgid "Téléchargements"
+msgstr "Descargas"
+
+#: src/routes/+page.svelte
+msgid "Choisissez votre plateforme"
+msgstr "Elige tu plataforma"
+
+#: src/routes/+page.svelte
+msgid "Binaires signés et mises à jour automatiques intégrées sur Desktop et Android."
+msgstr "Binarios firmados y actualizaciones automáticas integradas en Escritorio y Android."
+
+#: src/routes/+page.svelte
+msgid "<0/> Linux"
+msgstr "<0/> Linux"
+
+#: src/routes/+page.svelte
+msgid "<0/> Windows"
+msgstr "<0/> Windows"
+
+#: src/routes/+page.svelte
+msgid "<0/> macOS"
+msgstr "<0/> macOS"
+
+#: src/routes/+page.svelte
+msgid "<0/> Android"
+msgstr "<0/> Android"
+
+#: src/routes/+page.svelte
+msgid "Recommandé"
+msgstr "Recomendado"
+
+#: src/routes/+page.svelte
+msgid "Compiler et installer depuis les sources (Arch, Fedora, Debian, macOS)"
+msgstr "Compilar e instalar desde el código fuente (Arch, Fedora, Debian, macOS)"
+
+#: src/routes/+page.svelte
+msgid "Copié"
+msgstr "Copiado"
+
+#: src/routes/+page.svelte
+msgid "Copier"
+msgstr "Copiar"
+
+#: src/routes/+page.svelte
+msgid "Vibratunes • Licence GPL-3.0"
+msgstr "Vibratunes • Licencia GPL-3.0"
+
+#: src/routes/+page.svelte
+msgid "Dépôt Desktop"
+msgstr "Repositorio Desktop"
+
+#: src/routes/+page.svelte
+msgid "Dépôt Android"
+msgstr "Repositorio Android"
+
+#: src/routes/+page.svelte
+msgid "Releases"
+msgstr "Lanzamientos"
+
+#: src/routes/+page.svelte
+msgid "Inspiré par Limusic, Metrolist & SimpMusic. Indépendant de YouTube et Google LLC."
+msgstr "Inspirado en Limusic, Metrolist y SimpMusic. Independiente de YouTube y Google LLC."
