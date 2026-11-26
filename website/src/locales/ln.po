@@ -67,13 +67,11 @@ msgstr "Botali"
 msgid "Télécharger"
 msgstr "Kokita"
 
-#: src/routes/+page.svelte
-msgid "Choisir la langue"
-msgstr "Pona monoko"
+#~ msgid "Choisir la langue"
+#~ msgstr "Pona monoko"
 
-#: src/routes/+page.svelte
-msgid "GitHub <0/>"
-msgstr "GitHub <0/>"
+#~ msgid "GitHub <0/>"
+#~ msgstr "GitHub <0/>"
 
 #. 0: DESKTOP_VERSION
 #: src/routes/+page.svelte
@@ -98,21 +96,17 @@ msgstr "Miziki na yo ya YouTube, ya pɛto, kozanga internet mpe kozanga bapiblis
 msgid "Open-source GPL-3.0 • Linux, Windows, macOS Apple Silicon & Android 8.0+"
 msgstr "Open-source GPL-3.0 • Linux, Windows, macOS Apple Silicon mpe Android 8.0+"
 
-#: src/routes/+page.svelte
-msgid "Interface Desktop"
-msgstr "Emoniseli ya Ordinatɛrɛ"
+#~ msgid "Interface Desktop"
+#~ msgstr "Emoniseli ya Ordinatɛrɛ"
 
-#: src/routes/+page.svelte
-msgid "Paroles & Karaoké"
-msgstr "Maloba mpe Karaoké"
+#~ msgid "Paroles & Karaoké"
+#~ msgstr "Maloba mpe Karaoké"
 
-#: src/routes/+page.svelte
-msgid "Mode Vidéo"
-msgstr "Lolenge ya Video"
+#~ msgid "Mode Vidéo"
+#~ msgstr "Lolenge ya Video"
 
-#: src/routes/+page.svelte
-msgid "Application Android"
-msgstr "Esaleli ya Android"
+#~ msgid "Application Android"
+#~ msgstr "Esaleli ya Android"
 
 #: src/routes/+page.svelte
 msgid "Vue playlist dans Vibratunes Desktop"
@@ -223,9 +217,8 @@ msgstr "<0/> Android"
 msgid "Recommandé"
 msgstr "Eponami"
 
-#: src/routes/+page.svelte
-msgid "Compiler et installer depuis les sources (Arch, Fedora, Debian, macOS)"
-msgstr "Kotonga mpe kotya na masini banda na code (Arch, Fedora, Debian, macOS)"
+#~ msgid "Compiler et installer depuis les sources (Arch, Fedora, Debian, macOS)"
+#~ msgstr "Kotonga mpe kotya na masini banda na code (Arch, Fedora, Debian, macOS)"
 
 #: src/routes/+page.svelte
 msgid "Copié"
@@ -504,9 +497,8 @@ msgstr "Telefone ya Apitabodo"
 msgid "Téléphone de Denzu"
 msgstr "Telefone ya Denzu"
 
-#: src/routes/+page.svelte
-msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne, karaoké IA et VPN WireGuard intégré sur PC."
-msgstr "Vibratunes ekangamaka mbala moko na API ya YouTube mpe ebetaka miziki na libmpv mpe Media3. Electron ezali te, bapiblisite ezali te, ezali na kobomba nzembo kozanga internet, karaoké ya IA mpe VPN WireGuard na ordinatɛrɛ."
+#~ msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne, karaoké IA et VPN WireGuard intégré sur PC."
+#~ msgstr "Vibratunes ekangamaka mbala moko na API ya YouTube mpe ebetaka miziki na libmpv mpe Media3. Electron ezali te, bapiblisite ezali te, ezali na kobomba nzembo kozanga internet, karaoké ya IA mpe VPN WireGuard na ordinatɛrɛ."
 
 #: src/routes/+page.svelte
 msgid "Accessibilité & Fonctions"
@@ -516,17 +508,14 @@ msgstr "Bozwi & Makambo ya esaleli"
 msgid "Pensé pour écouter partout, même avec une connexion difficile."
 msgstr "Esalami mpo na koyoka miziki epai nyonso, ata internet ezali mpasi."
 
-#: src/routes/+page.svelte
-msgid "Vibratunes a été conçu pour celles et ceux qui subissent une connexion instable ou les restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
-msgstr "Vibratunes esalami mpo na bato oyo bazali na mikakatano ya internet to bipekiseli ya YouTube Music : bomba nzembo mpo na koyoka kozanga internet, mpe leka bipekiseli na ordinatɛrɛ na VPN WireGuard."
+#~ msgid "Vibratunes a été conçu pour celles et ceux qui subissent une connexion instable ou les restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
+#~ msgstr "Vibratunes esalami mpo na bato oyo bazali na mikakatano ya internet to bipekiseli ya YouTube Music : bomba nzembo mpo na koyoka kozanga internet, mpe leka bipekiseli na ordinatɛrɛ na VPN WireGuard."
 
-#: src/routes/+page.svelte
-msgid "VPN WireGuard intégré (PC)"
-msgstr "VPN WireGuard na kati (PC)"
+#~ msgid "VPN WireGuard intégré (PC)"
+#~ msgstr "VPN WireGuard na kati (PC)"
 
-#: src/routes/+page.svelte
-msgid "Activez un tunnel WireGuard directement depuis les paramètres sur ordinateur pour contourner le bridage réseau ou les restrictions géographiques."
-msgstr "Fungola nzela ya WireGuard mbala moko na ba-paramètres ya ordinatɛrɛ mpo na koleka bipekiseli ya rezo."
+#~ msgid "Activez un tunnel WireGuard directement depuis les paramètres sur ordinateur pour contourner le bridage réseau ou les restrictions géographiques."
+#~ msgstr "Fungola nzela ya WireGuard mbala moko na ba-paramètres ya ordinatɛrɛ mpo na koleka bipekiseli ya rezo."
 
 #: src/routes/+page.svelte
 msgid "Bibliothèque locale & Multi-comptes"
@@ -543,3 +532,100 @@ msgstr ""
 #: src/lib/components/SyncBeamVisual.svelte
 msgid "Mon PC"
 msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Activez un tunnel WireGuard directement depuis les paramètres pour contourner le bridage réseau ou les restrictions géographiques."
+msgstr ""
+
+#~ msgid "VPN WireGuard intégré"
+#~ msgstr ""
+
+#~ msgid "VPN WireGuard intégré <0>(PC)</0>"
+#~ msgstr ""
+
+#~ msgid "VPN WireGuard intégré <0>(Seulement sur pc)</0>"
+#~ msgstr ""
+
+#~ msgid "VPN WireGuard intégré br <0>(Seulement sur pc)</0>"
+#~ msgstr ""
+
+#: src/routes/+page.svelte
+msgid "VPN WireGuard intégré <0/> <1>(Seulement sur pc)</1>"
+msgstr ""
+
+#~ msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne et karaoké IA et VPN WireGuard intégré sur PC."
+#~ msgstr ""
+
+#~ msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne et karaoké ave IA et VPN WireGuard intégré sur PC."
+#~ msgstr ""
+
+#~ msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne et karaoké avec des modèles IA et VPN WireGuard intégré sur PC."
+#~ msgstr ""
+
+#~ msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne et karaoké avec des modèles IA lo et VPN WireGuard intégré sur PC."
+#~ msgstr ""
+
+#~ msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne et karaoké avec des modèles IA locaux et VPN WireGuard intégré sur PC."
+#~ msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Vibratunes se connecte directement à l'API interne de YouTube et lit l'audio via libmpv et Media3. Zéro Electron, zéro publicité, avec téléchargements hors-ligne et karaoké avec des modèles IA locaux."
+msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Interface PC"
+msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Paroles & karaoké"
+msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Mode vidéo"
+msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Application android"
+msgstr ""
+
+#~ msgid "Vibratunes a été conçu pour ceux qui subissent une connexion instable ou les restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
+#~ msgstr ""
+
+#~ msgid "Vibratunes a été conçu tout en pensant à ceux qui subissent une connexion instable ou les restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
+#~ msgstr ""
+
+#~ msgid "Vibratunes a été conçu tout en pensant à ceux qui sont victimes connexion instable ou les restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
+#~ msgstr ""
+
+#~ msgid "Vibratunes a été conçu tout en pensant à ceux qui sont victimes de connexion instable ou les restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
+#~ msgstr ""
+
+#~ msgid "Vibratunes a été conçu tout en pensant à ceux qui sont victimes de connexion instable ainsi que les restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
+#~ msgstr ""
+
+#~ msgid "Vibratunes a été conçu tout en pensant à ceux qui sont victimes de connexion instable ainsi que des restrictions géographiques de YouTube Music : téléchargez vos morceaux pour les écouter hors-ligne, et contournez les blocages sur PC grâce au VPN WireGuard intégré."
+#~ msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Vibratunes a été conçu tout en pensant à ceux qui sont victimes de connexion instable ainsi que des restrictions géographiques de YouTube Music."
+msgstr ""
+
+#~ msgid "Compiler et installer depuis les sources (Arch, Fedora, Debian, macOS et window)"
+#~ msgstr ""
+
+#: src/routes/+page.svelte
+msgid "Compiler et installer depuis les sources (Arch, Fedora, Debian, macOS et Windows)"
+msgstr "Tongisa mpe tia na nzela ya source (Arch, Fedora, Debian, macOS mpe Windows)"
+
+#: src/lib/components/ui/language-switcher/language-switcher.svelte
+#: src/lib/components/ui/language-switcher/language-switcher.svelte
+msgid "Change language"
+msgstr "Bongola lokota"
+
+#: src/routes/+page.svelte
+msgid "GitHub"
+msgstr "GitHub"
+
+#: src/routes/+page.svelte
+msgid "☕ Ko-fi"
+msgstr "☕ Ko-fi"

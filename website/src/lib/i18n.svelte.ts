@@ -2,11 +2,11 @@ import { loadLocale } from 'wuchale/load-utils';
 import { locales, type Locale } from '../locales/data.js';
 
 // @wc-ignore
-export const LOCALE_LABELS: Record<Locale, { code: string; name: string }> = {
-	fr: { code: 'FR', name: 'Français' },
-	en: { code: 'EN', name: 'English' },
-	es: { code: 'ES', name: 'Español' },
-	ln: { code: 'LN', name: 'Lingála' }
+export const LOCALE_LABELS: Record<Locale, { code: string; label: string }> = {
+	fr: { code: 'FR', label: 'Français' },
+	en: { code: 'EN', label: 'English' },
+	es: { code: 'ES', label: 'Español' },
+	ln: { code: 'LN', label: 'Lingála' }
 };
 
 const STORAGE_KEY = 'vibratunes-locale';

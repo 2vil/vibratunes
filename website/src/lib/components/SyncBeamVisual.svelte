@@ -34,9 +34,9 @@
 			<div class="z-10 flex flex-col items-center gap-2">
 				<div
 					bind:this={globeRef}
-					class="flex size-16 items-center justify-center rounded-full border border-primary/45 bg-primary/15 shadow-[0_0_28px_rgba(224,122,75,0.22)]"
+					class="flex size-16 items-center justify-center rounded-full border border-primary/45 bg-primary backdrop-blur-3xl shadow-[0_0_28px_rgba(224,122,75,0.22)]"
 				>
-					<Globe class="size-7 text-primary" />
+					<Globe class="size-7 text-foreground" />
 				</div>
 				<span class="text-sm font-medium text-primary">Internet</span>
 			</div>
@@ -98,7 +98,7 @@
 		{containerRef}
 		fromRef={globeRef}
 		toRef={pcRef}
-		curvature={-45}
+		curvature={40}
 		duration={3}
 		gradientStartColor="#f59e0b"
 		gradientStopColor="#e07a4b"
@@ -107,7 +107,7 @@
 		{containerRef}
 		fromRef={globeRef}
 		toRef={mamaleRef}
-		curvature={-15}
+		curvature={8}
 		duration={3}
 		delay={0.2}
 		gradientStartColor="#f59e0b"
@@ -117,7 +117,7 @@
 		{containerRef}
 		fromRef={globeRef}
 		toRef={apitabodoRef}
-		curvature={15}
+		curvature={-22}
 		duration={3}
 		delay={0.4}
 		gradientStartColor="#f59e0b"
@@ -127,7 +127,7 @@
 		{containerRef}
 		fromRef={globeRef}
 		toRef={denzuRef}
-		curvature={45}
+		curvature={-50}
 		duration={3}
 		delay={0.6}
 		gradientStartColor="#f59e0b"
