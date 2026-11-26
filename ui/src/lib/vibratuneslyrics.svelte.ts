@@ -46,7 +46,8 @@ function apply(s: api.VibratunesAccountState) {
 export function watchVibratunes(): () => void {
 	api.limusicProviders()
 		.then((p) => {
-			limusic.providers = p.providers;
+			// Full decoupling: do not expose third-party OAuth linking to lyrics.limusic.app
+			limusic.providers = [];
 			limusic.available = p.anonymous;
 		})
 		.catch(() => {});
