@@ -26,6 +26,7 @@
 	import {
 		np,
 		openAddToPlaylist,
+		pageCover,
 		playback,
 		prefs,
 		toggleNowPlayingRating,
@@ -228,9 +229,12 @@
 		// Mounted without a fly (the intro only plays when the view itself opens), so no introend
 		// is coming. By the first frame Svelte has started the fly if there is one.
 		const frame = requestAnimationFrame(() => {
-			if (!view.getAnimations().length) settled = true;
+			if (!view.getAnimations().length) settled = pageCover.player = true;
 		});
-		return () => cancelAnimationFrame(frame);
+		return () => {
+			cancelAnimationFrame(frame);
+			pageCover.player = false;
+		};
 	});
 
 	/** Report the hole's box whenever it moves, and none while the window is hidden (the tray, the
@@ -547,9 +551,9 @@
      the page behind showed through as a line (#661). The bar paints over the extra pixel. -->
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 <div
-	transition:fly={{ y: "100%", duration: 320, easing: cubicOut }}
-	onoutrostart={() => ((settled = false), setHole(null))}
-	onintroend={() => (settled = true)}
+	transition:fly={{ y: '100%', duration: 320, easing: cubicOut }}
+	onoutrostart={() => ((settled = pageCover.player = false), setHole(null))}
+	onintroend={() => (settled = pageCover.player = true)}
 	bind:this={view}
 	onpointerdown={(e) => (
 		(pressedKeep = keeps(e.target)), (releasedKeep = false)

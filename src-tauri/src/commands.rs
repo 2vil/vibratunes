@@ -2752,8 +2752,13 @@ pub async fn choose_lyrics_source(
 }
 
 #[tauri::command]
-pub fn set_lyrics_offset(state: St<'_>, video_id: String, offset_ms: i64) {
-    crate::lyrics::set_offset(state.inner(), &video_id, offset_ms);
+pub async fn set_lyrics_offset(
+    state: St<'_>,
+    video_id: String,
+    offset_ms: i64,
+) -> Result<(), String> {
+    crate::lyrics::set_offset(state.inner(), &video_id, offset_ms).await;
+    Ok(())
 }
 
 /// Every lyrics provider in the user's order, for Settings and the source picker.
@@ -2857,8 +2862,8 @@ pub async fn limusic_rename(
 /// The song's live revision on the service now (`None`: no live lyric), for keeping a draft on top
 /// of a newer version.
 #[tauri::command]
-pub async fn limusic_live_revision(video_id: String) -> Result<Option<i64>, String> {
-    crate::limusic::live_revision(&video_id).await
+pub async fn limusic_live_revision(state: St<'_>, video_id: String) -> Result<Option<i64>, String> {
+    crate::limusic::live_revision(&crate::lyrics::filed_id(&state, &video_id)).await
 }
 
 /// The votes on the lyric Vibratunes has live for the song, this account's own, and whether the lyric
@@ -2868,6 +2873,7 @@ pub async fn limusic_lyric_state(
     state: St<'_>,
     video_id: String,
 ) -> Result<Option<crate::limusic::LyricState>, String> {
+    let video_id = crate::lyrics::filed_id(&state, &video_id);
     crate::limusic::lyric_state(state.inner(), &video_id).await
 }
 
@@ -2878,6 +2884,7 @@ pub async fn limusic_vote(
     video_id: String,
     value: i64,
 ) -> Result<crate::limusic::Votes, String> {
+    let video_id = crate::lyrics::filed_id(&state, &video_id);
     crate::limusic::vote(state.inner(), &video_id, value).await
 }
 
@@ -2889,6 +2896,7 @@ pub async fn limusic_report(
     reason: String,
     note: Option<String>,
 ) -> Result<(), String> {
+    let video_id = crate::lyrics::filed_id(&state, &video_id);
     crate::limusic::report(state.inner(), &video_id, &reason, note).await
 }
 
@@ -2910,7 +2918,7 @@ pub async fn limusic_review_claim(
     crate::limusic::review_claim(state.inner(), revision).await
 }
 
-/// One revision with its lines.
+/// One revision with its lines, for a reviewer or its author (the editor reopens a rejected one).
 #[tauri::command]
 pub async fn limusic_review_revision(
     state: St<'_>,
@@ -2948,10 +2956,23 @@ pub async fn limusic_my_rejection(
     state: St<'_>,
     video_id: String,
 ) -> Result<Option<crate::limusic::Rejection>, String> {
+    let video_id = crate::lyrics::filed_id(&state, &video_id);
     Ok(crate::limusic::my_rejection(state.inner(), &video_id).await)
 }
 
-/// The lyrics team (admins only): staff and contributors, or the handles holding `q`.
+/// Reviewers' notes on my lyrics, newest first.
+#[tauri::command]
+pub async fn limusic_notes(state: St<'_>) -> Result<Vec<crate::limusic::Note>, String> {
+    crate::limusic::notes(state.inner()).await
+}
+
+/// The notes up to `last` are read.
+#[tauri::command]
+pub async fn limusic_notes_seen(state: St<'_>, last: i64) -> Result<(), String> {
+    crate::limusic::notes_seen(state.inner(), last).await
+}
+
+/// The lyrics team (admins and leads): staff and contributors, or the handles holding `q`.
 #[tauri::command]
 pub async fn limusic_admin_accounts(
     state: St<'_>,
@@ -2960,7 +2981,7 @@ pub async fn limusic_admin_accounts(
     crate::limusic::admin_accounts(state.inner(), &q).await
 }
 
-/// Set a role, ban or unban (admins only).
+/// Set a role, ban or unban (admins; a lead only moves people between user and reviewer).
 #[tauri::command]
 pub async fn limusic_admin_update(
     state: St<'_>,

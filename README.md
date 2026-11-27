@@ -69,28 +69,6 @@ browser runtime, no backend server, and no ads. Built on top of [Limusic](https:
 
 **Your Library**
 
-- Multi-account Google / YouTube sign-in
-- Playlists, likes, saved albums, artists, and uploads
-- Day-bucketed listening history and on-device listening stats
-- Instant search suggestions as you type
-
-</td>
-</tr>
-<tr>
-<td valign="top">
-
-**Desktop & Mobile Experience**
-
-- Mini player, theater mode, and full-screen layouts
-- System tray icon with background playback and startup on login
-- Global hotkeys, media keys, and native OS notifications
-- Touch-friendly UI adaptable to desktop and mobile screens
-
-</td>
-<td valign="top">
-
-**Customization**
-
 - Dynamic theme colors extracted from album artwork
 - Material You and system palette integration (pywal, wallust, Matugen)
 - Custom accent colors, fonts, and application icons

@@ -104,6 +104,10 @@ pub struct Session {
     pub data_sync_id: Option<String>,
     /// Full cookie string (Phase 3). Present ⇒ authenticated requests possible.
     pub cookie: Option<String>,
+    /// The `data_sync_id` of a brand channel and its `pageId`, in that order: the
+    /// watch-history ping names the channel with it (#736). Only sent while `data_sync_id` still
+    /// is that id, so a rollback or a switch that never set it can't send a stale channel.
+    pub page_id: Option<(String, String)>,
 }
 
 impl Session {
@@ -349,6 +353,21 @@ impl InnerTube {
 
     pub fn data_sync_id(&self) -> Option<String> {
         self.session.read().unwrap().data_sync_id.clone()
+    }
+
+    /// A brand channel's `(data_sync_id, pageId)`. `None` for a Google account's own channel,
+    /// which has no page id. See [`Session::page_id`].
+    pub fn set_page_id(&self, page: Option<(String, String)>) {
+        self.session.write().unwrap().page_id = page;
+    }
+
+    /// The selected brand channel's `pageId`, if there is one and it belongs to the identity
+    /// requests are being made as right now.
+    fn brand_page_id(&self) -> Option<String> {
+        let s = self.session.read().unwrap();
+        s.cookie.as_ref()?;
+        let (dsid, page_id) = s.page_id.as_ref()?;
+        (s.data_sync_id.as_ref() == Some(dsid)).then(|| page_id.clone())
     }
 
     /// Who is signed in, for comment tokens that must not cross accounts or channels: a hash of
@@ -652,7 +671,39 @@ impl InnerTube {
         playlist_id: Option<&str>,
     ) -> Result<(), Error> {
         let url = build_playback_url(base_url, &client.client_name, cpn, playlist_id);
-        let headers = self.headers(client, true);
+        self.stats_get(client, url).await
+    }
+
+    /// Report watch time for a registered play: GET the response's
+    /// `playbackTracking.videostatsWatchtimeUrl.baseUrl` with the stretches heard since the last
+    /// report (#764). Best-effort, like [`Self::register_playback`].
+    pub async fn report_watchtime(
+        &self,
+        client: &YouTubeClient,
+        base_url: &str,
+        cpn: &str,
+        report: &Watchtime,
+    ) -> Result<(), Error> {
+        let url = build_watchtime_url(base_url, client, cpn, report);
+        self.stats_get(client, url).await
+    }
+
+    /// The GET behind both stats pings, as `client` with its authed headers.
+    async fn stats_get(&self, client: &YouTubeClient, mut url: String) -> Result<(), Error> {
+        let mut headers = self.headers(client, true);
+        // A GET has no body, so the `onBehalfOfUser` that delegates every POST to a brand channel
+        // never reaches the ping, and the play never shows in that channel's history. The Android
+        // app, whose brand plays do register, names the channel in
+        // `X-Goog-PageId` and pings music.youtube.com instead of s.youtube.com; this sends that
+        // same request. A Google account's own channel keeps the request it always had (#736).
+        if let Some(page_id) = self.brand_page_id().filter(|_| client.login_supported) {
+            if let Ok(v) = HeaderValue::from_str(&page_id) {
+                headers.insert(HeaderName::from_static("x-goog-pageid"), v);
+            }
+            if let Some(rest) = url.strip_prefix("https://s.youtube.com/") {
+                url = format!("{ORIGIN}/{rest}");
+            }
+        }
         let http = self.http.read().unwrap().clone();
         let resp = http.get(&url).headers(headers).send().await?.error_for_status()?;
         self.absorb_cookies(resp.headers());
@@ -770,7 +821,60 @@ fn build_playback_url(
     url
 }
 
-/// CPN alphabet - 64 URL-safe chars, exactly 6 bits each. context/01.
+/// One watch-time report (#764): the stretches of the track heard since the previous one, in
+/// track seconds. Shaped on what music.youtube.com sends: `state=playing` plus when the next report
+/// is due while it plays, `state=paused` otherwise, and `final=1` on the one that closes the play.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Watchtime {
+    /// `(start, end)` of each stretch heard (`st`/`et`). Empty on a closing report with nothing new.
+    pub stretches: Vec<(f64, f64)>,
+    /// The playhead (`cmt`).
+    pub position: f64,
+    /// Seconds since the play started (`rt`).
+    pub elapsed: f64,
+    /// Seconds until the next report while playing (`rtn` is `rt` plus this); `None` = paused.
+    pub next_in: Option<f64>,
+    /// Closes the play (`final=1`).
+    pub last: bool,
+    /// 0-100, as the player has it.
+    pub volume: i64,
+}
+
+fn build_watchtime_url(base_url: &str, client: &YouTubeClient, cpn: &str, r: &Watchtime) -> String {
+    // Milliseconds at most, trailing zeros dropped: `10.468`, `0`.
+    let secs = |v: f64| {
+        let s = format!("{v:.3}");
+        s.trim_end_matches('0').trim_end_matches('.').to_owned()
+    };
+    // Nothing new still names a stretch: the official client closes with `st=et=cmt`.
+    let stretches =
+        if r.stretches.is_empty() { vec![(r.position, r.position)] } else { r.stretches.clone() };
+    let (st, et): (Vec<String>, Vec<String>) =
+        stretches.iter().map(|&(s, e)| (secs(s), secs(e))).unzip();
+    // One value per stretch, as the official client lists them.
+    let each = |v: String| vec![v; stretches.len()].join(",");
+    let mut url = build_playback_url(base_url, &client.client_name, cpn, None);
+    url.push_str(&format!(
+        "&cver={}&cmt={}&st={}&et={}&state={}&rt={}&volume={}&muted={}",
+        urlencoding::encode(&client.client_version),
+        secs(r.position),
+        urlencoding::encode(&st.join(",")),
+        urlencoding::encode(&et.join(",")),
+        if r.next_in.is_some() { "playing" } else { "paused" },
+        secs(r.elapsed),
+        urlencoding::encode(&each(r.volume.to_string())),
+        urlencoding::encode(&each("0".into())),
+    ));
+    if let Some(n) = r.next_in {
+        url.push_str(&format!("&rtn={}", secs(r.elapsed + n)));
+    }
+    if r.last {
+        url.push_str("&final=1");
+    }
+    url
+}
+
+/// CPN alphabet — 64 URL-safe chars, exactly 6 bits each. context/01.
 const CPN_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 /// A fresh 16-char Content Playback Nonce for one playback. context/01 §registerPlayback.
@@ -873,6 +977,33 @@ mod tests {
         // No existing query → first param uses `?`, no playlist params.
         let u2 = build_playback_url("https://s.youtube.com/x", "IOS", "abc", None);
         assert_eq!(u2, "https://s.youtube.com/x?c=IOS&cpn=abc&ver=2");
+    }
+
+    /// #764: the params music.youtube.com sends, one volume/muted value per stretch.
+    #[test]
+    fn watchtime_url_reports_the_stretches() {
+        let clients = crate::clients::Clients::bundled();
+        let web = clients.get(crate::clients::METADATA_CLIENT).unwrap();
+        let base = "https://s.youtube.com/api/stats/watchtime?docid=x";
+        let playing = Watchtime {
+            stretches: vec![(61.395, 93.262), (95.56, 101.4)],
+            position: 101.4,
+            elapsed: 102.015,
+            next_in: Some(40.0),
+            last: false,
+            volume: 15,
+        };
+        let u = build_watchtime_url(base, web, "cpn", &playing);
+        assert!(u.starts_with(&format!("{base}&c=WEB_REMIX&cpn=cpn&ver=2&cver=")), "{u}");
+        assert!(u.contains("&cmt=101.4&st=61.395%2C95.56&et=93.262%2C101.4&state=playing"), "{u}");
+        assert!(u.contains("&rt=102.015&volume=15%2C15&muted=0%2C0&rtn=142.015"), "{u}");
+        assert!(!u.contains("final"), "{u}");
+
+        let closing =
+            Watchtime { stretches: vec![], next_in: None, last: true, position: 259.5, ..playing };
+        let u = build_watchtime_url(base, web, "cpn", &closing);
+        assert!(u.contains("&cmt=259.5&st=259.5&et=259.5&state=paused"), "{u}");
+        assert!(u.ends_with("&volume=15&muted=0&final=1"), "{u}");
     }
 
     #[test]
@@ -1195,6 +1326,30 @@ mod tests {
         let mut it = InnerTube::new(session, None).unwrap();
         it.set_base_url(&server.base_url);
         it
+    }
+
+    /// #736: the ping names a brand channel in `X-Goog-PageId`, and only while requests are being
+    /// made as that channel. A Google account's own channel (no page id) sends none.
+    #[tokio::test]
+    async fn the_watch_history_ping_names_the_brand_channel_it_was_issued_for() {
+        let server = crate::test_server::MockServer::start(|_| (204, String::new()));
+        let it = signed_in_against(&server);
+        let clients = crate::clients::Clients::bundled();
+        let web = clients.get(crate::clients::METADATA_CLIENT).unwrap();
+        let ping = format!("{}api/stats/playback?docid=x", server.base_url);
+        let sent_page_id = || async {
+            it.register_playback(web, &ping, "cpn", None).await.unwrap();
+            server.requests().last().unwrap().header("x-goog-pageid").map(str::to_owned)
+        };
+
+        assert_eq!(sent_page_id().await, None, "own channel: no page id");
+        it.set_page_id(Some(("fixture-dsid".into(), "brand-page".into())));
+        assert_eq!(sent_page_id().await.as_deref(), Some("brand-page"));
+        it.set_data_sync_id(Some("another-channel".into()));
+        assert_eq!(sent_page_id().await, None, "a page id never travels with another channel");
+        it.set_cookie(None);
+        it.set_data_sync_id(Some("fixture-dsid".into()));
+        assert_eq!(sent_page_id().await, None, "nor without the cookie");
     }
 
     /// The point of `post_no_heal`: a refusal comes back to the caller, and the healer (which

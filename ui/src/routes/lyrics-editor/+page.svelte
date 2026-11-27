@@ -163,6 +163,9 @@
 	/** A reviewer fixing a submission before approving it (Fix before approving, on the review
 	 *  page): its lines are the start, and sending is the approval. Only for the song it is about. */
 	const fixing = limusic.fixing && track && limusic.fixing.videoId === track.videoId ? $state.snapshot(limusic.fixing) : null;
+	/** What the reviewer tells the author about the fix, sent with the approval. */
+	let fixNote = $state('');
+	const NOTE_PRESETS = ['review.note_preset_timing', 'review.note_preset_bg', 'review.note_preset_spelling', 'review.note_preset_split'] as const;
 	/** Why a reviewer turned down my last version of this song, said once at the top. */
 	let rejection = $state<api.LimusicRejection | null>(null);
 
@@ -314,6 +317,23 @@
 		if (!file) return;
 		if (file.size > 1024 * 1024) return toast.error(t('lyrics_editor.too_large'));
 		importText(await file.text());
+	}
+
+	/** The version a reviewer turned down, back on the stage to fix. Sending had cleared the draft,
+	 *  so the service's copy is the only one. It goes on top of what is live, like any start. */
+	let reopening = $state(false);
+	async function reopen() {
+		if (!rejection || reopening) return;
+		reopening = true;
+		try {
+			const rev = await api.limusicReviewRevision(rejection.revision);
+			// Started from something else, or left, while it was on its way.
+			if (alive && mode === 'start') begin(fromLyrics(rev.lyrics?.lines ?? []), false);
+		} catch {
+			toast.error(t('lyrics_editor.start_failed'));
+		} finally {
+			reopening = false;
+		}
 	}
 
 	let discardOpen = $state(false);
@@ -737,7 +757,7 @@
 		commitField();
 		submitting = true;
 		try {
-			await api.limusicReview(fixing.revision, fixing.videoId, 'approve', undefined, buildLines(lines));
+			await api.limusicReview(fixing.revision, fixing.videoId, 'approve', fixNote.trim() || undefined, buildLines(lines));
 			toast.success(t('review.approved_fixed'));
 			// Left while it was on its way: wherever the reviewer is now is not ours to move.
 			if (!alive) return;
@@ -819,14 +839,20 @@
 	// --- Keys -----------------------------------------------------------------------------------
 	// Unmodified, only ↑ / ↓ collide with the app's own keys (volume). This listens on the document,
 	// which a keydown reaches before the window, so it takes them first and the app-wide handler sees
-	// them already handled. Space stays play/pause here.
+	// them already handled. Space stays play/pause here. Every other app key needs Ctrl/Cmd, and a
+	// global hotkey needs Ctrl, Alt or Super (`parse_shortcut`), so bare letters and digits are ours.
 	function onKey(e: KeyboardEvent) {
 		if (mode !== 'edit' || e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+		// The now-playing view or theater mode over the page owns the keys: this handler runs before
+		// theirs (document before window), so it would take theater's F and the view's ↑ / ↓ volume.
+		if (np.open || ui.theaterOpen) return;
 		if (celebrate && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
 		const el = e.target;
 		if (typing(el)) return;
 		if (el instanceof HTMLElement && el.closest('[role=dialog],[role=alertdialog],[role=menu],[role=listbox],[role=slider]')) return;
 		const k = keyOf(e);
+		// 1-9 and 0 by the key as well as by what it types: AZERTY's bare top row types & é " ...
+		const digit = /^[0-9]$/.test(e.key) ? e.key : /^Digit([0-9])$/.exec(e.code)?.[1];
 		if (k === 'f' || k === 'j') {
 			// A held key is one tap.
 			if (!e.repeat) tap(e);
@@ -836,6 +862,11 @@
 		else if (k === 'l') loopOn = !loopOn;
 		else if (k === 'b') bgMode = !bgMode;
 		else if (k === 'v') chooseVoice(!tapBg);
+		else if (k === 'e' && line) openText();
+		// Singer n, 0 for none, and only the singers the Singer menu offers: 9 must not invent a
+		// Singer 9. "Everyone" has no key: v1000 is not a digit.
+		else if (digit && line && (digit === '0' || agents.includes(`v${digit}`)))
+			updateLine(line.id, (l) => setAgent(l, digit === '0' ? undefined : `v${digit}`));
 		else return;
 		e.preventDefault();
 	}
@@ -1083,6 +1114,31 @@
 				title={fixing.author ? t('review.fixing_title', { handle: fixing.author }) : t('review.fixing_title_anonymous')}
 				body={t('review.fixing_body')}
 			/>
+			<!-- What the author reads about it, in Settings, without the reviewer's name. -->
+			<div class="mt-2 flex flex-col gap-2 rounded-xl border bg-card px-3.5 py-3">
+				<label class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+					<span class="text-sm font-semibold">{fixing.author ? t('review.note_for', { handle: fixing.author }) : t('review.note_for_anonymous')}</span>
+					<input
+						bind:value={fixNote}
+						maxlength="300"
+						placeholder={t('review.note_placeholder')}
+						class="min-w-48 flex-1 border-b border-border bg-transparent py-1 text-sm outline-none focus:border-primary"
+						onkeydown={(e) => (e.key === 'Enter' || e.key === 'Escape') && e.currentTarget.blur()}
+					/>
+				</label>
+				<div class="flex flex-wrap items-center gap-1.5">
+					{#each NOTE_PRESETS as key (key)}
+						<button
+							type="button"
+							class="h-7 cursor-pointer rounded-full border px-3 text-xs font-medium hover:bg-muted {fixNote === t(key) ? 'border-primary bg-primary/12' : ''}"
+							onclick={() => (fixNote = fixNote === t(key) ? '' : t(key))}
+						>
+							{t(key)}
+						</button>
+					{/each}
+				</div>
+				<p class="text-[12.5px] text-muted-foreground">{t('review.note_hint')}</p>
+			</div>
 		</div>
 	{:else if rejection && mode !== 'preview'}
 		<div class="px-6 pb-3">
@@ -1093,6 +1149,9 @@
 			>
 				{#snippet actions()}
 					<Button size="sm" variant="ghost" onclick={() => (rejection = null)}>{t('common.close')}</Button>
+					{#if mode === 'start'}
+						<Button size="sm" variant="outline" disabled={reopening} onclick={reopen}>{t('lyrics_editor.rejected_open')}</Button>
+					{/if}
 				{/snippet}
 			</VibratunesNotice>
 		</div>
@@ -1358,6 +1417,7 @@
 							<Button variant="ghost" size="sm" class={textOpen ? 'bg-muted text-foreground' : 'text-muted-foreground'} aria-label={t('lyrics_editor.edit_text')} onclick={openText}>
 								<HugeiconsIcon icon={PencilEdit02Icon} class="size-4" />
 								<span class={wide ? '' : 'sr-only'}>{t('lyrics_editor.edit_text')}</span>
+								{#if wide}<kbd class={KEY}>E</kbd>{/if}
 							</Button>
 							<Popover.Root bind:open={singerOpen}>
 								<Popover.Trigger class="{GHOST} {line?.agent ? 'text-foreground' : 'text-muted-foreground'}" aria-label={t('lyrics_editor.singer')} disabled={!line}>
@@ -1382,6 +1442,7 @@
 													{#if on}<HugeiconsIcon icon={Tick02Icon} class="size-3.5" />{/if}
 												</span>
 												{a ? agentLabel(a) : t('lyrics_editor.singer_none')}
+												{#if !a || /^v[1-9]$/.test(a)}<kbd class="{KEY} ml-auto">{a ? a.slice(1) : '0'}</kbd>{/if}
 											</button>
 										{/each}
 									</div>
