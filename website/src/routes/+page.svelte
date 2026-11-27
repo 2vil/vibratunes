@@ -765,14 +765,6 @@
         >
           Releases
         </a>
-        <a
-          href="https://ko-fi.com/simohypers"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center gap-1 transition-colors hover:text-foreground"
-        >
-          ☕ Ko-fi
-        </a>
       </div>
 
       <p class="text-center sm:text-right">

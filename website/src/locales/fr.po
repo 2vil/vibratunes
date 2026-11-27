@@ -620,12 +620,11 @@ msgstr "Compiler et installer depuis les sources (Arch, Fedora, Debian, macOS et
 #: src/lib/components/ui/language-switcher/language-switcher.svelte
 #: src/lib/components/ui/language-switcher/language-switcher.svelte
 msgid "Change language"
-msgstr "Changer de langue"
+msgstr "Change language"
 
 #: src/routes/+page.svelte
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/routes/+page.svelte
-msgid "☕ Ko-fi"
-msgstr "☕ Ko-fi"
+#~ msgid "☕ Ko-fi"
+#~ msgstr "☕ Ko-fi"

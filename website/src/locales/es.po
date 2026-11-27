@@ -626,6 +626,5 @@ msgstr "Cambiar idioma"
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/routes/+page.svelte
-msgid "☕ Ko-fi"
-msgstr "☕ Ko-fi"
+#~ msgid "☕ Ko-fi"
+#~ msgstr "☕ Ko-fi"

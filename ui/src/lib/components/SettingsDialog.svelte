@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { tick, untrack, onDestroy, type Snippet } from 'svelte';
-	import { open, save } from '@tauri-apps/plugin-dialog';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { tick, untrack, onDestroy, type Snippet } from "svelte";
+	import { open, save } from "@tauri-apps/plugin-dialog";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		Settings02Icon,
 		PaintBoardIcon,
@@ -15,7 +15,6 @@
 		KeyboardIcon,
 		Cancel01Icon as RemoveIcon,
 		Copy01Icon,
-		Coffee02Icon,
 		DiscordIcon,
 		LastFmIcon,
 		Globe02Icon,
@@ -25,88 +24,193 @@
 		Download04Icon,
 		ComputerPhoneSyncIcon,
 		Search01Icon,
-		ArrowRight01Icon
-	} from '@hugeicons/core-free-icons';
-	import { goto } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Switch } from '$lib/components/ui/switch';
-	import { Slider } from '$lib/components/ui/slider';
-	import { Alert, AlertDescription } from '$lib/components/ui/alert';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import * as Popover from '$lib/components/ui/popover';
-	import * as Select from '$lib/components/ui/select';
-	import { HELP_COMBO, IS_MAC } from '$lib/shortcuts';
-	import { copyText } from '$lib/clipboard';
-	import * as api from '$lib/api';
-	import { blocked, karaokeAvailability, karaokeConsent, karaokeModels, karaokeSelection, cancelKaraokeModelDownload, deleteKaraokeModel, playback, prefs, refreshLanguage, setAutoplay, ui, toast, unblockArtist, setKaraokeDevice, applyKaraokeStatus, chooseKaraokeModel, refreshKaraokeModels } from '$lib/player.svelte';
-	import { deleteAllDownloads } from '$lib/download.svelte';
-	import { importTunnelConfig, initTunnel, setTunnelEnabled, tunnel, tunnelOn } from '$lib/tunnel.svelte';
-	import { win } from '$lib/win.svelte';
-	import { lt } from '$lib/lt.svelte';
-	import AppearanceSettings from '$lib/components/AppearanceSettings.svelte';
-	import Changelog from '$lib/components/Changelog.svelte';
-	import DiscordSettings from '$lib/components/DiscordSettings.svelte';
-	import ExperimentalBadge from '$lib/components/ExperimentalBadge.svelte';
-	import { KARAOKE_TIERS, tierMB } from '$lib/karaoke-tiers';
-	import ScrobbleSettings from '$lib/components/ScrobbleSettings.svelte';
-	import DevicesSettings from '$lib/components/DevicesSettings.svelte';
+		ArrowRight01Icon,
+	} from "@hugeicons/core-free-icons";
+	import { goto } from "$app/navigation";
+	import { Button } from "$lib/components/ui/button";
+	import { Input } from "$lib/components/ui/input";
+	import { Switch } from "$lib/components/ui/switch";
+	import { Slider } from "$lib/components/ui/slider";
+	import { Alert, AlertDescription } from "$lib/components/ui/alert";
+	import * as Dialog from "$lib/components/ui/dialog";
+	import * as AlertDialog from "$lib/components/ui/alert-dialog";
+	import * as Popover from "$lib/components/ui/popover";
+	import * as Select from "$lib/components/ui/select";
+	import { HELP_COMBO, IS_MAC } from "$lib/shortcuts";
+	import { copyText } from "$lib/clipboard";
+	import * as api from "$lib/api";
+	import {
+		blocked,
+		karaokeAvailability,
+		karaokeConsent,
+		karaokeModels,
+		karaokeSelection,
+		cancelKaraokeModelDownload,
+		deleteKaraokeModel,
+		playback,
+		prefs,
+		refreshLanguage,
+		setAutoplay,
+		ui,
+		toast,
+		unblockArtist,
+		setKaraokeDevice,
+		applyKaraokeStatus,
+		chooseKaraokeModel,
+		refreshKaraokeModels,
+	} from "$lib/player.svelte";
+	import { deleteAllDownloads } from "$lib/download.svelte";
+	import {
+		importTunnelConfig,
+		initTunnel,
+		setTunnelEnabled,
+		tunnel,
+		tunnelOn,
+	} from "$lib/tunnel.svelte";
+	import { win } from "$lib/win.svelte";
+	import { lt } from "$lib/lt.svelte";
+	import AppearanceSettings from "$lib/components/AppearanceSettings.svelte";
+	import Changelog from "$lib/components/Changelog.svelte";
+	import DiscordSettings from "$lib/components/DiscordSettings.svelte";
+	import ExperimentalBadge from "$lib/components/ExperimentalBadge.svelte";
+	import { KARAOKE_TIERS, tierMB } from "$lib/karaoke-tiers";
+	import ScrobbleSettings from "$lib/components/ScrobbleSettings.svelte";
+	import DevicesSettings from "$lib/components/DevicesSettings.svelte";
 	import {
 		updateState,
 		availableMessage,
 		checkForUpdatesInteractive,
 		installUpdate,
 		openDownloadPage,
-		recheckForUpdates
-	} from '$lib/updater.svelte';
-	import { getVersion } from '@tauri-apps/api/app';
-	import { t, tEn, setLocale, currentLocale, LOCALES, type TranslationKey } from '$lib/i18n.svelte';
-	import { SETTINGS, indexSettings, type SettingEntry, type SettingsTab } from '$lib/settings-search';
-	import { match } from '$lib/localsearch';
-	import { HOTKEY_ACTIONS } from '$lib/hotkeys.svelte';
-	import GlobalHotkeysSettings from '$lib/components/GlobalHotkeysSettings.svelte';
-	import VibratunesAccountSettings from './VibratunesAccountSettings.svelte';
-	import { limusic } from '$lib/vibratuneslyrics.svelte';
-	import LyricsSourcesSettings from '$lib/components/LyricsSourcesSettings.svelte';
-	import EnhancedLyricsSettings from '$lib/components/EnhancedLyricsSettings.svelte';
-	import LanguagePicker from '$lib/components/LanguagePicker.svelte';
+		recheckForUpdates,
+	} from "$lib/updater.svelte";
+	import { getVersion } from "@tauri-apps/api/app";
+	import {
+		t,
+		tEn,
+		setLocale,
+		currentLocale,
+		LOCALES,
+		type TranslationKey,
+	} from "$lib/i18n.svelte";
+	import {
+		SETTINGS,
+		indexSettings,
+		type SettingEntry,
+		type SettingsTab,
+	} from "$lib/settings-search";
+	import { match } from "$lib/localsearch";
+	import { HOTKEY_ACTIONS } from "$lib/hotkeys.svelte";
+	import GlobalHotkeysSettings from "$lib/components/GlobalHotkeysSettings.svelte";
+	import VibratunesAccountSettings from "./VibratunesAccountSettings.svelte";
+	import { limusic } from "$lib/vibratuneslyrics.svelte";
+	import LyricsSourcesSettings from "$lib/components/LyricsSourcesSettings.svelte";
+	import EnhancedLyricsSettings from "$lib/components/EnhancedLyricsSettings.svelte";
+	import LanguagePicker from "$lib/components/LanguagePicker.svelte";
 
 	type TabId = SettingsTab;
-	const TABS = $derived<{ id: TabId; label: string; hint: string; icon: typeof Settings02Icon }[]>([
-		{ id: 'general', label: t('settings.tabs.general'), hint: t('settings.tabs.general_hint'), icon: Settings02Icon },
-		{ id: 'themes', label: t('settings.tabs.themes'), hint: t('settings.tabs.themes_hint'), icon: PaintBoardIcon },
-		{ id: 'playback', label: t('settings.tabs.playback'), hint: t('settings.tabs.playback_hint'), icon: PlayCircleIcon },
+	const TABS = $derived<
+		{
+			id: TabId;
+			label: string;
+			hint: string;
+			icon: typeof Settings02Icon;
+		}[]
+	>([
+		{
+			id: "general",
+			label: t("settings.tabs.general"),
+			hint: t("settings.tabs.general_hint"),
+			icon: Settings02Icon,
+		},
+		{
+			id: "themes",
+			label: t("settings.tabs.themes"),
+			hint: t("settings.tabs.themes_hint"),
+			icon: PaintBoardIcon,
+		},
+		{
+			id: "playback",
+			label: t("settings.tabs.playback"),
+			hint: t("settings.tabs.playback_hint"),
+			icon: PlayCircleIcon,
+		},
 		// Only once the service has said it takes contributions (`limusic.available`).
 		...(limusic.available
-			? [{ id: 'contributing' as const, label: t('settings.tabs.contributing'), hint: t('settings.tabs.contributing_hint'), icon: PencilEdit02Icon }]
+			? [
+					{
+						id: "contributing" as const,
+						label: t("settings.tabs.contributing"),
+						hint: t("settings.tabs.contributing_hint"),
+						icon: PencilEdit02Icon,
+					},
+				]
 			: []),
-		{ id: 'hotkeys', label: t('settings.tabs.hotkeys'), hint: t('settings.tabs.hotkeys_hint'), icon: KeyboardIcon },
-		{ id: 'discord', label: t('settings.tabs.discord'), hint: t('settings.tabs.discord_hint'), icon: DiscordIcon },
-		{ id: 'scrobbling', label: t('settings.tabs.scrobbling'), hint: t('settings.tabs.scrobbling_hint'), icon: LastFmIcon },
-		{ id: 'devices', label: t('settings.tabs.devices'), hint: t('settings.tabs.devices_hint'), icon: ComputerPhoneSyncIcon },
-		{ id: 'data', label: t('settings.tabs.data'), hint: t('settings.tabs.data_hint'), icon: Database02Icon },
-		{ id: 'downloads', label: t('settings.tabs.downloads'), hint: t('settings.tabs.downloads_hint'), icon: Download04Icon },
-		{ id: 'about', label: t('settings.tabs.about'), hint: t('settings.tabs.about_hint'), icon: InformationCircleIcon }
+		{
+			id: "hotkeys",
+			label: t("settings.tabs.hotkeys"),
+			hint: t("settings.tabs.hotkeys_hint"),
+			icon: KeyboardIcon,
+		},
+		{
+			id: "discord",
+			label: t("settings.tabs.discord"),
+			hint: t("settings.tabs.discord_hint"),
+			icon: DiscordIcon,
+		},
+		{
+			id: "scrobbling",
+			label: t("settings.tabs.scrobbling"),
+			hint: t("settings.tabs.scrobbling_hint"),
+			icon: LastFmIcon,
+		},
+		{
+			id: "devices",
+			label: t("settings.tabs.devices"),
+			hint: t("settings.tabs.devices_hint"),
+			icon: ComputerPhoneSyncIcon,
+		},
+		{
+			id: "data",
+			label: t("settings.tabs.data"),
+			hint: t("settings.tabs.data_hint"),
+			icon: Database02Icon,
+		},
+		{
+			id: "downloads",
+			label: t("settings.tabs.downloads"),
+			hint: t("settings.tabs.downloads_hint"),
+			icon: Download04Icon,
+		},
+		{
+			id: "about",
+			label: t("settings.tabs.about"),
+			hint: t("settings.tabs.about_hint"),
+			icon: InformationCircleIcon,
+		},
 	]);
 
 	// Shared shapes for the settings rows. Kept as strings so the markup below stays readable and
 	// every group looks identical without a wrapper component per row.
-	const GROUP = 'mb-7 last:mb-1';
+	const GROUP = "mb-7 last:mb-1";
 	const LABEL =
-		'mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground';
-	const CARD = 'divide-y divide-border/60 overflow-hidden rounded-xl border bg-card';
+		"mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground";
+	const CARD =
+		"divide-y divide-border/60 overflow-hidden rounded-xl border bg-card";
 
-	let tab = $state<TabId>('general');
+	let tab = $state<TabId>("general");
 	const currentTab = $derived(TABS.find((tb) => tb.id === tab) ?? TABS[0]);
-	const shortcutsHint = $derived(t('settings.general.shortcuts_hint').split('{key}'));
+	const shortcutsHint = $derived(
+		t("settings.general.shortcuts_hint").split("{key}"),
+	);
 	const currentLocaleLabel = $derived(
-		LOCALES.find((l) => l.id === currentLocale.id)?.nativeLabel ?? currentLocale.id
+		LOCALES.find((l) => l.id === currentLocale.id)?.nativeLabel ??
+			currentLocale.id,
 	);
 	let langOpen = $state(false);
 	let settings = $state<Record<string, string>>({});
 	let clients = $state<string[]>([]);
-	let proxyInput = $state('');
+	let proxyInput = $state("");
 	/// How many blocked artists the section shows before the "show all" toggle. The list is never
 	/// truncated, only collapsed: a long one would otherwise push Lyrics and Advanced off the tab.
 	const BLOCKED_PREVIEW = 5;
@@ -116,14 +220,16 @@
 	async function copyBlocked() {
 		try {
 			await copyText(JSON.stringify(blocked.artists, null, 2));
-			toast(t('toasts.blocked_copied', { count: blocked.artists.length }));
+			toast(
+				t("toasts.blocked_copied", { count: blocked.artists.length }),
+			);
 		} catch {
-			toast(t('toasts.could_not_copy_link'));
+			toast(t("toasts.could_not_copy_link"));
 		}
 	}
 	let loaded = $state(false);
 	let clearing = $state(false);
-	let downloadDir = $state('');
+	let downloadDir = $state("");
 	let downloadConcurrency = $state(3);
 	let confirmDeleteAllDownloads = $state(false);
 
@@ -132,9 +238,9 @@
 			const picked = await open({
 				directory: true,
 				multiple: false,
-				title: t('download.pick_folder')
+				title: t("download.pick_folder"),
 			});
-			if (typeof picked === 'string' && picked.trim()) {
+			if (typeof picked === "string" && picked.trim()) {
 				await api.setDownloadDir(picked);
 				downloadDir = picked;
 			}
@@ -142,13 +248,15 @@
 			console.error(e);
 		}
 	}
-	let version = $state('');
+	let version = $state("");
 	getVersion().then((v) => (version = v));
 	// Release candidates ship only what the updater installs, so an .rpm, .deb or AUR install has
 	// nothing to take from the beta channel. Shown in dev, which is never the AppImage either.
 	let betaAvailable = $state(import.meta.env.DEV);
-	api.canSelfUpdate().then((v) => (betaAvailable ||= v)).catch(() => {});
-	// Result of the last "Check for updates" click — shown inline (a toast renders behind the modal).
+	api.canSelfUpdate()
+		.then((v) => (betaAvailable ||= v))
+		.catch(() => {});
+	// Result of the last "Check for updates" click - shown inline (a toast renders behind the modal).
 	let updateResult = $state<{ message: string; error: boolean } | null>(null);
 
 	// (Re)load whenever the modal opens, so it reflects the current persisted values. Also clear the
@@ -157,26 +265,36 @@
 	$effect(() => {
 		if (!ui.settingsOpen) return;
 		untrack(() => {
-			query = '';
+			query = "";
 			// Opened on a section from elsewhere (the lyrics source picker): its tab, scrolled to it
 			// once the tab has rendered. The Last.fm menu and "Edit scrobble" open a whole tab.
-			if (ui.settingsFocus === 'scrobbling' || ui.settingsFocus === 'devices') {
+			if (
+				ui.settingsFocus === "scrobbling" ||
+				ui.settingsFocus === "devices"
+			) {
 				tab = ui.settingsFocus;
 				ui.settingsFocus = null;
 				load();
 				loadKaraoke();
-			} else if (ui.settingsFocus === 'limusic') {
-				tab = 'contributing';
+			} else if (ui.settingsFocus === "limusic") {
+				tab = "contributing";
 				ui.settingsFocus = null;
 				load();
 				loadKaraoke();
 			} else if (ui.settingsFocus) {
-				tab = 'playback';
+				tab = "playback";
 				const id = `settings-${ui.settingsFocus}`;
 				ui.settingsFocus = null;
-				load().then(tick).then(() => {
-					document.getElementById(id)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-				});
+				load()
+					.then(tick)
+					.then(() => {
+						document
+							.getElementById(id)
+							?.scrollIntoView({
+								block: "start",
+								behavior: "smooth",
+							});
+					});
 				loadKaraoke();
 			} else {
 				load();
@@ -191,55 +309,57 @@
 	}
 
 	// Diagnostics. Toasts render behind this modal, so the buttons report on themselves.
-	let diagState = $state<'idle' | 'busy' | 'copied' | 'saved'>('idle');
-	let diagError = $state('');
+	let diagState = $state<"idle" | "busy" | "copied" | "saved">("idle");
+	let diagError = $state("");
 
-	function flash(kind: 'copied' | 'saved') {
+	function flash(kind: "copied" | "saved") {
 		diagState = kind;
-		setTimeout(() => (diagState = 'idle'), 2500);
+		setTimeout(() => (diagState = "idle"), 2500);
 	}
 
 	async function copyDiagnostics() {
-		diagError = '';
-		diagState = 'busy';
+		diagError = "";
+		diagState = "busy";
 		try {
 			await copyText(await api.diagnostics());
-			flash('copied');
+			flash("copied");
 		} catch (e) {
-			diagState = 'idle';
+			diagState = "idle";
 			diagError = String(e);
 		}
 	}
 
 	async function saveDiagnostics() {
-		diagError = '';
+		diagError = "";
 		try {
 			const path = await save({
 				defaultPath: `limusic-diagnostics-${new Date().toISOString().slice(0, 10)}.txt`,
-				filters: [{ name: 'Text', extensions: ['txt'] }]
+				filters: [{ name: "Text", extensions: ["txt"] }],
 			});
 			if (!path) return;
-			diagState = 'busy';
+			diagState = "busy";
 			await api.saveDiagnostics(path);
-			flash('saved');
+			flash("saved");
 		} catch (e) {
-			diagState = 'idle';
+			diagState = "idle";
 			diagError = String(e);
 		}
 	}
 
 	async function openBugForm() {
-		diagError = '';
+		diagError = "";
 		try {
 			// GitHub's prefill only reaches `input` and `textarea` fields, so the "Which system?"
 			// dropdown stays the user's one click and everything the app knows goes in `system`.
 			const system = await api.diagnosticsSummary();
 			const q = new URLSearchParams({
-				template: 'bug_report.yml',
+				template: "bug_report.yml",
 				version,
-				system
+				system,
 			});
-			await api.openExternal(`https://github.com/SimoHypers/limusic/issues/new?${q}`);
+			await api.openExternal(
+				`https://github.com/SimoHypers/limusic/issues/new?${q}`,
+			);
 		} catch (e) {
 			diagError = String(e);
 		}
@@ -247,7 +367,7 @@
 
 	// Microsoft's permalink for the latest x64 VC++ runtime (karaoke's ONNX Runtime needs >= 14.44).
 	// Credit for the vocal-removal model, as the UVR README asks.
-	const UVR_URL = 'https://github.com/Anjok07/ultimatevocalremovergui';
+	const UVR_URL = "https://github.com/Anjok07/ultimatevocalremovergui";
 
 	let karaokeCacheLimit = $state(2048);
 	let karaokeCacheBytes = $state(0);
@@ -255,7 +375,7 @@
 	let clearCacheTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	function formatCacheSize(bytes: number): string {
-		if (bytes < 1024) return '0 KB';
+		if (bytes < 1024) return "0 KB";
 		const kb = bytes / 1024;
 		if (kb < 1024) return `${kb.toFixed(1)} KB`;
 		const mb = kb / 1024;
@@ -267,14 +387,40 @@
 	// Disk use by kind (#705), measured whenever the Data & storage tab shows and after a clear.
 	let usage = $state<api.StorageUsage | null>(null);
 	const STORAGE = [
-		{ id: 'library', color: 'var(--storage-1)', hint: 'settings.data.library_hint' },
-		{ id: 'audio', color: 'var(--storage-2)', hint: 'settings.data.audio_hint' },
-		{ id: 'karaoke', color: 'var(--storage-3)', hint: 'karaoke.settings.cache_used_desc' },
-		{ id: 'models', color: 'var(--storage-4)', hint: 'settings.data.models_hint' },
-		{ id: 'web', color: 'var(--storage-5)', hint: 'settings.data.web_hint' },
-		{ id: 'other', color: 'var(--muted-foreground)', hint: 'settings.data.other_hint' }
+		{
+			id: "library",
+			color: "var(--storage-1)",
+			hint: "settings.data.library_hint",
+		},
+		{
+			id: "audio",
+			color: "var(--storage-2)",
+			hint: "settings.data.audio_hint",
+		},
+		{
+			id: "karaoke",
+			color: "var(--storage-3)",
+			hint: "karaoke.settings.cache_used_desc",
+		},
+		{
+			id: "models",
+			color: "var(--storage-4)",
+			hint: "settings.data.models_hint",
+		},
+		{
+			id: "web",
+			color: "var(--storage-5)",
+			hint: "settings.data.web_hint",
+		},
+		{
+			id: "other",
+			color: "var(--muted-foreground)",
+			hint: "settings.data.other_hint",
+		},
 	] as const;
-	const usageTotal = $derived(usage ? Object.values(usage).reduce((a, b) => a + b, 0) : 0);
+	const usageTotal = $derived(
+		usage ? Object.values(usage).reduce((a, b) => a + b, 0) : 0,
+	);
 
 	async function loadStorage() {
 		try {
@@ -285,14 +431,16 @@
 	}
 
 	$effect(() => {
-		if (ui.settingsOpen && tab === 'data') untrack(loadStorage);
+		if (ui.settingsOpen && tab === "data") untrack(loadStorage);
 	});
 
 	// Models are removed one by one in Playback > Karaoke, so the storage row links there.
 	function showKaraokeSettings() {
-		tab = 'playback';
+		tab = "playback";
 		tick().then(() => {
-			document.getElementById('settings-karaoke')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+			document
+				.getElementById("settings-karaoke")
+				?.scrollIntoView({ block: "start", behavior: "smooth" });
 		});
 	}
 
@@ -309,10 +457,10 @@
 		clearCacheConfirm = false;
 		try {
 			await api.karaokeClearCache();
-			if (tab === 'data') loadStorage();
+			if (tab === "data") loadStorage();
 			const status = await api.karaokeEngineStatus();
 			karaokeCacheBytes = status.cacheBytes;
-			toast.success(t('karaoke.settings.cleared'));
+			toast.success(t("karaoke.settings.cleared"));
 		} catch (e) {
 			toast.error(String(e));
 		}
@@ -320,16 +468,21 @@
 
 	const karaokeCacheOptions = $derived.by(() => {
 		const base = [
-			{ value: '1024', label: '1 GB' },
-			{ value: '2048', label: '2 GB' },
-			{ value: '5120', label: '5 GB' },
-			{ value: '10240', label: '10 GB' }
+			{ value: "1024", label: "1 GB" },
+			{ value: "2048", label: "2 GB" },
+			{ value: "5120", label: "5 GB" },
+			{ value: "10240", label: "10 GB" },
 		];
 		const curStr = String(karaokeCacheLimit);
 		if (!base.some((o) => o.value === curStr)) {
 			return [
 				...base,
-				{ value: curStr, label: t('karaoke.settings.cache_custom', { n: karaokeCacheLimit }) }
+				{
+					value: curStr,
+					label: t("karaoke.settings.cache_custom", {
+						n: karaokeCacheLimit,
+					}),
+				},
 			];
 		}
 		return base;
@@ -367,19 +520,32 @@
 			return {
 				value: tier.id,
 				label: size ? `${name} (${size})` : name,
-				desc: t(`karaoke.settings.model_${tier.key}_desc`)
+				desc: t(`karaoke.settings.model_${tier.key}_desc`),
 			};
-		})
+		}),
 	);
 
 	const karaokeDeviceOptions = $derived([
 		...(karaokeAvailability.autoSupported
-			? [{ value: 'auto' as api.KaraokeDevice, label: t('karaoke.settings.device_auto') }]
+			? [
+					{
+						value: "auto" as api.KaraokeDevice,
+						label: t("karaoke.settings.device_auto"),
+					},
+				]
 			: []),
-		{ value: 'cpu' as api.KaraokeDevice, label: t('karaoke.settings.device_cpu') },
+		{
+			value: "cpu" as api.KaraokeDevice,
+			label: t("karaoke.settings.device_cpu"),
+		},
 		...(karaokeAvailability.gpuSupported
-			? [{ value: 'gpu' as api.KaraokeDevice, label: t('karaoke.settings.device_gpu') }]
-			: [])
+			? [
+					{
+						value: "gpu" as api.KaraokeDevice,
+						label: t("karaoke.settings.device_gpu"),
+					},
+				]
+			: []),
 	]);
 
 	function setKaraokeModel(val: string) {
@@ -394,12 +560,12 @@
 			const [, limitRes, statusRes] = await Promise.allSettled([
 				refreshKaraokeModels(),
 				api.karaokeCacheLimitMb(),
-				api.karaokeEngineStatus()
+				api.karaokeEngineStatus(),
 			]);
-			if (limitRes.status === 'fulfilled') {
+			if (limitRes.status === "fulfilled") {
 				karaokeCacheLimit = limitRes.value;
 			}
-			if (statusRes.status === 'fulfilled') {
+			if (statusRes.status === "fulfilled") {
 				const s = statusRes.value;
 				karaokeCacheBytes = s.cacheBytes;
 				applyKaraokeStatus(s);
@@ -416,14 +582,14 @@
 				api.getSettings(),
 				api.getStreamClients(),
 				api.getDownloadDir(),
-				api.getDownloadConcurrency()
+				api.getDownloadConcurrency(),
 			]);
 			settings = s;
 			clients = c;
 			downloadDir = d;
 			downloadConcurrency = concurrency;
 			tunnel.confName = settings.warp_conf_name || null;
-			proxyInput = s.proxy ?? '';
+			proxyInput = s.proxy ?? "";
 		} catch (e) {
 			toast.error(String(e));
 		}
@@ -435,97 +601,109 @@
 		await api.setDownloadConcurrency(n);
 	}
 
-	const quality = $derived(settings.quality ?? 'HIGH');
+	const quality = $derived(settings.quality ?? "HIGH");
 	// The embedded WARP tunnel's status line, next to its toggle. The backend drives the state
 	// (`tunnel-status` events); this only translates it.
 	const tunnelStatusText = $derived.by(() => {
 		switch (tunnel.status.status) {
-			case 'off':
-				return t('settings.general.tunnel_status_off');
-			case 'registering':
-				return t('settings.general.tunnel_status_registering');
-			case 'connecting':
-				return t('settings.general.tunnel_status_connecting');
-			case 'connected':
-				return t('settings.general.tunnel_status_connected');
+			case "off":
+				return t("settings.general.tunnel_status_off");
+			case "registering":
+				return t("settings.general.tunnel_status_registering");
+			case "connecting":
+				return t("settings.general.tunnel_status_connecting");
+			case "connected":
+				return t("settings.general.tunnel_status_connected");
 			default:
-				return t('settings.general.tunnel_status_failed', { msg: tunnel.status.msg });
+				return t("settings.general.tunnel_status_failed", {
+					msg: tunnel.status.msg,
+				});
 		}
 	});
-	const historyOn = $derived(settings.enable_history !== 'false');
+	const historyOn = $derived(settings.enable_history !== "false");
 	// On unless turned off: loudness matching is what YTM does, and it's what most people want.
 	// Off gives the untouched master, limiter included (#298, #300).
-	const normalizeOn = $derived(settings.normalize_volume !== 'false');
+	const normalizeOn = $derived(settings.normalize_volume !== "false");
 	// Off by default: experimental, and it runs a second decoder while tracks overlap.
-	const crossfadeOn = $derived(settings.crossfade === 'true');
+	const crossfadeOn = $derived(settings.crossfade === "true");
 	// A room carries one track and one position, so an overlap cannot be synced: the backend
 	// suspends the fade for as long as we are in one (`AppState::apply_crossfade`). Say so here,
 	// or it reads as crossfade quietly breaking.
-	const crossfadeSuspended = $derived(lt.role !== 'none');
+	const crossfadeSuspended = $derived(lt.role !== "none");
 	// Clamped like the player clamps it (`set_crossfade`), so a stored value from anywhere but this
 	// slider cannot show a number the audio will not use.
 	const crossfadeSecs = $derived.by(() => {
-		const secs = Number(settings.crossfade_secs ?? '5');
+		const secs = Number(settings.crossfade_secs ?? "5");
 		return Number.isFinite(secs) ? Math.min(10, Math.max(1, secs)) : 5;
 	});
-	const hideVideosOn = $derived(settings.hide_videos === 'true');
-	const preferWordsOn = $derived(settings.lyrics_prefer_words === 'true');
+	const hideVideosOn = $derived(settings.hide_videos === "true");
+	const preferWordsOn = $derived(settings.lyrics_prefer_words === "true");
 	// Off until the setting is turned on: still experimental, so nobody gets video they didn't ask
 	// for. Same test in `player.svelte.ts`, which hydrates `prefs` at launch.
-	const musicVideosOn = $derived(settings.music_videos === 'true');
+	const musicVideosOn = $derived(settings.music_videos === "true");
 	// On by default, and only offered with music videos on: album songs that have a video start as
 	// it, with the song on the Song/Video switch (#442, #464). Rust reads it in `get_album`.
-	const videosFirstOn = $derived(settings.videos_first !== 'false');
+	const videosFirstOn = $derived(settings.videos_first !== "false");
 	// Off by default, and only offered with music videos on: it costs real GPU time on every frame.
-	const ambientOn = $derived(settings.ambient_light === 'true');
-	const preventDuplicatesOn = $derived(settings.prevent_duplicates === 'true');
+	const ambientOn = $derived(settings.ambient_light === "true");
+	const preventDuplicatesOn = $derived(
+		settings.prevent_duplicates === "true",
+	);
 	// Off by default: pause when other apps play media.
-	const autoPauseOn = $derived(settings.auto_pause_other_audio === 'true');
+	const autoPauseOn = $derived(settings.auto_pause_other_audio === "true");
 	// Off by default: shuffle applies to the queue it was turned on for (issue #117).
-	const stickyShuffleOn = $derived(settings.sticky_shuffle === 'true');
+	const stickyShuffleOn = $derived(settings.sticky_shuffle === "true");
 	// Off by default: shuffle keeps what was added with Add to queue behind the playlist (#369).
-	const shuffleWholeOn = $derived(settings.shuffle_whole_queue === 'true');
-	const updateBannerOn = $derived(settings.update_banner !== 'false');
-	const betaOn = $derived(settings.update_channel === 'beta');
-	const trayOn = $derived(settings.close_to_tray !== 'false');
-	const trackNotificationsOn = $derived(settings.track_notifications === 'true');
-	const trackNotificationsFocusedOn = $derived(settings.track_notifications_focused === 'true');
-	const playOnStartOn = $derived(settings.play_on_start === 'true');
-	const autostartOn = $derived(settings.autostart === 'true');
-	const startMinimizedOn = $derived(settings.start_minimized === 'true');
+	const shuffleWholeOn = $derived(settings.shuffle_whole_queue === "true");
+	const updateBannerOn = $derived(settings.update_banner !== "false");
+	const betaOn = $derived(settings.update_channel === "beta");
+	const trayOn = $derived(settings.close_to_tray !== "false");
+	const trackNotificationsOn = $derived(
+		settings.track_notifications === "true",
+	);
+	const trackNotificationsFocusedOn = $derived(
+		settings.track_notifications_focused === "true",
+	);
+	const playOnStartOn = $derived(settings.play_on_start === "true");
+	const autostartOn = $derived(settings.autostart === "true");
+	const startMinimizedOn = $derived(settings.start_minimized === "true");
 	// `native_chrome` is read-only and platform-derived (commands.rs). `overlay` is macOS, where the
 	// traffic lights are fixed at window creation and there is nothing to offer the user (#65).
-	const systemTitlebarOn = $derived(settings.native_chrome !== 'off');
-	const systemTitlebarFixed = $derived(settings.native_chrome === 'overlay');
+	const systemTitlebarOn = $derived(settings.native_chrome !== "off");
+	const systemTitlebarFixed = $derived(settings.native_chrome === "overlay");
 	const disabled = $derived(
 		new Set(
-			(settings.disabled_stream_clients ?? '')
-				.split(',')
+			(settings.disabled_stream_clients ?? "")
+				.split(",")
 				.map((s) => s.trim())
-				.filter(Boolean)
-		)
+				.filter(Boolean),
+		),
 	);
 
 	// Settings search (#624): a query swaps the tab's content for the rows that match it, and picking
 	// one opens its tab on that row.
-	let query = $state('');
+	let query = $state("");
 	let searchInput = $state<HTMLInputElement | null>(null);
 	let pane: HTMLElement | undefined;
-	const searching = $derived(query.trim() !== '');
+	const searching = $derived(query.trim() !== "");
 	const firstTerm = $derived(query.trim().toLowerCase().split(/\s+/)[0]);
 	const HOTKEY_SECTIONS = {
-		playback: 'settings.hotkeys.section_playback',
-		audio: 'settings.hotkeys.section_audio',
-		window: 'settings.hotkeys.section_window'
+		playback: "settings.hotkeys.section_playback",
+		audio: "settings.hotkeys.section_audio",
+		window: "settings.hotkeys.section_window",
 	} as const;
 	// Rows this machine never shows, the same tests as the markup below.
 	const unavailable = $derived(
 		new Set<string>([
-			...(IS_MAC ? ['settings.playback.auto_pause_other_audio'] : []),
-			...(systemTitlebarFixed ? ['settings.general.system_titlebar'] : []),
-			...(betaAvailable ? [] : ['settings.about.beta']),
-			...(karaokeAvailability.gpuSupported ? [] : ['karaoke.settings.device'])
-		])
+			...(IS_MAC ? ["settings.playback.auto_pause_other_audio"] : []),
+			...(systemTitlebarFixed
+				? ["settings.general.system_titlebar"]
+				: []),
+			...(betaAvailable ? [] : ["settings.about.beta"]),
+			...(karaokeAvailability.gpuSupported
+				? []
+				: ["karaoke.settings.device"]),
+		]),
 	);
 	const searchIndex = $derived(
 		indexSettings(
@@ -533,24 +711,35 @@
 				...SETTINGS,
 				...HOTKEY_ACTIONS.map(
 					(a): SettingEntry => ({
-						tab: 'hotkeys',
+						tab: "hotkeys",
 						section: HOTKEY_SECTIONS[a.section],
 						title: a.titleKey,
 						desc: a.hintKey,
-						under: 'settings.hotkeys.enable'
-					})
-				)
-			].filter((e) => TABS.some((tb) => tb.id === e.tab) && !unavailable.has(e.title)),
+						under: "settings.hotkeys.enable",
+					}),
+				),
+			].filter(
+				(e) =>
+					TABS.some((tb) => tb.id === e.tab) &&
+					!unavailable.has(e.title),
+			),
 			t,
-			tEn
-		)
+			tEn,
+		),
 	);
 	// Grouped by tab in the order of each tab's best hit, so the top row is the one Enter opens.
 	const results = $derived.by(() => {
-		const groups: { tab: (typeof TABS)[number]; rows: SettingEntry[] }[] = [];
+		const groups: { tab: (typeof TABS)[number]; rows: SettingEntry[] }[] =
+			[];
 		for (const e of match(searchIndex, query)) {
 			let g = groups.find((x) => x.tab.id === e.tab);
-			if (!g) groups.push((g = { tab: TABS.find((tb) => tb.id === e.tab)!, rows: [] }));
+			if (!g)
+				groups.push(
+					(g = {
+						tab: TABS.find((tb) => tb.id === e.tab)!,
+						rows: [],
+					}),
+				);
 			g.rows.push(e);
 		}
 		return groups;
@@ -563,7 +752,8 @@
 		const walk = document.createTreeWalker(pane, NodeFilter.SHOW_TEXT);
 		for (let n = walk.nextNode(); n; n = walk.nextNode()) {
 			if (n.nodeValue?.trim() !== text) continue;
-			const row = n.parentElement?.closest<HTMLElement>('[data-setting-row]');
+			const row =
+				n.parentElement?.closest<HTMLElement>("[data-setting-row]");
 			if (row) return row;
 		}
 		return null;
@@ -573,26 +763,35 @@
 	// nothing the scrolling-list rules object to. The accent is resolved first: a var() inside a
 	// Web Animations keyframe is not something to count on in every engine here.
 	async function openResult(e: SettingEntry) {
-		query = '';
+		query = "";
 		tab = e.tab;
 		await tick();
 		const row = findRow(e.title) ?? (e.under ? findRow(e.under) : null);
 		if (!row) return;
-		row.scrollIntoView({ block: 'center', behavior: 'smooth' });
-		const accent = getComputedStyle(row).getPropertyValue('--primary').trim();
+		row.scrollIntoView({ block: "center", behavior: "smooth" });
+		const accent = getComputedStyle(row)
+			.getPropertyValue("--primary")
+			.trim();
 		const lit = {
 			backgroundColor: `color-mix(in oklab, ${accent} 16%, transparent)`,
-			boxShadow: `inset 0 0 0 1px ${accent}`
+			boxShadow: `inset 0 0 0 1px ${accent}`,
 		};
 		row.animate(
-			[lit, { ...lit, offset: 0.55 }, { backgroundColor: 'transparent', boxShadow: 'inset 0 0 0 1px transparent' }],
-			{ duration: 1800, easing: 'ease-out' }
+			[
+				lit,
+				{ ...lit, offset: 0.55 },
+				{
+					backgroundColor: "transparent",
+					boxShadow: "inset 0 0 0 1px transparent",
+				},
+			],
+			{ duration: 1800, easing: "ease-out" },
 		);
 	}
 
 	function onSearchKey(e: KeyboardEvent) {
 		const top = results[0]?.rows[0];
-		if (e.key === 'Enter' && top) {
+		if (e.key === "Enter" && top) {
 			e.preventDefault();
 			openResult(top);
 		}
@@ -600,131 +799,151 @@
 
 	// "/" puts the cursor in the search, as on most sites. Not Ctrl+F: that is next track here.
 	function onDialogKey(e: KeyboardEvent) {
-		if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
-		if ((e.target as HTMLElement).closest('input, textarea, [contenteditable]')) return;
+		if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+		if (
+			(e.target as HTMLElement).closest(
+				"input, textarea, [contenteditable]",
+			)
+		)
+			return;
 		e.preventDefault();
 		searchInput?.focus();
 	}
 
 	const QUALITIES = [
-		{ id: 'LOW', key: 'settings.playback.quality_low' },
-		{ id: 'AUTO', key: 'settings.playback.quality_auto' },
-		{ id: 'HIGH', key: 'settings.playback.quality_high' }
+		{ id: "LOW", key: "settings.playback.quality_low" },
+		{ id: "AUTO", key: "settings.playback.quality_auto" },
+		{ id: "HIGH", key: "settings.playback.quality_high" },
 	] as const;
 
 	async function setQuality(q: string) {
 		settings.quality = q;
-		await api.setSetting('quality', q);
+		await api.setSetting("quality", q);
 		// Cached URLs are keyed by video only, so clear them to apply the new quality everywhere.
 		await api.clearCaches();
-		toast.success(t('toasts.quality_updated'));
+		toast.success(t("toasts.quality_updated"));
 	}
 
 	async function setHistory(on: boolean) {
-		settings.enable_history = on ? 'true' : 'false';
-		await api.setSetting('enable_history', settings.enable_history);
+		settings.enable_history = on ? "true" : "false";
+		await api.setSetting("enable_history", settings.enable_history);
 	}
 
 	// Rust retunes the track that's already playing, so the difference is audible immediately.
 	async function setNormalize(on: boolean) {
-		settings.normalize_volume = on ? 'true' : 'false';
-		await api.setSetting('normalize_volume', settings.normalize_volume);
+		settings.normalize_volume = on ? "true" : "false";
+		await api.setSetting("normalize_volume", settings.normalize_volume);
 	}
 
 	async function setCrossfade(on: boolean) {
-		settings.crossfade = on ? 'true' : 'false';
-		await api.setSetting('crossfade', settings.crossfade);
+		settings.crossfade = on ? "true" : "false";
+		await api.setSetting("crossfade", settings.crossfade);
 	}
 
 	async function setCrossfadeSecs(secs: number) {
 		settings.crossfade_secs = String(secs);
-		await api.setSetting('crossfade_secs', settings.crossfade_secs);
+		await api.setSetting("crossfade_secs", settings.crossfade_secs);
 	}
 
 	// Also lands in `prefs`, which is where the player view reads it: the switch has to take effect
 	// on the track that's already playing, not on the next launch.
 	async function setMusicVideos(on: boolean) {
-		settings.music_videos = on ? 'true' : 'false';
+		settings.music_videos = on ? "true" : "false";
 		prefs.musicVideos = on;
-		await api.setSetting('music_videos', settings.music_videos);
+		await api.setSetting("music_videos", settings.music_videos);
 	}
 
 	async function setVideosFirst(on: boolean) {
-		settings.videos_first = on ? 'true' : 'false';
-		await api.setSetting('videos_first', settings.videos_first);
+		settings.videos_first = on ? "true" : "false";
+		await api.setSetting("videos_first", settings.videos_first);
 	}
 
 	// `prefs` after the write: on Linux the write is also what turns WebGL on for the glow.
 	async function setAmbient(on: boolean) {
-		settings.ambient_light = on ? 'true' : 'false';
-		await api.setSetting('ambient_light', settings.ambient_light);
+		settings.ambient_light = on ? "true" : "false";
+		await api.setSetting("ambient_light", settings.ambient_light);
 		prefs.ambient = on;
 	}
 
 	async function setPreferWords(on: boolean) {
-		settings.lyrics_prefer_words = on ? 'true' : 'false';
-		await api.setSetting('lyrics_prefer_words', settings.lyrics_prefer_words);
+		settings.lyrics_prefer_words = on ? "true" : "false";
+		await api.setSetting(
+			"lyrics_prefer_words",
+			settings.lyrics_prefer_words,
+		);
 	}
 
 	async function setHideVideos(on: boolean) {
-		settings.hide_videos = on ? 'true' : 'false';
-		await api.setSetting('hide_videos', settings.hide_videos);
+		settings.hide_videos = on ? "true" : "false";
+		await api.setSetting("hide_videos", settings.hide_videos);
 	}
 
 	async function setPreventDuplicates(on: boolean) {
-		settings.prevent_duplicates = on ? 'true' : 'false';
-		await api.setSetting('prevent_duplicates', settings.prevent_duplicates);
+		settings.prevent_duplicates = on ? "true" : "false";
+		await api.setSetting("prevent_duplicates", settings.prevent_duplicates);
 	}
 
 	async function setAutoPause(on: boolean) {
-		settings.auto_pause_other_audio = on ? 'true' : 'false';
-		await api.setSetting('auto_pause_other_audio', settings.auto_pause_other_audio);
+		settings.auto_pause_other_audio = on ? "true" : "false";
+		await api.setSetting(
+			"auto_pause_other_audio",
+			settings.auto_pause_other_audio,
+		);
 	}
 
 	async function setStickyShuffle(on: boolean) {
-		settings.sticky_shuffle = on ? 'true' : 'false';
-		await api.setSetting('sticky_shuffle', settings.sticky_shuffle);
+		settings.sticky_shuffle = on ? "true" : "false";
+		await api.setSetting("sticky_shuffle", settings.sticky_shuffle);
 	}
 
 	async function setShuffleWhole(on: boolean) {
-		settings.shuffle_whole_queue = on ? 'true' : 'false';
-		await api.setSetting('shuffle_whole_queue', settings.shuffle_whole_queue);
+		settings.shuffle_whole_queue = on ? "true" : "false";
+		await api.setSetting(
+			"shuffle_whole_queue",
+			settings.shuffle_whole_queue,
+		);
 	}
 
 	async function setUpdateBanner(on: boolean) {
-		settings.update_banner = on ? 'true' : 'false';
-		await api.setSetting('update_banner', settings.update_banner);
+		settings.update_banner = on ? "true" : "false";
+		await api.setSetting("update_banner", settings.update_banner);
 	}
 
 	async function setBeta(on: boolean) {
-		settings.update_channel = on ? 'beta' : 'stable';
-		await api.setSetting('update_channel', settings.update_channel);
+		settings.update_channel = on ? "beta" : "stable";
+		await api.setSetting("update_channel", settings.update_channel);
 		await recheckForUpdates();
 	}
 
 	async function setTray(on: boolean) {
-		settings.close_to_tray = on ? 'true' : 'false';
-		await api.setSetting('close_to_tray', settings.close_to_tray);
+		settings.close_to_tray = on ? "true" : "false";
+		await api.setSetting("close_to_tray", settings.close_to_tray);
 	}
 
 	async function setTrackNotifications(on: boolean) {
-		settings.track_notifications = on ? 'true' : 'false';
-		await api.setSetting('track_notifications', settings.track_notifications);
+		settings.track_notifications = on ? "true" : "false";
+		await api.setSetting(
+			"track_notifications",
+			settings.track_notifications,
+		);
 	}
 
 	async function setTrackNotificationsFocused(on: boolean) {
-		settings.track_notifications_focused = on ? 'true' : 'false';
-		await api.setSetting('track_notifications_focused', settings.track_notifications_focused);
+		settings.track_notifications_focused = on ? "true" : "false";
+		await api.setSetting(
+			"track_notifications_focused",
+			settings.track_notifications_focused,
+		);
 	}
 
 	// The backend flips the real window decorations; `win.chrome` is what the SPA keys its own
 	// corner rounding, resize borders and window buttons off, so it has to move with it.
 	async function setSystemTitlebar(on: boolean) {
 		const prev = win.chrome;
-		settings.native_chrome = on ? 'on' : 'off';
-		win.chrome = on ? 'on' : 'off';
+		settings.native_chrome = on ? "on" : "off";
+		win.chrome = on ? "on" : "off";
 		try {
-			await api.setSetting('system_titlebar', on ? 'true' : 'false');
+			await api.setSetting("system_titlebar", on ? "true" : "false");
 		} catch (e) {
 			settings.native_chrome = prev;
 			win.chrome = prev;
@@ -733,26 +952,26 @@
 	}
 
 	async function setPlayOnStart(on: boolean) {
-		settings.play_on_start = on ? 'true' : 'false';
-		await api.setSetting('play_on_start', settings.play_on_start);
+		settings.play_on_start = on ? "true" : "false";
+		await api.setSetting("play_on_start", settings.play_on_start);
 	}
 
 	async function setAutostart(on: boolean) {
-		settings.autostart = on ? 'true' : 'false';
+		settings.autostart = on ? "true" : "false";
 		try {
-			await api.setSetting('autostart', settings.autostart);
+			await api.setSetting("autostart", settings.autostart);
 		} catch (e) {
-			settings.autostart = on ? 'false' : 'true'; // registration failed — revert the switch
+			settings.autostart = on ? "false" : "true"; // registration failed - revert the switch
 			toast.error(String(e));
 		}
 	}
 
 	async function setStartMinimized(on: boolean) {
-		settings.start_minimized = on ? 'true' : 'false';
+		settings.start_minimized = on ? "true" : "false";
 		try {
-			await api.setSetting('start_minimized', settings.start_minimized);
+			await api.setSetting("start_minimized", settings.start_minimized);
 		} catch (e) {
-			settings.start_minimized = on ? 'false' : 'true';
+			settings.start_minimized = on ? "false" : "true";
 			toast.error(String(e));
 		}
 	}
@@ -761,21 +980,24 @@
 		const set = new Set(disabled);
 		if (set.has(name)) set.delete(name);
 		else set.add(name);
-		settings.disabled_stream_clients = [...set].join(',');
-		await api.setSetting('disabled_stream_clients', settings.disabled_stream_clients);
+		settings.disabled_stream_clients = [...set].join(",");
+		await api.setSetting(
+			"disabled_stream_clients",
+			settings.disabled_stream_clients,
+		);
 	}
 
 	async function saveProxy() {
 		settings.proxy = proxyInput.trim();
-		await api.setSetting('proxy', settings.proxy);
-		toast.success(t('toasts.proxy_saved'));
+		await api.setSetting("proxy", settings.proxy);
+		toast.success(t("toasts.proxy_saved"));
 	}
 
 	async function doClearCaches() {
 		clearing = true;
 		try {
 			await api.clearCaches();
-			toast.success(t('toasts.caches_cleared'));
+			toast.success(t("toasts.caches_cleared"));
 		} finally {
 			clearing = false;
 			loadStorage();
@@ -798,11 +1020,18 @@
 	tall?: boolean;
 })}
 	<div data-setting-row class="px-4 py-3.5">
-		<div class="flex {o.tall ? 'items-start' : 'items-center'} justify-between gap-6">
+		<div
+			class="flex {o.tall
+				? 'items-start'
+				: 'items-center'} justify-between gap-6"
+		>
 			<div class="min-w-0">
 				<div class="flex items-center gap-2">
 					{#if o.dot}
-						<span class="size-2 shrink-0 rounded-full" style:background={o.dot}></span>
+						<span
+							class="size-2 shrink-0 rounded-full"
+							style:background={o.dot}
+						></span>
 					{/if}
 					<span class="text-sm font-medium">{o.title}</span>
 					{#if o.badge}
@@ -815,7 +1044,11 @@
 					{#if o.extra}{@render o.extra()}{/if}
 				</div>
 				{#if o.desc}
-					<p class="mt-1 max-w-prose text-xs leading-relaxed text-muted-foreground">{o.desc}</p>
+					<p
+						class="mt-1 max-w-prose text-xs leading-relaxed text-muted-foreground"
+					>
+						{o.desc}
+					</p>
 				{/if}
 			</div>
 			{#if o.control}
@@ -831,8 +1064,12 @@
 <!-- A result's title with the first word of the query marked. Only where lowercasing kept the
      length, or the slice would land off by a letter. -->
 {#snippet marked(text: string)}
-	{@const i = text.length === text.toLowerCase().length ? text.toLowerCase().indexOf(firstTerm) : -1}
-	{#if i < 0}{text}{:else}{text.slice(0, i)}<mark class="rounded-[3px] bg-primary/25 text-foreground"
+	{@const i =
+		text.length === text.toLowerCase().length
+			? text.toLowerCase().indexOf(firstTerm)
+			: -1}
+	{#if i < 0}{text}{:else}{text.slice(0, i)}<mark
+			class="rounded-[3px] bg-primary/25 text-foreground"
 			>{text.slice(i, i + firstTerm.length)}</mark
 		>{text.slice(i + firstTerm.length)}{/if}
 {/snippet}
@@ -848,36 +1085,60 @@
 			// The first Esc clears a search, the next one closes.
 			if (query) {
 				e.preventDefault();
-				query = '';
+				query = "";
 			}
 		}}
-		class="gap-0 overflow-hidden p-0 {tab === 'discord' || tab === 'scrobbling' || tab === 'themes' ? 'sm:max-w-5xl' : tab === 'hotkeys' ? 'sm:max-w-4xl' : 'sm:max-w-3xl'}"
+		class="gap-0 overflow-hidden p-0 {tab === 'discord' ||
+		tab === 'scrobbling' ||
+		tab === 'themes'
+			? 'sm:max-w-5xl'
+			: tab === 'hotkeys'
+				? 'sm:max-w-4xl'
+				: 'sm:max-w-3xl'}"
 	>
-		<Dialog.Description class="sr-only">{t('settings.title')}</Dialog.Description>
+		<Dialog.Description class="sr-only"
+			>{t("settings.title")}</Dialog.Description
+		>
 
 		<div class="flex min-w-0 h-[min(38rem,80vh)]">
 			<!-- Tab rail -->
-			<nav data-settings-nav class="flex w-52 shrink-0 flex-col border-r bg-muted/40 p-3">
-				<Dialog.Title class="px-3 pt-1 pb-4 font-heading text-base font-semibold">
-					{t('settings.title')}
+			<nav
+				data-settings-nav
+				class="flex w-52 shrink-0 flex-col border-r bg-muted/40 p-3"
+			>
+				<Dialog.Title
+					class="px-3 pt-1 pb-4 font-heading text-base font-semibold"
+				>
+					{t("settings.title")}
 				</Dialog.Title>
 				<div class="relative mb-2.5">
-					<span class="pointer-events-none absolute inset-y-0 left-2.5 flex items-center text-muted-foreground">
-						<HugeiconsIcon icon={Search01Icon} size={15} strokeWidth={2} />
+					<span
+						class="pointer-events-none absolute inset-y-0 left-2.5 flex items-center text-muted-foreground"
+					>
+						<HugeiconsIcon
+							icon={Search01Icon}
+							size={15}
+							strokeWidth={2}
+						/>
 					</span>
 					<Input
 						bind:ref={searchInput}
 						bind:value={query}
 						onkeydown={onSearchKey}
-						placeholder={t('settings.search.placeholder')}
-						aria-label={t('settings.search.placeholder')}
+						placeholder={t("settings.search.placeholder")}
+						aria-label={t("settings.search.placeholder")}
 						autocomplete="off"
 						spellcheck={false}
 						class="h-8 rounded-lg pr-7 pl-8 text-[13px] md:text-[13px]"
 					/>
 					{#if !query}
-						<span class="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-							<kbd class="rounded border px-1 font-mono text-[10px] leading-4 text-muted-foreground">/</kbd>
+						<span
+							class="pointer-events-none absolute inset-y-0 right-2 flex items-center"
+						>
+							<kbd
+								class="rounded border px-1 font-mono text-[10px] leading-4 text-muted-foreground"
+								>/</kbd
+							>
 						</span>
 					{/if}
 				</div>
@@ -887,7 +1148,7 @@
 						<button
 							onclick={() => {
 								tab = tb.id;
-								query = '';
+								query = "";
 							}}
 							aria-current={active}
 							class="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors {active
@@ -898,14 +1159,17 @@
 								icon={tb.icon}
 								size={17}
 								strokeWidth={2}
-								class={active ? 'text-primary' : ''}
+								class={active ? "text-primary" : ""}
 							/>
 							<span class="truncate">{tb.label}</span>
 						</button>
 					{/each}
 				</div>
 				{#if version}
-					<span class="mt-auto px-3 pb-1 text-[11px] text-muted-foreground">v{version}</span>
+					<span
+						class="mt-auto px-3 pb-1 text-[11px] text-muted-foreground"
+						>v{version}</span
+					>
 				{/if}
 			</nav>
 
@@ -917,15 +1181,21 @@
 					data-settings-header
 					class="flex h-14 shrink-0 flex-col justify-center border-b px-6 pr-14"
 				>
-					<h2 class="text-sm font-semibold">{searching ? t('common.search') : currentTab.label}</h2>
+					<h2 class="text-sm font-semibold">
+						{searching ? t("common.search") : currentTab.label}
+					</h2>
 					<p class="truncate text-xs text-muted-foreground">
-						{searching ? t('settings.search.hint') : currentTab.hint}
+						{searching
+							? t("settings.search.hint")
+							: currentTab.hint}
 					</p>
 				</header>
 
 				{#if searching}
 					<!-- No hover transition: these rows scroll (docs/UI-PERFORMANCE.md). -->
-					<div class="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-6 py-5">
+					<div
+						class="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-6 py-5"
+					>
 						{#each results as g (g.tab.id)}
 							<section class={GROUP}>
 								<h3 class={LABEL}>{g.tab.label}</h3>
@@ -937,18 +1207,38 @@
 											class="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left outline-none hover:bg-foreground/5 focus-visible:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset"
 										>
 											<span class="min-w-0 flex-1">
-												<span class="block text-sm font-medium">{@render marked(t(e.title))}</span>
+												<span
+													class="block text-sm font-medium"
+													>{@render marked(
+														t(e.title),
+													)}</span
+												>
 												{#if e.desc}
-													<span class="mt-0.5 block truncate text-xs text-muted-foreground">{t(e.desc)}</span>
+													<span
+														class="mt-0.5 block truncate text-xs text-muted-foreground"
+														>{t(e.desc)}</span
+													>
 												{/if}
 												{#if e.under}
-													<span class="mt-0.5 block text-xs text-muted-foreground">
-														{t('settings.search.shown_when', { setting: t(e.under) })}
+													<span
+														class="mt-0.5 block text-xs text-muted-foreground"
+													>
+														{t(
+															"settings.search.shown_when",
+															{
+																setting: t(
+																	e.under,
+																),
+															},
+														)}
 													</span>
 												{/if}
 											</span>
 											{#if e.section}
-												<span class="shrink-0 text-xs text-muted-foreground">{t(e.section)}</span>
+												<span
+													class="shrink-0 text-xs text-muted-foreground"
+													>{t(e.section)}</span
+												>
 											{/if}
 											<HugeiconsIcon
 												icon={ArrowRight01Icon}
@@ -962,542 +1252,828 @@
 							</section>
 						{:else}
 							<div class="py-16 text-center">
-								<p class="text-sm font-medium">{t('settings.search.empty', { query: query.trim() })}</p>
-								<p class="mt-1.5 text-xs text-muted-foreground">{t('settings.search.empty_hint')}</p>
+								<p class="text-sm font-medium">
+									{t("settings.search.empty", {
+										query: query.trim(),
+									})}
+								</p>
+								<p class="mt-1.5 text-xs text-muted-foreground">
+									{t("settings.search.empty_hint")}
+								</p>
 							</div>
 						{/each}
 					</div>
 				{/if}
 				<!-- Hidden, not unmounted, while a search shows: Esc brings the tab back as it was, an
 				     unsaved edit in it included. -->
-				<div class={searching ? 'hidden' : 'contents'}>
-				{#if loaded && tab === 'discord'}
-					<DiscordSettings {settings} />
-				{:else if loaded && tab === 'scrobbling'}
-					<ScrobbleSettings {settings} />
-				{:else if tab === 'devices'}
-					<DevicesSettings />
-				{:else if tab === 'themes'}
-					<AppearanceSettings />
-				{:else}
-				<!-- relative: an absolute child (the lyrics sources' sr-only live region) would otherwise
+				<div class={searching ? "hidden" : "contents"}>
+					{#if loaded && tab === "discord"}
+						<DiscordSettings {settings} />
+					{:else if loaded && tab === "scrobbling"}
+						<ScrobbleSettings {settings} />
+					{:else if tab === "devices"}
+						<DevicesSettings />
+					{:else if tab === "themes"}
+						<AppearanceSettings />
+					{:else}
+						<!-- relative: an absolute child (the lyrics sources' sr-only live region) would otherwise
 				     be laid out against the dialog, outside this pane, and make the overflow-hidden dialog
 				     scrollable. scrollIntoView then scrolls the dialog too and clips its rail (#406). -->
-				<div class="relative min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-6 py-5">
-					{#if !loaded}
-						<p class="text-sm text-muted-foreground">{t('common.loading')}</p>
-					{:else if tab === 'general'}
-						<!-- The shortcuts list has no other entry point in the chrome. Closing settings
-						     first: two stacked dialogs would trap focus in the wrong one. -->
-						<button
-							type="button"
-							class="mb-5 inline-flex items-center gap-2 rounded-full border bg-muted/50 px-3 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-							onclick={() => {
-								ui.settingsOpen = false;
-								ui.shortcutsOpen = true;
-							}}
+						<div
+							class="relative min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-6 py-5"
 						>
-							<HugeiconsIcon icon={KeyboardIcon} class="h-3.5 w-3.5" />
-							<span
-								>{shortcutsHint[0]}<kbd class="font-mono font-medium">{HELP_COMBO}</kbd>{shortcutsHint[1] ??
-									''}</span
-							>
-						</button>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.language')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.general.language'),
-									desc: t('settings.general.language_hint'),
-									control: languageTrigger,
-									below: langOpen ? languageList : undefined
-								})}
-							</div>
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.activity')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('player.history'),
-									desc: t('settings.playback.play_history_hint'),
-									control: historySwitch
-								})}
-							</div>
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.system')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.general.close_to_tray'),
-									desc: t('settings.general.close_to_tray_hint'),
-									control: traySwitch
-								})}
-								{@render row({
-									title: t('settings.general.track_notifications'),
-									desc: t('settings.general.track_notifications_hint'),
-									control: trackNotificationsSwitch
-								})}
-								{#if trackNotificationsOn}
-									{@render row({
-										title: t('settings.general.track_notifications_focused'),
-										desc: t('settings.general.track_notifications_focused_hint'),
-										control: trackNotificationsFocusedSwitch
-									})}
-								{/if}
-								{@render row({
-									title: t('settings.general.play_on_start'),
-									desc: t('settings.general.play_on_start_hint'),
-									control: playOnStartSwitch
-								})}
-								{@render row({
-									title: t('settings.general.autostart'),
-									desc: t('settings.general.autostart_hint'),
-									control: autostartSwitch
-								})}
-								{#if autostartOn}
-									{@render row({
-										title: t('settings.general.start_minimized'),
-										desc: t('settings.general.start_minimized_hint'),
-										control: startMinimizedSwitch
-									})}
-								{/if}
-								{#if !systemTitlebarFixed}
-									{@render row({
-										title: t('settings.general.system_titlebar'),
-										desc: t('settings.general.system_titlebar_hint'),
-										control: systemTitlebarSwitch
-									})}
-								{/if}
-							</div>
-						</section>
-					{:else if tab === 'playback'}
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.audio')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.playback.audio_quality'),
-									desc: t('settings.playback.audio_quality_hint'),
-									control: qualityPicker
-								})}
-								{@render row({
-									title: t('settings.playback.normalize_volume'),
-									desc: t('settings.playback.normalize_volume_hint'),
-									control: normalizeSwitch,
-									tall: true
-								})}
-								{@render row({
-									title: t('settings.playback.autoplay'),
-									desc: t('settings.playback.autoplay_hint'),
-									control: autoplaySwitch
-								})}
-								{@render row({
-									title: t('settings.playback.crossfade'),
-									badge: t('settings.themes.experimental'),
-									desc: crossfadeSuspended
-										? t('settings.playback.crossfade_lt_paused')
-										: t('settings.playback.crossfade_hint'),
-									control: crossfadeSwitch,
-									tall: true
-								})}
-								{#if crossfadeOn}
-									{@render row({
-										title: t('settings.playback.crossfade_duration'),
-										desc: t('settings.playback.crossfade_duration_hint'),
-										control: crossfadeSlider,
-										tall: true
-									})}
-								{/if}
-								{@render row({
-									title: t('settings.playback.prevent_duplicates'),
-									desc: t('settings.playback.prevent_duplicates_hint'),
-									control: dupSwitch,
-									tall: true
-								})}
-								<!-- there is no media watcher on macOS, so the setting isn't offered there -->
-								{#if !IS_MAC}
-									{@render row({
-										title: t('settings.playback.auto_pause_other_audio'),
-										desc: t('settings.playback.auto_pause_other_audio_hint'),
-										control: autoPauseSwitch,
-										tall: true
-									})}
-								{/if}
-								{@render row({
-									title: t('settings.playback.sticky_shuffle'),
-									desc: t('settings.playback.sticky_shuffle_hint'),
-									control: stickyShuffleSwitch,
-									tall: true
-								})}
-								{@render row({
-									title: t('settings.playback.shuffle_whole_queue'),
-									desc: t('settings.playback.shuffle_whole_queue_hint'),
-									control: shuffleWholeSwitch,
-									tall: true
-								})}
-							</div>
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.video')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.playback.music_videos'),
-									badge: t('settings.themes.experimental'),
-									desc: t('settings.playback.music_videos_hint'),
-									control: musicVideoSwitch,
-									tall: true
-								})}
-								{#if musicVideosOn}
-									{@render row({
-										title: t('settings.playback.videos_first'),
-										desc: t('settings.playback.videos_first_hint'),
-										control: videosFirstSwitch,
-										tall: true
-									})}
-									{@render row({
-										title: t('settings.playback.ambient_light'),
-										badge: t('settings.themes.experimental'),
-										desc: t('settings.playback.ambient_light_hint'),
-										extra: ambientGpu,
-										control: ambientSwitch,
-										tall: true
-									})}
-								{/if}
-								{@render row({
-									title: t('settings.playback.hide_videos'),
-									desc: t('settings.playback.hide_videos_hint'),
-									control: hideVideoSwitch,
-									tall: true
-								})}
-							</div>
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.blocked')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.playback.blocked_artists'),
-									desc: t('settings.playback.blocked_artists_hint'),
-									below: blockedList
-								})}
-							</div>
-						</section>
-						<section class={GROUP} id="settings-lyrics">
-							<h3 class={LABEL}>{t('settings.sections.lyrics')}</h3>
-							<div class="space-y-3">
-								<EnhancedLyricsSettings />
-								<LyricsSourcesSettings {settings} />
-							</div>
-							<div data-settings-card class="mt-3 {CARD}">
-								{@render row({
-									title: t('settings.playback.lyrics_prefer_words'),
-									desc: t('settings.playback.lyrics_prefer_words_hint'),
-									control: preferWordsSwitch,
-									tall: true
-								})}
-							</div>
-						</section>
-						<section class={GROUP} id="settings-karaoke">
-							<h3 class="{LABEL} flex items-center gap-2">
-								{t('karaoke.settings.title')}
-								<ExperimentalBadge tooltip={t('karaoke.experimental_tooltip')} />
-							</h3>
-							<div class={CARD}>
-								{@render row({
-									title: t('karaoke.settings.model'),
-									desc: t('karaoke.settings.model_desc'),
-									control: karaokeModelControl,
-									below: karaokeModelBelow,
-									tall: true
-								})}
-								{@render row({
-									title: t('karaoke.settings.cache_limit'),
-									desc: t('karaoke.settings.cache_limit_desc'),
-									control: karaokeCacheLimitControl
-								})}
-								{@render row({
-									title: t('karaoke.settings.cache_used'),
-									desc: t('karaoke.settings.cache_used_desc'),
-									control: karaokeCacheUsedControl
-								})}
-								<!-- Only where there is a graphics card path. Auto only where it can judge the card
+							{#if !loaded}
+								<p class="text-sm text-muted-foreground">
+									{t("common.loading")}
+								</p>
+							{:else if tab === "general"}
+								<!-- The shortcuts list has no other entry point in the chrome. Closing settings
+						     first: two stacked dialogs would trap focus in the wrong one. -->
+								<button
+									type="button"
+									class="mb-5 inline-flex items-center gap-2 rounded-full border bg-muted/50 px-3 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+									onclick={() => {
+										ui.settingsOpen = false;
+										ui.shortcutsOpen = true;
+									}}
+								>
+									<HugeiconsIcon
+										icon={KeyboardIcon}
+										class="h-3.5 w-3.5"
+									/>
+									<span
+										>{shortcutsHint[0]}<kbd
+											class="font-mono font-medium"
+											>{HELP_COMBO}</kbd
+										>{shortcutsHint[1] ?? ""}</span
+									>
+								</button>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.language")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.general.language",
+											),
+											desc: t(
+												"settings.general.language_hint",
+											),
+											control: languageTrigger,
+											below: langOpen
+												? languageList
+												: undefined,
+										})}
+									</div>
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.activity")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t("player.history"),
+											desc: t(
+												"settings.playback.play_history_hint",
+											),
+											control: historySwitch,
+										})}
+									</div>
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.system")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.general.close_to_tray",
+											),
+											desc: t(
+												"settings.general.close_to_tray_hint",
+											),
+											control: traySwitch,
+										})}
+										{@render row({
+											title: t(
+												"settings.general.track_notifications",
+											),
+											desc: t(
+												"settings.general.track_notifications_hint",
+											),
+											control: trackNotificationsSwitch,
+										})}
+										{#if trackNotificationsOn}
+											{@render row({
+												title: t(
+													"settings.general.track_notifications_focused",
+												),
+												desc: t(
+													"settings.general.track_notifications_focused_hint",
+												),
+												control:
+													trackNotificationsFocusedSwitch,
+											})}
+										{/if}
+										{@render row({
+											title: t(
+												"settings.general.play_on_start",
+											),
+											desc: t(
+												"settings.general.play_on_start_hint",
+											),
+											control: playOnStartSwitch,
+										})}
+										{@render row({
+											title: t(
+												"settings.general.autostart",
+											),
+											desc: t(
+												"settings.general.autostart_hint",
+											),
+											control: autostartSwitch,
+										})}
+										{#if autostartOn}
+											{@render row({
+												title: t(
+													"settings.general.start_minimized",
+												),
+												desc: t(
+													"settings.general.start_minimized_hint",
+												),
+												control: startMinimizedSwitch,
+											})}
+										{/if}
+										{#if !systemTitlebarFixed}
+											{@render row({
+												title: t(
+													"settings.general.system_titlebar",
+												),
+												desc: t(
+													"settings.general.system_titlebar_hint",
+												),
+												control: systemTitlebarSwitch,
+											})}
+										{/if}
+									</div>
+								</section>
+							{:else if tab === "playback"}
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.audio")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.playback.audio_quality",
+											),
+											desc: t(
+												"settings.playback.audio_quality_hint",
+											),
+											control: qualityPicker,
+										})}
+										{@render row({
+											title: t(
+												"settings.playback.normalize_volume",
+											),
+											desc: t(
+												"settings.playback.normalize_volume_hint",
+											),
+											control: normalizeSwitch,
+											tall: true,
+										})}
+										{@render row({
+											title: t(
+												"settings.playback.autoplay",
+											),
+											desc: t(
+												"settings.playback.autoplay_hint",
+											),
+											control: autoplaySwitch,
+										})}
+										{@render row({
+											title: t(
+												"settings.playback.crossfade",
+											),
+											badge: t(
+												"settings.themes.experimental",
+											),
+											desc: crossfadeSuspended
+												? t(
+														"settings.playback.crossfade_lt_paused",
+													)
+												: t(
+														"settings.playback.crossfade_hint",
+													),
+											control: crossfadeSwitch,
+											tall: true,
+										})}
+										{#if crossfadeOn}
+											{@render row({
+												title: t(
+													"settings.playback.crossfade_duration",
+												),
+												desc: t(
+													"settings.playback.crossfade_duration_hint",
+												),
+												control: crossfadeSlider,
+												tall: true,
+											})}
+										{/if}
+										{@render row({
+											title: t(
+												"settings.playback.prevent_duplicates",
+											),
+											desc: t(
+												"settings.playback.prevent_duplicates_hint",
+											),
+											control: dupSwitch,
+											tall: true,
+										})}
+										<!-- there is no media watcher on macOS, so the setting isn't offered there -->
+										{#if !IS_MAC}
+											{@render row({
+												title: t(
+													"settings.playback.auto_pause_other_audio",
+												),
+												desc: t(
+													"settings.playback.auto_pause_other_audio_hint",
+												),
+												control: autoPauseSwitch,
+												tall: true,
+											})}
+										{/if}
+										{@render row({
+											title: t(
+												"settings.playback.sticky_shuffle",
+											),
+											desc: t(
+												"settings.playback.sticky_shuffle_hint",
+											),
+											control: stickyShuffleSwitch,
+											tall: true,
+										})}
+										{@render row({
+											title: t(
+												"settings.playback.shuffle_whole_queue",
+											),
+											desc: t(
+												"settings.playback.shuffle_whole_queue_hint",
+											),
+											control: shuffleWholeSwitch,
+											tall: true,
+										})}
+									</div>
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.video")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.playback.music_videos",
+											),
+											badge: t(
+												"settings.themes.experimental",
+											),
+											desc: t(
+												"settings.playback.music_videos_hint",
+											),
+											control: musicVideoSwitch,
+											tall: true,
+										})}
+										{#if musicVideosOn}
+											{@render row({
+												title: t(
+													"settings.playback.videos_first",
+												),
+												desc: t(
+													"settings.playback.videos_first_hint",
+												),
+												control: videosFirstSwitch,
+												tall: true,
+											})}
+											{@render row({
+												title: t(
+													"settings.playback.ambient_light",
+												),
+												badge: t(
+													"settings.themes.experimental",
+												),
+												desc: t(
+													"settings.playback.ambient_light_hint",
+												),
+												extra: ambientGpu,
+												control: ambientSwitch,
+												tall: true,
+											})}
+										{/if}
+										{@render row({
+											title: t(
+												"settings.playback.hide_videos",
+											),
+											desc: t(
+												"settings.playback.hide_videos_hint",
+											),
+											control: hideVideoSwitch,
+											tall: true,
+										})}
+									</div>
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.blocked")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.playback.blocked_artists",
+											),
+											desc: t(
+												"settings.playback.blocked_artists_hint",
+											),
+											below: blockedList,
+										})}
+									</div>
+								</section>
+								<section class={GROUP} id="settings-lyrics">
+									<h3 class={LABEL}>
+										{t("settings.sections.lyrics")}
+									</h3>
+									<div class="space-y-3">
+										<EnhancedLyricsSettings />
+										<LyricsSourcesSettings {settings} />
+									</div>
+									<div data-settings-card class="mt-3 {CARD}">
+										{@render row({
+											title: t(
+												"settings.playback.lyrics_prefer_words",
+											),
+											desc: t(
+												"settings.playback.lyrics_prefer_words_hint",
+											),
+											control: preferWordsSwitch,
+											tall: true,
+										})}
+									</div>
+								</section>
+								<section class={GROUP} id="settings-karaoke">
+									<h3 class="{LABEL} flex items-center gap-2">
+										{t("karaoke.settings.title")}
+										<ExperimentalBadge
+											tooltip={t(
+												"karaoke.experimental_tooltip",
+											)}
+										/>
+									</h3>
+									<div class={CARD}>
+										{@render row({
+											title: t("karaoke.settings.model"),
+											desc: t(
+												"karaoke.settings.model_desc",
+											),
+											control: karaokeModelControl,
+											below: karaokeModelBelow,
+											tall: true,
+										})}
+										{@render row({
+											title: t(
+												"karaoke.settings.cache_limit",
+											),
+											desc: t(
+												"karaoke.settings.cache_limit_desc",
+											),
+											control: karaokeCacheLimitControl,
+										})}
+										{@render row({
+											title: t(
+												"karaoke.settings.cache_used",
+											),
+											desc: t(
+												"karaoke.settings.cache_used_desc",
+											),
+											control: karaokeCacheUsedControl,
+										})}
+										<!-- Only where there is a graphics card path. Auto only where it can judge the card
 								     (Windows); elsewhere the card is opt-in and the text says so. -->
-								{#if karaokeAvailability.gpuSupported}
-									{@render row({
-										title: t('karaoke.settings.device'),
-										desc: karaokeAvailability.autoSupported
-											? t('karaoke.settings.device_desc')
-											: t('karaoke.settings.device_desc_opt_in'),
-										control: karaokeDeviceControl
-									})}
-								{/if}
-								{@render row({
-									title: t('karaoke.settings.status'),
-									desc: t('karaoke.settings.status_desc'),
-									control: karaokeStatusControl
-								})}
-								{@render row({
-									title: t('karaoke.settings.credit'),
-									desc: t('karaoke.consent.credit'),
-									control: karaokeCreditControl
-								})}
-							</div>
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.advanced')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({ title: t('settings.general.stream_clients'), below: clientList })}
-							</div>
-						</section>
-					{:else if tab === 'contributing'}
-						<!-- Vibratunes Lyrics: who you are there, and how lyrics get added. Its own tab: as a
+										{#if karaokeAvailability.gpuSupported}
+											{@render row({
+												title: t(
+													"karaoke.settings.device",
+												),
+												desc: karaokeAvailability.autoSupported
+													? t(
+															"karaoke.settings.device_desc",
+														)
+													: t(
+															"karaoke.settings.device_desc_opt_in",
+														),
+												control: karaokeDeviceControl,
+											})}
+										{/if}
+										{@render row({
+											title: t("karaoke.settings.status"),
+											desc: t(
+												"karaoke.settings.status_desc",
+											),
+											control: karaokeStatusControl,
+										})}
+										{@render row({
+											title: t("karaoke.settings.credit"),
+											desc: t("karaoke.consent.credit"),
+											control: karaokeCreditControl,
+										})}
+									</div>
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.advanced")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.general.stream_clients",
+											),
+											below: clientList,
+										})}
+									</div>
+								</section>
+							{:else if tab === "contributing"}
+								<!-- Vibratunes Lyrics: who you are there, and how lyrics get added. Its own tab: as a
 						     section at the bottom of Playback nobody found it. -->
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('limusic.account')}</h3>
-							<VibratunesAccountSettings />
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('limusic.how_title')}</h3>
-							<div data-settings-card class={CARD}>
-								{#each [{ title: t('limusic.how_open'), hint: t('limusic.how_open_hint'), icon: MusicNote01Icon }, { title: t('lyrics_editor.how_tap'), hint: t('lyrics_editor.how_tap_hint'), icon: Tap01Icon }, { title: t('lyrics_editor.how_send'), hint: t('lyrics_editor.how_send_hint'), icon: SentIcon }] as h (h.title)}
-									<div class="flex items-center gap-3.5 px-4 py-3">
-										<span class="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-muted">
-											<HugeiconsIcon icon={h.icon} class="size-[18px]" />
-										</span>
-										<div class="min-w-0">
-											<p class="text-sm font-medium">{h.title}</p>
-											<p class="text-xs text-muted-foreground">{h.hint}</p>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("limusic.account")}
+									</h3>
+									<VibratunesAccountSettings />
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("limusic.how_title")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{#each [{ title: t("limusic.how_open"), hint: t("limusic.how_open_hint"), icon: MusicNote01Icon }, { title: t("lyrics_editor.how_tap"), hint: t("lyrics_editor.how_tap_hint"), icon: Tap01Icon }, { title: t("lyrics_editor.how_send"), hint: t("lyrics_editor.how_send_hint"), icon: SentIcon }] as h (h.title)}
+											<div
+												class="flex items-center gap-3.5 px-4 py-3"
+											>
+												<span
+													class="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-muted"
+												>
+													<HugeiconsIcon
+														icon={h.icon}
+														class="size-[18px]"
+													/>
+												</span>
+												<div class="min-w-0">
+													<p
+														class="text-sm font-medium"
+													>
+														{h.title}
+													</p>
+													<p
+														class="text-xs text-muted-foreground"
+													>
+														{h.hint}
+													</p>
+												</div>
+											</div>
+										{/each}
+										<div
+											class="flex flex-wrap items-center gap-3 px-4 py-3"
+										>
+											<p
+												class="min-w-40 flex-1 text-xs text-muted-foreground"
+											>
+												{t("limusic.open_editor_hint")}
+											</p>
+											<Button
+												size="sm"
+												onclick={() => {
+													ui.settingsOpen = false;
+													goto("/lyrics-editor");
+												}}
+											>
+												{t("limusic.open_editor")}
+											</Button>
 										</div>
 									</div>
-								{/each}
-								<div class="flex flex-wrap items-center gap-3 px-4 py-3">
-									<p class="min-w-40 flex-1 text-xs text-muted-foreground">{t('limusic.open_editor_hint')}</p>
-									<Button
-										size="sm"
-										onclick={() => {
-											ui.settingsOpen = false;
-											goto('/lyrics-editor');
-										}}
-									>
-										{t('limusic.open_editor')}
-									</Button>
-								</div>
-							</div>
-						</section>
-					{:else if tab === 'hotkeys'}
-						<GlobalHotkeysSettings />
-					{:else if tab === 'data'}
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.network')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.general.proxy'),
-									desc: t('settings.general.proxy_hint'),
-									below: proxyForm
-								})}
-								{@render row({
-									title: t('settings.general.tunnel_title'),
-									desc: tunnelStatusText,
-									extra: tunnelBadge,
-									control: tunnelSwitch
-								})}
-								{@render row({
-									title: t('settings.general.tunnel_config'),
-									desc: tunnel.confName ?? t('settings.general.tunnel_config_none'),
-									control: tunnelImportButton
-								})}
-							</div>
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.storage')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.data.used'),
-									desc: t('settings.data.used_hint'),
-									control: usageTotalText,
-									below: usageBar
-								})}
-								{#each STORAGE as s (s.id)}
-									<!-- The action rides next to the title at its height, so every size stays in one column. -->
-									{#snippet action()}
-										{#if s.id === 'audio'}
-											{@render clearButton()}
-										{:else if s.id === 'karaoke'}
-											{@render karaokeClearButton(true)}
-										{:else if s.id === 'models'}
-											<Button variant="outline" size="xs" class="h-5 px-2" onclick={showKaraokeSettings}>
-												{t('settings.data.manage')}
-											</Button>
+								</section>
+							{:else if tab === "hotkeys"}
+								<GlobalHotkeysSettings />
+							{:else if tab === "data"}
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.network")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t("settings.general.proxy"),
+											desc: t(
+												"settings.general.proxy_hint",
+											),
+											below: proxyForm,
+										})}
+										{@render row({
+											title: t(
+												"settings.general.tunnel_title",
+											),
+											desc: tunnelStatusText,
+											extra: tunnelBadge,
+											control: tunnelSwitch,
+										})}
+										{@render row({
+											title: t(
+												"settings.general.tunnel_config",
+											),
+											desc:
+												tunnel.confName ??
+												t(
+													"settings.general.tunnel_config_none",
+												),
+											control: tunnelImportButton,
+										})}
+									</div>
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.storage")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t("settings.data.used"),
+											desc: t("settings.data.used_hint"),
+											control: usageTotalText,
+											below: usageBar,
+										})}
+										{#each STORAGE as s (s.id)}
+											<!-- The action rides next to the title at its height, so every size stays in one column. -->
+											{#snippet action()}
+												{#if s.id === "audio"}
+													{@render clearButton()}
+												{:else if s.id === "karaoke"}
+													{@render karaokeClearButton(
+														true,
+													)}
+												{:else if s.id === "models"}
+													<Button
+														variant="outline"
+														size="xs"
+														class="h-5 px-2"
+														onclick={showKaraokeSettings}
+													>
+														{t(
+															"settings.data.manage",
+														)}
+													</Button>
+												{/if}
+											{/snippet}
+											{#snippet size()}
+												<span
+													class="text-xs text-muted-foreground tabular-nums"
+												>
+													{usage
+														? formatCacheSize(
+																usage[s.id],
+															)
+														: "…"}
+												</span>
+											{/snippet}
+											{@render row({
+												title: t(
+													`settings.data.${s.id}`,
+												),
+												desc: t(s.hint),
+												dot: s.color,
+												extra: action,
+												control: size,
+												tall: true,
+											})}
+										{/each}
+									</div>
+								</section>
+							{:else if tab === "downloads"}
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("download.folder")}
+									</h3>
+									<div class={CARD}>
+										{@render row({
+											title: t("download.folder"),
+											desc: downloadDir,
+											control: downloadFolderControl,
+										})}
+									</div>
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("download.max_concurrent")}
+									</h3>
+									<div class={CARD}>
+										{@render row({
+											title: t("download.max_concurrent"),
+											desc: t(
+												"download.max_concurrent_hint",
+											),
+											control: concurrencySlider,
+										})}
+									</div>
+								</section>
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.storage")}
+									</h3>
+									<div class={CARD}>
+										{@render row({
+											title: t("download.delete_all"),
+											desc: t("download.delete_all_hint"),
+											control: deleteAllDownloadsButton,
+										})}
+									</div>
+								</section>
+								<AlertDialog.Root
+									bind:open={confirmDeleteAllDownloads}
+								>
+									<AlertDialog.Content>
+										<AlertDialog.Header>
+											<AlertDialog.Title
+												>{t(
+													"download.delete_all_confirm",
+												)}</AlertDialog.Title
+											>
+											<AlertDialog.Description
+												>{t(
+													"download.delete_all_confirm_desc",
+												)}</AlertDialog.Description
+											>
+										</AlertDialog.Header>
+										<AlertDialog.Footer>
+											<AlertDialog.Cancel
+												>{t(
+													"common.cancel",
+												)}</AlertDialog.Cancel
+											>
+											<AlertDialog.Action
+												class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+												onclick={async () => {
+													confirmDeleteAllDownloads = false;
+													await deleteAllDownloads();
+												}}
+											>
+												{t("download.delete_all")}
+											</AlertDialog.Action>
+										</AlertDialog.Footer>
+									</AlertDialog.Content>
+								</AlertDialog.Root>
+							{:else if tab === "about"}
+								<div
+									class="mb-7 rounded-xl border bg-gradient-to-br from-primary/8 to-transparent px-4 py-4"
+								>
+									<div class="flex items-center gap-2">
+										<span
+											class="font-heading text-lg font-bold"
+											>Vibratunes</span
+										>
+										{#if version}
+											<span
+												class="rounded-full bg-primary/12 px-2 py-0.5 text-[11px] font-semibold text-primary"
+											>
+												v{version}
+											</span>
 										{/if}
-									{/snippet}
-									{#snippet size()}
-										<span class="text-xs text-muted-foreground tabular-nums">
-											{usage ? formatCacheSize(usage[s.id]) : '…'}
-										</span>
-									{/snippet}
-									{@render row({
-										title: t(`settings.data.${s.id}`),
-										desc: t(s.hint),
-										dot: s.color,
-										extra: action,
-										control: size,
-										tall: true
-									})}
-								{/each}
-							</div>
-						</section>
-					{:else if tab === 'downloads'}
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('download.folder')}</h3>
-							<div class={CARD}>
-								{@render row({
-									title: t('download.folder'),
-									desc: downloadDir,
-									control: downloadFolderControl
-								})}
-							</div>
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('download.max_concurrent')}</h3>
-							<div class={CARD}>
-								{@render row({
-									title: t('download.max_concurrent'),
-									desc: t('download.max_concurrent_hint'),
-									control: concurrencySlider
-								})}
-							</div>
-						</section>
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.storage')}</h3>
-							<div class={CARD}>
-								{@render row({
-									title: t('download.delete_all'),
-									desc: t('download.delete_all_hint'),
-									control: deleteAllDownloadsButton
-								})}
-							</div>
-						</section>
-						<AlertDialog.Root bind:open={confirmDeleteAllDownloads}>
-							<AlertDialog.Content>
-								<AlertDialog.Header>
-									<AlertDialog.Title>{t('download.delete_all_confirm')}</AlertDialog.Title>
-									<AlertDialog.Description>{t('download.delete_all_confirm_desc')}</AlertDialog.Description>
-								</AlertDialog.Header>
-								<AlertDialog.Footer>
-									<AlertDialog.Cancel>{t('common.cancel')}</AlertDialog.Cancel>
-									<AlertDialog.Action
-										class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-										onclick={async () => {
-											confirmDeleteAllDownloads = false;
-											await deleteAllDownloads();
-										}}
+									</div>
+									<p
+										class="mt-1.5 max-w-prose text-xs leading-relaxed text-muted-foreground"
 									>
-										{t('download.delete_all')}
-									</AlertDialog.Action>
-								</AlertDialog.Footer>
-							</AlertDialog.Content>
-						</AlertDialog.Root>
-					{:else if tab === 'about'}
-						<div
-							class="mb-7 rounded-xl border bg-gradient-to-br from-primary/8 to-transparent px-4 py-4"
-						>
-							<div class="flex items-center gap-2">
-								<span class="font-heading text-lg font-bold">Vibratunes</span>
-								{#if version}
-									<span
-										class="rounded-full bg-primary/12 px-2 py-0.5 text-[11px] font-semibold text-primary"
-									>
-										v{version}
-									</span>
-								{/if}
-							</div>
-							<p class="mt-1.5 max-w-prose text-xs leading-relaxed text-muted-foreground">
-								{t('settings.about.description')}
-							</p>
+										{t("settings.about.description")}
+									</p>
+								</div>
+
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.support")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t("settings.about.discord"),
+											desc: t(
+												"settings.about.discord_hint",
+											),
+											control: discordButton,
+											tall: true,
+										})}
+									</div>
+								</section>
+
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.updates")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.about.check_updates",
+											),
+											desc:
+												updateState.available &&
+												!updateState.canInstall
+													? `${availableMessage(updateState.available)} ${t("settings.about.update_packaged")}`
+													: updateState.available
+														? availableMessage(
+																updateState.available,
+															)
+														: t(
+																"settings.about.up_to_date",
+															),
+											control: updateButton,
+											below:
+												updateResult &&
+												!updateState.available
+													? updateAlert
+													: undefined,
+										})}
+										{@render row({
+											title: t(
+												"settings.general.update_banner",
+											),
+											desc: t(
+												"settings.general.update_banner_hint",
+											),
+											control: bannerSwitch,
+											tall: true,
+										})}
+										{#if betaAvailable}
+											{@render row({
+												title: t("settings.about.beta"),
+												desc: t(
+													"settings.about.beta_hint",
+												),
+												control: betaSwitch,
+												tall: true,
+											})}
+										{/if}
+									</div>
+								</section>
+
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.report")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.about.diagnostics",
+											),
+											desc: t(
+												"settings.about.diagnostics_hint",
+											),
+											control: copyDiagButton,
+											tall: true,
+											below: diagError
+												? diagAlert
+												: undefined,
+										})}
+										{@render row({
+											title: t(
+												"settings.about.diagnostics_save",
+											),
+											desc: t(
+												"settings.about.diagnostics_save_hint",
+											),
+											control: saveDiagButton,
+										})}
+										{@render row({
+											title: t(
+												"settings.about.report_issue",
+											),
+											desc: t(
+												"settings.about.report_issue_hint",
+											),
+											control: reportButton,
+										})}
+									</div>
+								</section>
+
+								<section class={GROUP}>
+									<h3 class={LABEL}>
+										{t("settings.sections.whats_new")}
+									</h3>
+									<div data-settings-card class={CARD}>
+										{@render row({
+											title: t(
+												"settings.about.changelog",
+											),
+											desc: t(
+												"settings.about.version",
+											).replace("{version}", version),
+											below: changelog,
+										})}
+									</div>
+								</section>
+							{/if}
 						</div>
-
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.support')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.about.discord'),
-									desc: t('settings.about.discord_hint'),
-									control: discordButton,
-									tall: true
-								})}
-								{@render row({
-									title: t('settings.about.kofi'),
-									desc: t('settings.about.kofi_hint'),
-									control: kofiButton,
-									tall: true
-								})}
-							</div>
-						</section>
-
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.updates')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.about.check_updates'),
-									desc: updateState.available && !updateState.canInstall
-										? `${availableMessage(updateState.available)} ${t('settings.about.update_packaged')}`
-										: updateState.available
-											? availableMessage(updateState.available)
-											: t('settings.about.up_to_date'),
-									control: updateButton,
-									below: updateResult && !updateState.available ? updateAlert : undefined
-								})}
-								{@render row({
-									title: t('settings.general.update_banner'),
-									desc: t('settings.general.update_banner_hint'),
-									control: bannerSwitch,
-									tall: true
-								})}
-								{#if betaAvailable}
-									{@render row({
-										title: t('settings.about.beta'),
-										desc: t('settings.about.beta_hint'),
-										control: betaSwitch,
-										tall: true
-									})}
-								{/if}
-							</div>
-						</section>
-
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.report')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.about.diagnostics'),
-									desc: t('settings.about.diagnostics_hint'),
-									control: copyDiagButton,
-									tall: true,
-									below: diagError ? diagAlert : undefined
-								})}
-								{@render row({
-									title: t('settings.about.diagnostics_save'),
-									desc: t('settings.about.diagnostics_save_hint'),
-									control: saveDiagButton
-								})}
-								{@render row({
-									title: t('settings.about.report_issue'),
-									desc: t('settings.about.report_issue_hint'),
-									control: reportButton
-								})}
-							</div>
-						</section>
-
-						<section class={GROUP}>
-							<h3 class={LABEL}>{t('settings.sections.whats_new')}</h3>
-							<div data-settings-card class={CARD}>
-								{@render row({
-									title: t('settings.about.changelog'),
-									desc: t('settings.about.version').replace('{version}', version),
-									below: changelog
-								})}
-							</div>
-						</section>
 					{/if}
-				</div>
-				{/if}
 				</div>
 			</div>
 		</div>
@@ -1515,12 +2091,18 @@
 		aria-label="{t('settings.general.language')}: {currentLocaleLabel}"
 		class="flex h-9 w-44 shrink-0 cursor-pointer items-center gap-2 rounded-4xl border border-input bg-input/30 px-3 text-sm transition-colors hover:bg-input/50"
 	>
-		<HugeiconsIcon icon={Globe02Icon} strokeWidth={2} class="size-4 shrink-0 text-muted-foreground" />
+		<HugeiconsIcon
+			icon={Globe02Icon}
+			strokeWidth={2}
+			class="size-4 shrink-0 text-muted-foreground"
+		/>
 		<span class="flex-1 truncate text-left">{currentLocaleLabel}</span>
 		<HugeiconsIcon
 			icon={ArrowDown01Icon}
 			strokeWidth={2}
-			class="size-4 shrink-0 text-muted-foreground transition-transform {langOpen ? 'rotate-180' : ''}"
+			class="size-4 shrink-0 text-muted-foreground transition-transform {langOpen
+				? 'rotate-180'
+				: ''}"
 		/>
 	</button>
 {/snippet}
@@ -1535,22 +2117,34 @@
 	/>
 {/snippet}
 
-{#snippet tunnelSwitch()}<Switch checked={tunnelOn()} onCheckedChange={(v) => void setTunnelEnabled(v)} />{/snippet}
-{#snippet tunnelBadge()}<ExperimentalBadge tooltip={t('settings.general.tunnel_tooltip')} />{/snippet}
+{#snippet tunnelSwitch()}<Switch
+		checked={tunnelOn()}
+		onCheckedChange={(v) => void setTunnelEnabled(v)}
+	/>{/snippet}
+{#snippet tunnelBadge()}<ExperimentalBadge
+		tooltip={t("settings.general.tunnel_tooltip")}
+	/>{/snippet}
 {#snippet tunnelImportButton()}
 	<Button
 		variant="outline"
 		size="sm"
 		onclick={async () => {
 			const name = await importTunnelConfig();
-			if (name) toast.success(t('settings.general.tunnel_imported', { name }));
+			if (name)
+				toast.success(t("settings.general.tunnel_imported", { name }));
 		}}
 	>
-		{t('settings.general.tunnel_import')}
+		{t("settings.general.tunnel_import")}
 	</Button>
 {/snippet}
-{#snippet historySwitch()}<Switch checked={historyOn} onCheckedChange={setHistory} />{/snippet}
-{#snippet traySwitch()}<Switch checked={trayOn} onCheckedChange={setTray} />{/snippet}
+{#snippet historySwitch()}<Switch
+		checked={historyOn}
+		onCheckedChange={setHistory}
+	/>{/snippet}
+{#snippet traySwitch()}<Switch
+		checked={trayOn}
+		onCheckedChange={setTray}
+	/>{/snippet}
 {#snippet trackNotificationsSwitch()}<Switch
 		checked={trackNotificationsOn}
 		onCheckedChange={setTrackNotifications}
@@ -1559,30 +2153,47 @@
 		checked={trackNotificationsFocusedOn}
 		onCheckedChange={setTrackNotificationsFocused}
 	/>{/snippet}
-{#snippet playOnStartSwitch()}<Switch checked={playOnStartOn} onCheckedChange={setPlayOnStart} />{/snippet}
-{#snippet autostartSwitch()}<Switch checked={autostartOn} onCheckedChange={setAutostart} />{/snippet}
-{#snippet startMinimizedSwitch()}<Switch checked={startMinimizedOn} onCheckedChange={setStartMinimized} />{/snippet}
+{#snippet playOnStartSwitch()}<Switch
+		checked={playOnStartOn}
+		onCheckedChange={setPlayOnStart}
+	/>{/snippet}
+{#snippet autostartSwitch()}<Switch
+		checked={autostartOn}
+		onCheckedChange={setAutostart}
+	/>{/snippet}
+{#snippet startMinimizedSwitch()}<Switch
+		checked={startMinimizedOn}
+		onCheckedChange={setStartMinimized}
+	/>{/snippet}
 {#snippet systemTitlebarSwitch()}<Switch
 		checked={systemTitlebarOn}
 		onCheckedChange={setSystemTitlebar}
 	/>{/snippet}
-{#snippet autoplaySwitch()}<Switch checked={prefs.autoplay} onCheckedChange={setAutoplay} />{/snippet}
+{#snippet autoplaySwitch()}<Switch
+		checked={prefs.autoplay}
+		onCheckedChange={setAutoplay}
+	/>{/snippet}
 
-{#snippet crossfadeSwitch()}<Switch checked={crossfadeOn} onCheckedChange={setCrossfade} />{/snippet}
+{#snippet crossfadeSwitch()}<Switch
+		checked={crossfadeOn}
+		onCheckedChange={setCrossfade}
+	/>{/snippet}
 
 {#snippet crossfadeSlider()}
 	<div class="flex w-44 shrink-0 items-center gap-3">
 		<Slider
 			type="single"
-			aria-label={t('settings.playback.crossfade_duration')}
+			aria-label={t("settings.playback.crossfade_duration")}
 			min={1}
 			max={10}
 			step={1}
 			value={crossfadeSecs}
 			onValueChange={setCrossfadeSecs}
 		/>
-		<span class="w-8 shrink-0 text-right font-mono text-xs text-muted-foreground">
-			{t('settings.playback.crossfade_seconds', { secs: crossfadeSecs })}
+		<span
+			class="w-8 shrink-0 text-right font-mono text-xs text-muted-foreground"
+		>
+			{t("settings.playback.crossfade_seconds", { secs: crossfadeSecs })}
 		</span>
 	</div>
 {/snippet}
@@ -1602,10 +2213,22 @@
 		checked={shuffleWholeOn}
 		onCheckedChange={setShuffleWhole}
 	/>{/snippet}
-{#snippet normalizeSwitch()}<Switch checked={normalizeOn} onCheckedChange={setNormalize} />{/snippet}
-{#snippet musicVideoSwitch()}<Switch checked={musicVideosOn} onCheckedChange={setMusicVideos} />{/snippet}
-{#snippet videosFirstSwitch()}<Switch checked={videosFirstOn} onCheckedChange={setVideosFirst} />{/snippet}
-{#snippet ambientSwitch()}<Switch checked={ambientOn} onCheckedChange={setAmbient} />{/snippet}
+{#snippet normalizeSwitch()}<Switch
+		checked={normalizeOn}
+		onCheckedChange={setNormalize}
+	/>{/snippet}
+{#snippet musicVideoSwitch()}<Switch
+		checked={musicVideosOn}
+		onCheckedChange={setMusicVideos}
+	/>{/snippet}
+{#snippet videosFirstSwitch()}<Switch
+		checked={videosFirstOn}
+		onCheckedChange={setVideosFirst}
+	/>{/snippet}
+{#snippet ambientSwitch()}<Switch
+		checked={ambientOn}
+		onCheckedChange={setAmbient}
+	/>{/snippet}
 <!-- The GPU note, behind a warning glyph by the title: it matters to the few whose card is weak,
      and a paragraph under the switch read as a reason not to try it. A popover rather than a
      tooltip, so it opens on a click or a key and can hold the link. -->
@@ -1613,18 +2236,27 @@
 	<Popover.Root>
 		<Popover.Trigger
 			class="-m-1 cursor-pointer rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground data-[state=open]:text-foreground"
-			aria-label={t('settings.playback.ambient_light_gpu_title')}
-			title={t('settings.playback.ambient_light_gpu_title')}
+			aria-label={t("settings.playback.ambient_light_gpu_title")}
+			title={t("settings.playback.ambient_light_gpu_title")}
 		>
 			<HugeiconsIcon icon={Alert02Icon} size={14} strokeWidth={1.8} />
 		</Popover.Trigger>
 		<Popover.Content side="top" align="start" class="w-80 gap-3">
 			<div class="flex items-start gap-2.5">
-				<HugeiconsIcon icon={Alert02Icon} size={16} strokeWidth={1.8} class="mt-0.5 shrink-0" />
+				<HugeiconsIcon
+					icon={Alert02Icon}
+					size={16}
+					strokeWidth={1.8}
+					class="mt-0.5 shrink-0"
+				/>
 				<div class="min-w-0">
-					<p class="text-sm font-semibold">{t('settings.playback.ambient_light_gpu_title')}</p>
-					<p class="mt-1 text-xs leading-relaxed text-muted-foreground">
-						{t('settings.playback.ambient_light_gpu')}
+					<p class="text-sm font-semibold">
+						{t("settings.playback.ambient_light_gpu_title")}
+					</p>
+					<p
+						class="mt-1 text-xs leading-relaxed text-muted-foreground"
+					>
+						{t("settings.playback.ambient_light_gpu")}
 					</p>
 				</div>
 			</div>
@@ -1632,18 +2264,37 @@
 				variant="secondary"
 				size="sm"
 				class="self-start"
-				onclick={() => api.openExternal('https://www.videocardbenchmark.net/gpu_list.php')}
+				onclick={() =>
+					api.openExternal(
+						"https://www.videocardbenchmark.net/gpu_list.php",
+					)}
 			>
-				<HugeiconsIcon icon={LinkSquare02Icon} size={15} strokeWidth={1.8} />
-				{t('settings.playback.ambient_light_gpu_check')}
+				<HugeiconsIcon
+					icon={LinkSquare02Icon}
+					size={15}
+					strokeWidth={1.8}
+				/>
+				{t("settings.playback.ambient_light_gpu_check")}
 			</Button>
 		</Popover.Content>
 	</Popover.Root>
 {/snippet}
-{#snippet preferWordsSwitch()}<Switch checked={preferWordsOn} onCheckedChange={setPreferWords} />{/snippet}
-{#snippet hideVideoSwitch()}<Switch checked={hideVideosOn} onCheckedChange={setHideVideos} />{/snippet}
-{#snippet bannerSwitch()}<Switch checked={updateBannerOn} onCheckedChange={setUpdateBanner} />{/snippet}
-{#snippet betaSwitch()}<Switch checked={betaOn} onCheckedChange={setBeta} />{/snippet}
+{#snippet preferWordsSwitch()}<Switch
+		checked={preferWordsOn}
+		onCheckedChange={setPreferWords}
+	/>{/snippet}
+{#snippet hideVideoSwitch()}<Switch
+		checked={hideVideosOn}
+		onCheckedChange={setHideVideos}
+	/>{/snippet}
+{#snippet bannerSwitch()}<Switch
+		checked={updateBannerOn}
+		onCheckedChange={setUpdateBanner}
+	/>{/snippet}
+{#snippet betaSwitch()}<Switch
+		checked={betaOn}
+		onCheckedChange={setBeta}
+	/>{/snippet}
 
 <!-- Segmented, not three buttons: the options are one exclusive choice and should look like it. -->
 {#snippet qualityPicker()}
@@ -1666,13 +2317,20 @@
 
 {#snippet clientList()}
 	<p class="mb-3 max-w-prose text-xs leading-relaxed text-muted-foreground">
-		{t('settings.general.stream_clients_hint', { var: 'LIMUSIC_DISABLED_CLIENTS' })}
+		{t("settings.general.stream_clients_hint", {
+			var: "LIMUSIC_DISABLED_CLIENTS",
+		})}
 	</p>
 	<div class="flex flex-col gap-2">
 		{#each clients as name (name)}
-			<div class="flex items-center justify-between rounded-lg bg-muted/60 py-1.5 pr-2 pl-3">
+			<div
+				class="flex items-center justify-between rounded-lg bg-muted/60 py-1.5 pr-2 pl-3"
+			>
 				<span class="font-mono text-xs">{name}</span>
-				<Switch checked={!disabled.has(name)} onCheckedChange={() => toggleClient(name)} />
+				<Switch
+					checked={!disabled.has(name)}
+					onCheckedChange={() => toggleClient(name)}
+				/>
 			</div>
 		{/each}
 	</div>
@@ -1681,18 +2339,23 @@
 {#snippet blockedList()}
 	{#if !blocked.artists.length}
 		<p class="text-xs leading-relaxed text-muted-foreground">
-			{t('settings.playback.blocked_artists_empty')}
+			{t("settings.playback.blocked_artists_empty")}
 		</p>
 	{:else}
 		<div class="flex flex-col gap-2">
 			{#each showAllBlocked ? blocked.artists : blocked.artists.slice(0, BLOCKED_PREVIEW) as entry (entry.id ?? entry.name)}
-				<div class="flex items-center justify-between gap-2 rounded-lg bg-muted/60 py-1.5 pr-1.5 pl-3">
+				<div
+					class="flex items-center justify-between gap-2 rounded-lg bg-muted/60 py-1.5 pr-1.5 pl-3"
+				>
 					<span class="truncate text-xs">{entry.name}</span>
 					<Button
 						variant="ghost"
 						size="icon"
 						class="h-7 w-7 shrink-0"
-						aria-label={t('settings.playback.blocked_artists_remove', { name: entry.name })}
+						aria-label={t(
+							"settings.playback.blocked_artists_remove",
+							{ name: entry.name },
+						)}
 						onclick={() => unblockArtist(entry)}
 					>
 						<HugeiconsIcon icon={RemoveIcon} class="h-3.5 w-3.5" />
@@ -1709,13 +2372,20 @@
 					onclick={() => (showAllBlocked = !showAllBlocked)}
 				>
 					{showAllBlocked
-						? t('settings.playback.blocked_artists_show_less')
-						: t('settings.playback.blocked_artists_show_all', { count: blocked.artists.length })}
+						? t("settings.playback.blocked_artists_show_less")
+						: t("settings.playback.blocked_artists_show_all", {
+								count: blocked.artists.length,
+							})}
 				</Button>
 			{/if}
-			<Button variant="ghost" size="sm" class="ml-auto h-7 gap-1.5 px-2 text-xs" onclick={copyBlocked}>
+			<Button
+				variant="ghost"
+				size="sm"
+				class="ml-auto h-7 gap-1.5 px-2 text-xs"
+				onclick={copyBlocked}
+			>
 				<HugeiconsIcon icon={Copy01Icon} class="h-3.5 w-3.5" />
-				{t('settings.playback.blocked_artists_copy')}
+				{t("settings.playback.blocked_artists_copy")}
 			</Button>
 		</div>
 	{/if}
@@ -1729,8 +2399,11 @@
 			saveProxy();
 		}}
 	>
-		<Input bind:value={proxyInput} placeholder={t('settings.general.proxy_placeholder')} />
-		<Button type="submit" variant="outline">{t('common.save')}</Button>
+		<Input
+			bind:value={proxyInput}
+			placeholder={t("settings.general.proxy_placeholder")}
+		/>
+		<Button type="submit" variant="outline">{t("common.save")}</Button>
 	</form>
 {/snippet}
 
@@ -1744,40 +2417,63 @@
 			value={downloadConcurrency}
 			onValueChange={setDownloadConcurrency}
 		/>
-		<span class="w-6 shrink-0 text-right font-mono text-xs text-muted-foreground">{downloadConcurrency}</span>
+		<span
+			class="w-6 shrink-0 text-right font-mono text-xs text-muted-foreground"
+			>{downloadConcurrency}</span
+		>
 	</div>
 {/snippet}
 
 {#snippet deleteAllDownloadsButton()}
-	<Button size="sm" variant="destructive" onclick={() => (confirmDeleteAllDownloads = true)}>
-		{t('download.delete_all')}
+	<Button
+		size="sm"
+		variant="destructive"
+		onclick={() => (confirmDeleteAllDownloads = true)}
+	>
+		{t("download.delete_all")}
 	</Button>
 {/snippet}
 
 {#snippet downloadFolderControl()}
 	<div class="flex items-center gap-2">
 		<Button size="sm" variant="outline" onclick={changeDownloadDir}>
-			{t('download.change_folder')}
+			{t("download.change_folder")}
 		</Button>
-		<Button size="sm" variant="outline" onclick={() => api.openDownloadDir()}>
-			{t('download.open_folder')}
+		<Button
+			size="sm"
+			variant="outline"
+			onclick={() => api.openDownloadDir()}
+		>
+			{t("download.open_folder")}
 		</Button>
 	</div>
 {/snippet}
 
 {#snippet clearButton()}
-	<Button variant="outline" size="xs" class="h-5 px-2" onclick={doClearCaches} disabled={clearing}>
-		{clearing ? t('common.loading') : t('settings.data.clear_cache_button')}
+	<Button
+		variant="outline"
+		size="xs"
+		class="h-5 px-2"
+		onclick={doClearCaches}
+		disabled={clearing}
+	>
+		{clearing ? t("common.loading") : t("settings.data.clear_cache_button")}
 	</Button>
 {/snippet}
 
 {#snippet usageTotalText()}
-	<span class="text-sm font-medium tabular-nums">{usage ? formatCacheSize(usageTotal) : '…'}</span>
+	<span class="text-sm font-medium tabular-nums"
+		>{usage ? formatCacheSize(usageTotal) : "…"}</span
+	>
 {/snippet}
 
 <!-- One segment per kind, sized by its share; the rows below are its legend. -->
 {#snippet usageBar()}
-	<div class="flex h-2 gap-0.5 overflow-hidden rounded-full {usage ? '' : 'bg-muted'}">
+	<div
+		class="flex h-2 gap-0.5 overflow-hidden rounded-full {usage
+			? ''
+			: 'bg-muted'}"
+	>
 		{#each STORAGE as s (s.id)}
 			{#if usage && usageTotal > 0 && usage[s.id] > 0}
 				<div
@@ -1791,32 +2487,45 @@
 {/snippet}
 
 {#snippet copyDiagButton()}
-	<Button variant="secondary" size="sm" onclick={copyDiagnostics} disabled={diagState === 'busy'}>
-		{diagState === 'copied' ? t('settings.about.diagnostics_copied') : t('settings.about.copy')}
+	<Button
+		variant="secondary"
+		size="sm"
+		onclick={copyDiagnostics}
+		disabled={diagState === "busy"}
+	>
+		{diagState === "copied"
+			? t("settings.about.diagnostics_copied")
+			: t("settings.about.copy")}
 	</Button>
 {/snippet}
 
 {#snippet saveDiagButton()}
-	<Button variant="secondary" size="sm" onclick={saveDiagnostics} disabled={diagState === 'busy'}>
-		{diagState === 'saved' ? t('settings.about.diagnostics_saved') : t('common.save')}
+	<Button
+		variant="secondary"
+		size="sm"
+		onclick={saveDiagnostics}
+		disabled={diagState === "busy"}
+	>
+		{diagState === "saved"
+			? t("settings.about.diagnostics_saved")
+			: t("common.save")}
 	</Button>
 {/snippet}
 
 {#snippet reportButton()}
-	<Button size="sm" onclick={openBugForm}>{t('settings.about.report_issue_button')}</Button>
+	<Button size="sm" onclick={openBugForm}
+		>{t("settings.about.report_issue_button")}</Button
+	>
 {/snippet}
 
 {#snippet discordButton()}
-	<Button variant="secondary" size="sm" onclick={() => api.openExternal(api.DISCORD_URL)}>
+	<Button
+		variant="secondary"
+		size="sm"
+		onclick={() => api.openExternal(api.DISCORD_URL)}
+	>
 		<HugeiconsIcon icon={DiscordIcon} size={15} strokeWidth={1.8} />
-		{t('settings.about.discord_button')}
-	</Button>
-{/snippet}
-
-{#snippet kofiButton()}
-	<Button variant="secondary" size="sm" onclick={() => api.openExternal('https://ko-fi.com/simohypers')}>
-		<HugeiconsIcon icon={Coffee02Icon} size={15} strokeWidth={1.8} />
-		{t('settings.about.kofi_button')}
+		{t("settings.about.discord_button")}
 	</Button>
 {/snippet}
 
@@ -1828,20 +2537,35 @@
 
 {#snippet updateButton()}
 	{#if updateState.available && !updateState.canInstall}
-		<Button size="sm" onclick={openDownloadPage}>{t('settings.about.download_page')}</Button>
+		<Button size="sm" onclick={openDownloadPage}
+			>{t("settings.about.download_page")}</Button
+		>
 	{:else if updateState.available}
-		<Button size="sm" onclick={installUpdate} disabled={updateState.installing}>
-			{updateState.installing ? t('common.loading') : t('settings.about.install_update')}
+		<Button
+			size="sm"
+			onclick={installUpdate}
+			disabled={updateState.installing}
+		>
+			{updateState.installing
+				? t("common.loading")
+				: t("settings.about.install_update")}
 		</Button>
 	{:else}
-		<Button variant="outline" size="sm" onclick={checkUpdates} disabled={updateState.checking}>
-			{updateState.checking ? t('settings.about.checking_updates') : t('settings.about.check_updates')}
+		<Button
+			variant="outline"
+			size="sm"
+			onclick={checkUpdates}
+			disabled={updateState.checking}
+		>
+			{updateState.checking
+				? t("settings.about.checking_updates")
+				: t("settings.about.check_updates")}
 		</Button>
 	{/if}
 {/snippet}
 
 {#snippet updateAlert()}
-	<Alert variant={updateResult?.error ? 'destructive' : 'default'}>
+	<Alert variant={updateResult?.error ? "destructive" : "default"}>
 		<AlertDescription>{updateResult?.message}</AlertDescription>
 	</Alert>
 {/snippet}
@@ -1856,14 +2580,21 @@
 		value={karaokeAvailability.device}
 		onValueChange={(v) => void setKaraokeDevice(v as api.KaraokeDevice)}
 	>
-		<Select.Trigger class="w-48 shrink-0" aria-label={t('karaoke.settings.device')}>
+		<Select.Trigger
+			class="w-48 shrink-0"
+			aria-label={t("karaoke.settings.device")}
+		>
 			<span class="flex-1 truncate text-left">
-				{karaokeDeviceOptions.find((o) => o.value === karaokeAvailability.device)?.label ?? karaokeDeviceOptions[0].label}
+				{karaokeDeviceOptions.find(
+					(o) => o.value === karaokeAvailability.device,
+				)?.label ?? karaokeDeviceOptions[0].label}
 			</span>
 		</Select.Trigger>
 		<Select.Content>
 			{#each karaokeDeviceOptions as opt (opt.value)}
-				<Select.Item value={opt.value} label={opt.label}>{opt.label}</Select.Item>
+				<Select.Item value={opt.value} label={opt.label}
+					>{opt.label}</Select.Item
+				>
 			{/each}
 		</Select.Content>
 	</Select.Root>
@@ -1875,31 +2606,49 @@
 		value={karaokeSelection.model}
 		onValueChange={setKaraokeModel}
 	>
-		<Select.Trigger class="w-48 shrink-0" aria-label={t('karaoke.settings.model')}>
+		<Select.Trigger
+			class="w-48 shrink-0"
+			aria-label={t("karaoke.settings.model")}
+		>
 			<span class="flex-1 truncate text-left">
-				{karaokeModelOptions.find((o) => o.value === karaokeSelection.model)?.label ?? karaokeSelection.model}
+				{karaokeModelOptions.find(
+					(o) => o.value === karaokeSelection.model,
+				)?.label ?? karaokeSelection.model}
 			</span>
 		</Select.Trigger>
 		<Select.Content>
 			{#each karaokeModelOptions as opt (opt.value)}
-				<Select.Item value={opt.value} label={opt.label}>{opt.label}</Select.Item>
+				<Select.Item value={opt.value} label={opt.label}
+					>{opt.label}</Select.Item
+				>
 			{/each}
 		</Select.Content>
 	</Select.Root>
 {/snippet}
 
 {#snippet karaokeModelBelow()}
-	{@const currentModelSt = karaokeModels[karaokeSelection.model] ?? karaokeModels.light}
+	{@const currentModelSt =
+		karaokeModels[karaokeSelection.model] ?? karaokeModels.light}
 	{@const sizeStr = tierMB(karaokeSelection.model)}
 	{@const downloadedStr = (currentModelSt.downloaded / 1048576).toFixed(1)}
 	{@const totalStr = (currentModelSt.total / 1048576).toFixed(1)}
-	{@const anyDownloading = Object.values(karaokeModels).some((m) => m.downloading)}
+	{@const anyDownloading = Object.values(karaokeModels).some(
+		(m) => m.downloading,
+	)}
 	{@const isDisabled = playback.karaoke || anyDownloading}
-	{@const disableReason = playback.karaoke ? t('karaoke.settings.delete_in_use') : anyDownloading ? t('karaoke.settings.delete_in_use') : ''}
+	{@const disableReason = playback.karaoke
+		? t("karaoke.settings.delete_in_use")
+		: anyDownloading
+			? t("karaoke.settings.delete_in_use")
+			: ""}
 	<div class="flex items-center justify-between pt-1">
 		<span class="text-xs text-muted-foreground flex items-center gap-2">
 			{#if currentModelSt.installed}
-				<span>{t('karaoke.settings.model_installed', { size: sizeStr })}</span>
+				<span
+					>{t("karaoke.settings.model_installed", {
+						size: sizeStr,
+					})}</span
+				>
 				<Button
 					variant="outline"
 					size="sm"
@@ -1915,21 +2664,34 @@
 						}
 					}}
 				>
-					{deleteConfirmModel === karaokeSelection.model ? t('karaoke.settings.delete_confirm') : t('karaoke.settings.delete')}
+					{deleteConfirmModel === karaokeSelection.model
+						? t("karaoke.settings.delete_confirm")
+						: t("karaoke.settings.delete")}
 				</Button>
 			{:else if currentModelSt.downloading}
 				{downloadedStr} / {totalStr} MB
 			{:else}
-				{t('karaoke.settings.model_missing')}
+				{t("karaoke.settings.model_missing")}
 			{/if}
 		</span>
 		{#if !currentModelSt.installed && !currentModelSt.downloading}
-			<Button size="sm" onclick={() => { karaokeConsent.model = karaokeSelection.model; karaokeConsent.enableAfter = false; karaokeConsent.open = true; }}>
-				{t('karaoke.download')}
+			<Button
+				size="sm"
+				onclick={() => {
+					karaokeConsent.model = karaokeSelection.model;
+					karaokeConsent.enableAfter = false;
+					karaokeConsent.open = true;
+				}}
+			>
+				{t("karaoke.download")}
 			</Button>
 		{:else if currentModelSt.downloading}
-			<Button variant="outline" size="sm" onclick={cancelKaraokeModelDownload}>
-				{t('karaoke.cancel')}
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={cancelKaraokeModelDownload}
+			>
+				{t("karaoke.cancel")}
 			</Button>
 		{/if}
 	</div>
@@ -1940,25 +2702,33 @@
 		<span class="text-xs text-muted-foreground">
 			{#if karaokeAvailability.reason}
 				{t(`karaoke.unavailable.${karaokeAvailability.reason}`)}
-			{:else if karaokeAvailability.processor === 'gpu'}
-				{t('karaoke.settings.processor_gpu')}
-			{:else if karaokeAvailability.processor === 'cpu'}
-				{t('karaoke.settings.processor_cpu')}
+			{:else if karaokeAvailability.processor === "gpu"}
+				{t("karaoke.settings.processor_gpu")}
+			{:else if karaokeAvailability.processor === "cpu"}
+				{t("karaoke.settings.processor_cpu")}
 			{:else}
-				{t('karaoke.settings.not_started')}
+				{t("karaoke.settings.not_started")}
 			{/if}
 		</span>
-		{#if karaokeAvailability.reason === 'vc_runtime'}
-			<Button variant="outline" size="sm" onclick={() => api.openExternal(api.VC_REDIST_URL)}>
-				{t('karaoke.settings.get_vc_redist')}
+		{#if karaokeAvailability.reason === "vc_runtime"}
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={() => api.openExternal(api.VC_REDIST_URL)}
+			>
+				{t("karaoke.settings.get_vc_redist")}
 			</Button>
 		{/if}
 	</div>
 {/snippet}
 
 {#snippet karaokeCreditControl()}
-	<Button variant="outline" size="sm" onclick={() => api.openExternal(UVR_URL)}>
-		{t('karaoke.consent.credit_link')}
+	<Button
+		variant="outline"
+		size="sm"
+		onclick={() => api.openExternal(UVR_URL)}
+	>
+		{t("karaoke.consent.credit_link")}
 	</Button>
 {/snippet}
 
@@ -1968,14 +2738,21 @@
 		value={String(karaokeCacheLimit)}
 		onValueChange={setKaraokeCacheLimit}
 	>
-		<Select.Trigger class="w-40 shrink-0" aria-label={t('karaoke.settings.cache_limit')}>
+		<Select.Trigger
+			class="w-40 shrink-0"
+			aria-label={t("karaoke.settings.cache_limit")}
+		>
 			<span class="flex-1 truncate text-left">
-				{karaokeCacheOptions.find((o) => o.value === String(karaokeCacheLimit))?.label ?? `${karaokeCacheLimit} MB`}
+				{karaokeCacheOptions.find(
+					(o) => o.value === String(karaokeCacheLimit),
+				)?.label ?? `${karaokeCacheLimit} MB`}
 			</span>
 		</Select.Trigger>
 		<Select.Content>
 			{#each karaokeCacheOptions as opt (opt.value)}
-				<Select.Item value={opt.value} label={opt.label}>{opt.label}</Select.Item>
+				<Select.Item value={opt.value} label={opt.label}
+					>{opt.label}</Select.Item
+				>
 			{/each}
 		</Select.Content>
 	</Select.Root>
@@ -1992,11 +2769,13 @@
 
 {#snippet karaokeClearButton(small = false)}
 	<Button
-		variant={clearCacheConfirm ? 'destructive' : 'outline'}
-		size={small ? 'xs' : 'sm'}
-		class={small ? 'h-5 px-2' : ''}
+		variant={clearCacheConfirm ? "destructive" : "outline"}
+		size={small ? "xs" : "sm"}
+		class={small ? "h-5 px-2" : ""}
 		onclick={clearKaraokeCache}
 	>
-		{clearCacheConfirm ? t('karaoke.settings.clear_confirm') : t('karaoke.settings.clear')}
+		{clearCacheConfirm
+			? t("karaoke.settings.clear_confirm")
+			: t("karaoke.settings.clear")}
 	</Button>
 {/snippet}
