@@ -1,11 +1,11 @@
 //! PoToken / BotGuard generator (context/04, context/13).
 //!
 //! Two tokens per session/video (context/04): a session token (minted from visitorData, cached in
-//! Rust with its TTL — [`PoTokenGenerator::get_session_po_token`]) → the `/player` request body; a
-//! per-video streaming token (minted from videoId, lazy —
+//! Rust with its TTL - [`PoTokenGenerator::get_session_po_token`]) → the `/player` request body; a
+//! per-video streaming token (minted from videoId, lazy -
 //! [`PoTokenGenerator::get_streaming_po_token`]) → `&pot=` on the stream URL. Everything is wrapped
 //! so a failure or timeout returns `None` and the orchestrator falls through to the non-PoToken
-//! clients (graceful degradation — context/06 §5).
+//! clients (graceful degradation - context/06 §5).
 //!
 //! BotGuard itself runs in [`botguard`], on `rustypipe-botguard` (deno_core + JSDOM), **not** in a
 //! hidden webview. That is the 2026-08-25 fix for KI-1: googlevideo rejects every token a real
@@ -105,9 +105,9 @@ impl SessionToken {
 pub struct PoTokenGenerator {
     db: Arc<Db>,
     minter: Mutex<Option<Minter>>,
-    /// Session token cache — see [`SessionToken`].
+    /// Session token cache - see [`SessionToken`].
     session_token: Mutex<Option<SessionToken>>,
-    /// Latched once the JS runtime proves unusable — thereafter always degrade to the non-PoToken
+    /// Latched once the JS runtime proves unusable - thereafter always degrade to the non-PoToken
     /// clients (context/04 §BadWebViewException).
     runtime_bad: AtomicBool,
 }
@@ -159,7 +159,7 @@ impl PoTokenGenerator {
                 None
             }
             Err(_) => {
-                tracing::warn!("PoToken session mint timed out — degrading");
+                tracing::warn!("PoToken session mint timed out - degrading");
                 self.teardown().await;
                 None
             }
@@ -183,7 +183,7 @@ impl PoTokenGenerator {
                 None
             }
             Err(_) => {
-                tracing::warn!(video_id, "PoToken streaming mint timed out — degrading");
+                tracing::warn!(video_id, "PoToken streaming mint timed out - degrading");
                 self.teardown().await;
                 None
             }
@@ -191,7 +191,7 @@ impl PoTokenGenerator {
     }
 
     async fn on_failure(&self, what: &str, e: &botguard::Error) {
-        tracing::warn!(what, error = %e, "PoToken mint failed — degrading");
+        tracing::warn!(what, error = %e, "PoToken mint failed - degrading");
         if matches!(e, botguard::Error::Fatal(_)) {
             self.runtime_bad.store(true, Ordering::SeqCst);
         }
@@ -316,7 +316,7 @@ impl PoTokenGenerator {
         // call, and one stored by a previous run is exactly that. The per-video streaming path
         // builds its own minter on demand if it ever needs one, so there is nothing else to warm.
         if self.cached_session_token(visitor_data).await.is_some() {
-            tracing::info!("PoToken session token still valid — skipping the BotGuard bootstrap");
+            tracing::info!("PoToken session token still valid - skipping the BotGuard bootstrap");
             return;
         }
         let mut guard = self.minter.lock().await;
@@ -330,7 +330,7 @@ impl PoTokenGenerator {
         }
     }
 
-    /// Drop the runtime if it's been idle longer than `idle` — the mint-and-drop memory policy
+    /// Drop the runtime if it's been idle longer than `idle` - the mint-and-drop memory policy
     /// (Phase-0 decision): keep it warm while the queue mints, drop it when idle. Dropping the
     /// minter ends its thread and frees the V8 isolate.
     // ponytail: called from a periodic task in lib.rs; no self-spawned monitor.

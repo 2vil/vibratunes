@@ -1,9 +1,9 @@
 // Mobile experience store, modeled on Tousync's src/lib/store.svelte.ts. One reactive object
-// drives every phone-specific decision: a JS-driven `isMobile` (<768 px — the layout trees are
+// drives every phone-specific decision: a JS-driven `isMobile` (<768 px - the layout trees are
 // structurally different, so Tailwind classes alone can't do the switch), the platform, and the
 // mobile AppBar slots that pages configure imperatively (Tousync's configureAppBarUI pattern).
 import { browser } from '$app/environment';
-	import type { IconSvgElement } from '@hugeicons/svelte';
+import type { IconSvgElement } from '@hugeicons/svelte';
 
 /** Breakpoint under which the app renders its phone shell. Matches Tailwind's `md`. */
 const MOBILE_BREAKPOINT = 768;
@@ -11,13 +11,13 @@ const MOBILE_BREAKPOINT = 768;
 class Mobile {
 	#screenWidth = $state(browser ? window.innerWidth : 1024);
 
-	/** True under a phone-width viewport — drives the layout tree switch in +layout.svelte. */
+	/** True under a phone-width viewport - drives the layout tree switch in +layout.svelte. */
 	isMobile = $derived(this.#screenWidth < MOBILE_BREAKPOINT);
 
 	/** Running inside a Tauri webview (desktop window or Android app), not a plain browser. */
 	isTauri = $state(browser && '__TAURI_INTERNALS__' in window);
 
-	/** Android app (vs desktop Tauri or browser) — gates desktop-only features. */
+	/** Android app (vs desktop Tauri or browser) - gates desktop-only features. */
 	isAndroid = $state(browser && /Android/i.test(navigator.userAgent));
 
 	// --- AppBar slots (mobile top bar) ---------------------------------------------------------
@@ -36,7 +36,7 @@ class Mobile {
 
 	constructor() {
 		if (!browser) return;
-		// Keep isMobile live through resizes and rotations — widening a phone window flips the
+		// Keep isMobile live through resizes and rotations - widening a phone window flips the
 		// layout tree the same way a phone flips it on rotation (Tousync does the same).
 		window.addEventListener('resize', () => (this.#screenWidth = window.innerWidth));
 	}

@@ -2,7 +2,7 @@
 //!
 //! Same tolerant walk-the-tree approach as `metadata.rs` (reuses its helpers): we locate the few
 //! renderer node types we care about anywhere in the response and pull only the fields the UI
-//! needs — robust to YouTube reshuffling the surrounding container tree.
+//! needs - robust to YouTube reshuffling the surrounding container tree.
 //! - `musicCarouselShelfRenderer` → a home section (a titled row of cards).
 //! - `musicTwoRowItemRenderer`     → a card (playlist / album / artist / song).
 //! - `musicResponsiveListItemRenderer` → a track row (shared with search; via `parse_list_item`).
@@ -33,7 +33,7 @@ pub struct BrowseItem {
     pub subtitle: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumbnail: Option<String>,
-    /// "3:47" — only on song rows from a list-style carousel (a card shelf carries none). Kept out
+    /// "3:47" - only on song rows from a list-style carousel (a card shelf carries none). Kept out
     /// of `subtitle` so the queue and the scrobbler still get a clean artist string.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<String>,
@@ -60,7 +60,7 @@ pub struct BrowseItem {
     /// stream. Carried so a card played from a shelf reaches the orchestrator with the flag set.
     #[serde(default)]
     pub is_upload: bool,
-    /// YouTube marks this card explicit ([`is_explicit`]) — a track, or an album whose tracks are.
+    /// YouTube marks this card explicit ([`is_explicit`]) - a track, or an album whose tracks are.
     #[serde(default)]
     pub explicit: bool,
 }
@@ -107,7 +107,7 @@ pub struct HomePage {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum PlaylistSort {
-    /// The playlist's own order — what dragging rows around in YouTube Music produces.
+    /// The playlist's own order - what dragging rows around in YouTube Music produces.
     Default,
     Newest,
     Oldest,
@@ -134,13 +134,13 @@ impl PlaylistSort {
     /// honours these, in both directions, and asking for one writes nothing to the account (Liked
     /// Music is the exception: YouTube remembers whatever it was last asked for).
     ///
-    /// The values are a protobuf literal — field 139 wrapping `{1: order, 2: kind}`, order 1
+    /// The values are a protobuf literal - field 139 wrapping `{1: order, 2: kind}`, order 1
     /// ascending / 2 descending, kind 3 date / 4 top-voted / 5 title / 6 artist / 7 album, and an
     /// empty submessage for the stored order. Copied from YouTube's own menu rather than encoded,
     /// because these eleven are all of them.
     pub fn params(self, desc: bool) -> &'static str {
         match (self, desc) {
-            (Self::Default, _) => "2ggA", // da 08 00 — empty, i.e. leave the order alone
+            (Self::Default, _) => "2ggA", // da 08 00 - empty, i.e. leave the order alone
             // "Newest" is already a descending sort on date, so reversing it *is* "Oldest".
             (Self::Newest, false) | (Self::Oldest, true) => "2ggECAIQAw==",
             (Self::Oldest, false) | (Self::Newest, true) => "2ggECAEQAw==",
@@ -264,7 +264,7 @@ pub struct ArtistPage {
     /// publishes no listener figure for.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub monthly_listeners: Option<String>,
-    /// Subscribe target — the channelId (falls back to the browseId, which is the same `UC…`).
+    /// Subscribe target - the channelId (falls back to the browseId, which is the same `UC…`).
     pub channel_id: String,
     pub subscribed: bool,
     /// This artist's radio (`RDEM…` / `RDAO…`), from the header's "start radio" button. Server-
@@ -298,7 +298,7 @@ pub struct ArtistCarousel {
 pub struct AlbumPage {
     pub title: Option<String>,
     pub artist: Option<String>,
-    /// The album artist's channel browseId (`UC…`) — links to the artist page.
+    /// The album artist's channel browseId (`UC…`) - links to the artist page.
     pub artist_id: Option<String>,
     /// The artist line run by run, so a collaborative album links each artist separately.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -315,7 +315,7 @@ pub struct AlbumPage {
     pub continuation: Option<String>,
     /// The album itself is flagged explicit (its header wears the badge, not just some tracks).
     pub explicit: bool,
-    /// The album's audio playlist id (`OLAK5uy_…`) — the radio seed for autoplay continuation and
+    /// The album's audio playlist id (`OLAK5uy_…`) - the radio seed for autoplay continuation and
     /// the target of the library save (an album in your library is a "like" on this playlist).
     pub playlist_id: Option<String>,
     /// Whether the album is already saved to the signed-in user's library.
@@ -328,7 +328,7 @@ pub struct AlbumPage {
 
 /// Parse a `FEmusic_home` response into filter chips + titled carousel sections. context/08.
 /// A chip's `params` fed back into `browse(FEmusic_home)` yields that mood's feed (same shape,
-/// hence the same parser — "Mixed for you" and friends are just more carousel shelves).
+/// hence the same parser - "Mixed for you" and friends are just more carousel shelves).
 pub fn parse_home(root: &Value) -> HomePage {
     let chips: Vec<HomeChip> = find_all(root, "chipCloudChipRenderer")
         .into_iter()
@@ -479,7 +479,7 @@ pub fn parse_playlist(root: &Value) -> PlaylistPage {
             it
         })
         .collect();
-    // Present only for playlists the signed-in user owns — the sole reliable ownership signal.
+    // Present only for playlists the signed-in user owns - the sole reliable ownership signal.
     let owned = !find_all(root, "musicEditablePlaylistDetailHeaderRenderer").is_empty();
     // The facepile is on every playlist header (the owner's avatar); only a collaborative one taps
     // through to the Collaborate panel, and it also carries an avatar per contributor. Note a
@@ -609,7 +609,7 @@ pub struct SearchResults {
 
 /// Parse an unfiltered `search` response. The metadata client (WEB_REMIX) returns a **flat** list
 /// (one `musicCardShelfRenderer` "top result" + many `itemSectionRenderer` rows), NOT titled
-/// per-type shelves — so we classify each row by its own navigation target. context/08.
+/// per-type shelves - so we classify each row by its own navigation target. context/08.
 pub fn parse_search_all(root: &Value) -> SearchResults {
     let mut r = SearchResults::default();
     let Some(contents) = find_all(root, "sectionListRenderer")
@@ -696,7 +696,7 @@ fn bucket_item(li: &Value, r: &mut SearchResults) {
     }
 }
 
-/// Parse a filtered (album/artist/playlist) search into a flat card list — the "Show more" pages.
+/// Parse a filtered (album/artist/playlist) search into a flat card list - the "Show more" pages.
 pub fn parse_search_cards(root: &Value) -> Vec<BrowseItem> {
     find_all(root, "musicResponsiveListItemRenderer")
         .into_iter()
@@ -887,7 +887,7 @@ pub fn parse_album(root: &Value) -> AlbumPage {
     }
 }
 
-/// The header's save-to-library `toggleButtonRenderer` — the one whose action is a `likeEndpoint`
+/// The header's save-to-library `toggleButtonRenderer` - the one whose action is a `likeEndpoint`
 /// on the album's playlist (the header's other buttons are play/menu). Saving an album to the
 /// library IS a like on its `OLAK5uy_` playlist; `isToggled` is the current state. Live-verified
 /// 2026-07.
@@ -904,7 +904,7 @@ fn library_toggle_playlist_id(header: Option<&Value>) -> Option<String> {
 /// Per-track "this row links the music video, not the album audio" flags, aligned with
 /// `parse_album().items` (same rows, same parse filter). A row is a video when its watch
 /// endpoint's `musicVideoType` is present and is neither audio kind (a generated album track or
-/// one of the user's own uploads) — absent means we can't tell, so we assume audio and leave it
+/// one of the user's own uploads) - absent means we can't tell, so we assume audio and leave it
 /// alone.
 pub fn album_video_flags(root: &Value) -> Vec<bool> {
     find_all(root, "musicResponsiveListItemRenderer")
@@ -1104,7 +1104,7 @@ fn text_or_runs(v: Option<&Value>) -> Option<String> {
     v.get("simpleText").and_then(Value::as_str).map(str::to_owned).or_else(|| runs_text_opt(v))
 }
 
-/// True if a browse response is YouTube's logged-out "Sign in" empty state — which is what the
+/// True if a browse response is YouTube's logged-out "Sign in" empty state - which is what the
 /// server returns when the cookie has gone stale (its `__Secure-*SIDTS` cookies rotate ~hourly).
 /// The endpoints turn this into a clear "session expired" error instead of a silently-empty page.
 pub(crate) fn is_signed_out(root: &Value) -> bool {
@@ -1252,7 +1252,7 @@ pub(crate) fn podcast_show_id(browse_id: &str, root: &Value) -> Option<String> {
     (episodes && playlist_header(root).is_none()).then(|| format!("MPSP{id}"))
 }
 
-/// The playlist/album header node — recursion finds the detail renderer even when it's wrapped in
+/// The playlist/album header node - recursion finds the detail renderer even when it's wrapped in
 /// an editable-playlist header.
 fn playlist_header(root: &Value) -> Option<&Value> {
     ["musicResponsiveHeaderRenderer", "musicDetailHeaderRenderer"]
@@ -1260,7 +1260,7 @@ fn playlist_header(root: &Value) -> Option<&Value> {
         .find_map(|key| find_all(root, key).into_iter().next())
 }
 
-/// The shelf holding the playlist's/album's own tracks — the first one in the response, since the
+/// The shelf holding the playlist's/album's own tracks - the first one in the response, since the
 /// suggestions section always comes after it.
 fn track_shelf(root: &Value) -> Option<&Value> {
     find_all(root, "musicPlaylistShelfRenderer")
@@ -1272,7 +1272,7 @@ fn track_shelf(root: &Value) -> Option<&Value> {
 /// The track shelf's own paging token. Scoped on purpose: an owned playlist's page also carries a
 /// "suggestions" section with a continuation of its own, and paging *that* appends recommended
 /// songs the playlist doesn't contain (a 6-track playlist grew to 13). Falls back to nothing rather
-/// than to a whole-tree sweep — a token from the wrong shelf is worse than no paging.
+/// than to a whole-tree sweep - a token from the wrong shelf is worse than no paging.
 fn shelf_continuation(root: &Value) -> Option<String> {
     continuation_token(track_shelf(root)?)
 }
@@ -1384,7 +1384,7 @@ mod tests {
         assert!(cards.iter().all(|c| c.kind == "album" && c.id.starts_with("MPRE")));
     }
 
-    // An artist radio id can't be built client-side (no `RD…` prefix trick) — it only exists in
+    // An artist radio id can't be built client-side (no `RD…` prefix trick) - it only exists in
     // the header's start-radio button, next to a pile of other playlist ids that aren't radios.
     #[test]
     fn parses_the_artist_radio_off_the_header() {
@@ -1461,7 +1461,7 @@ mod tests {
                 "title": { "runs": [{ "text": "Yesterday" }] },
                 "contents": [row("ccccccccccc", "Third")]
             } },
-            // Nothing playable in it (no videoId anywhere) — dropped rather than shown empty.
+            // Nothing playable in it (no videoId anywhere) - dropped rather than shown empty.
             { "musicShelfRenderer": {
                 "title": { "runs": [{ "text": "Last week" }] },
                 "contents": [json!({ "musicResponsiveListItemRenderer": {} })]
@@ -1687,7 +1687,7 @@ mod tests {
     }
 
     /// Library artists come back as a shelf of list rows (no grid), and each links `MPLA` + the
-    /// channelId — which has to become a plain `UC…` artist card.
+    /// channelId - which has to become a plain `UC…` artist card.
     #[test]
     fn parses_library_artists_shelf() {
         let root = json!({
@@ -1824,7 +1824,7 @@ mod tests {
     }
 
     /// An owned playlist's page carries a suggestions section ("add more to this playlist") with a
-    /// continuation of its own. Paging that appended recommended songs to the track list — a
+    /// continuation of its own. Paging that appended recommended songs to the track list - a
     /// 6-track playlist showed 13. Only the track shelf's own token counts.
     #[test]
     fn short_playlist_ignores_the_suggestion_shelf_token() {
@@ -1843,7 +1843,7 @@ mod tests {
                             ]
                         } }
                     ] } },
-                    // "Suggestions" shelf — its token must never be treated as more tracks.
+                    // "Suggestions" shelf - its token must never be treated as more tracks.
                     { "musicShelfRenderer": {
                         "title": { "runs": [{ "text": "Suggestions" }] },
                         "contents": [],
@@ -1990,7 +1990,7 @@ mod tests {
     fn continuation_ignores_nested_edit_renderer() {
         // An owned/editable playlist's continuation embeds, inside each track row, a NESTED copy of
         // the same `musicResponsiveListItemRenderer` (an add-suggestion edit command). A deep sweep
-        // would count every track twice — the real "load more" duplication bug.
+        // would count every track twice - the real "load more" duplication bug.
         let editable_row = |vid: &str, title: &str| {
             json!({ "musicResponsiveListItemRenderer": {
                 "playlistItemData": { "videoId": vid },
@@ -2227,7 +2227,7 @@ mod tests {
         assert_eq!(a.items[0].video_id, "trk1");
         // Track row has no thumbnail of its own → falls back to the album cover (for the player bar).
         assert_eq!(a.items[0].thumbnail.as_deref(), Some("cover_big.jpg"));
-        // The album's own OLAK id from the track rows — never the carousel's other-album id.
+        // The album's own OLAK id from the track rows - never the carousel's other-album id.
         assert_eq!(a.playlist_id.as_deref(), Some("OLAK5uy_iceman"));
         assert!(!a.in_library); // no save button in this fixture
 
@@ -2363,7 +2363,7 @@ mod tests {
         let root = json!({ "contents": [
             row("t1", "Audio Track", Some("MUSIC_VIDEO_TYPE_ATV")),
             row("t2", "MV Track", Some("MUSIC_VIDEO_TYPE_OMV")),
-            // Unparseable row (no title) — dropped by parse_album, so flags must skip it too.
+            // Unparseable row (no title) - dropped by parse_album, so flags must skip it too.
             row("t3", "", Some("MUSIC_VIDEO_TYPE_OMV")),
             row("t4", "Untyped Track", None),
         ] });
@@ -2526,7 +2526,7 @@ mod tests {
         assert!(!m.editable, "a browseEndpoint menu cannot be written back");
     }
 
-    /// Albums and YouTube's radio mixes carry no menu at all — the UI falls back to sorting the
+    /// Albums and YouTube's radio mixes carry no menu at all - the UI falls back to sorting the
     /// rows it has rather than asking for an order the server will not give.
     #[test]
     fn no_menu_on_a_list_youtube_will_not_reorder() {

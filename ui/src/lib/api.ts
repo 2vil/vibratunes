@@ -1,4 +1,4 @@
-// The UI's only door to Rust. context/11 UI contract — commands in, events out. The UI never
+// The UI's only door to Rust. context/11 UI contract - commands in, events out. The UI never
 // touches YouTube; everything here is a Tauri command or event payload.
 import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
@@ -18,19 +18,19 @@ export interface SongItem {
 	video_id: string;
 	title: string;
 	artists: string;
-	/** Primary artist's channel browseId (`UC…`), when linked — makes the artist name navigable. */
+	/** Primary artist's channel browseId (`UC…`), when linked - makes the artist name navigable. */
 	artist_id?: string;
-	/** The artist line run by run — a collab links each name to its own page. Empty/absent when
+	/** The artist line run by run - a collab links each name to its own page. Empty/absent when
 	 * nothing is linked; render plain `artists` then. */
 	artist_runs?: ArtistRun[];
 	album?: string;
-	/** The album's browseId (`MPRE…`), when linked — makes the album navigable. */
+	/** The album's browseId (`MPRE…`), when linked - makes the album navigable. */
 	album_id?: string;
 	duration?: string;
 	/** Play count as YouTube abbreviates it ("53M"). Album, artist and search rows. */
 	play_count?: string;
 	thumbnail?: string;
-	/** Item id within a playlist — present only on playlist tracks; needed to remove them. */
+	/** Item id within a playlist - present only on playlist tracks; needed to remove them. */
 	set_video_id?: string;
 	/** Collaborative playlists only: who added this track, and one avatar per person (several on a
 	 * Taste Match row more than one member shares). */
@@ -39,22 +39,22 @@ export interface SongItem {
 	/** When the track went into the playlist (unix seconds). Playlists on this machine only:
 	 *  YouTube sends no such date for its own. */
 	added_at?: number;
-	/** The signed-in user's rating (absent when the response didn't say — same as 'indifferent'). */
+	/** The signed-in user's rating (absent when the response didn't say - same as 'indifferent'). */
 	rating?: Rating;
 	/** "Add to library" off the row's own menu, with a token for each direction. Absent on rows
 	 *  YouTube sent no menu for, and on the ones built here (local files, On Repeat, a Listen
-	 *  Together guest's queue) — the menu hides the action rather than offering a dead one.
+	 *  Together guest's queue) - the menu hides the action rather than offering a dead one.
 	 *  Library ▸ Songs is not Liked Music: this is a feedback write, not a rating. */
 	library?: { in_library: boolean; add_token?: string; remove_token?: string };
 	/** Listen Together: name of the guest who added this queue item (session adds only). */
 	queued_by?: string;
-	/** Queued to play next ("Play next", or a guest's session add) — the "Next in queue" block. */
+	/** Queued to play next ("Play next", or a guest's session add) - the "Next in queue" block. */
 	queued?: boolean;
-	/** Appended by "Add to queue" — its own block at the tail of the queue. */
+	/** Appended by "Add to queue" - its own block at the tail of the queue. */
 	queued_end?: boolean;
 	/** The album/playlist either block was added from, for its heading in the queue panel. */
 	queued_from?: string;
-	/** Appended by autoplay radio continuation — drives the queue's "Autoplay" divider + badge. */
+	/** Appended by autoplay radio continuation - drives the queue's "Autoplay" divider + badge. */
 	autoplay?: boolean;
 	/** YouTube flags the track explicit. Browse/search rows only: `/next` carries no badge, so a
 	 *  radio- or autoplay-appended track arrives without it. */
@@ -74,7 +74,7 @@ export interface NowPlaying {
 	title: string;
 	artists: string;
 	artistId?: string;
-	/** The artist line run by run — links each artist of a collab separately. */
+	/** The artist line run by run - links each artist of a collab separately. */
 	artistRuns?: ArtistRun[];
 	thumbnail?: string;
 	duration?: string;
@@ -98,7 +98,7 @@ export interface QueueState {
 	currentIndex: number;
 	shuffle?: boolean;
 	repeat?: RepeatMode;
-	/** What seeded the queue (playlist/album title, "<song> Radio") — the "Next from" header. */
+	/** What seeded the queue (playlist/album title, "<song> Radio") - the "Next from" header. */
 	sourceName?: string | null;
 	/** The playlist the queue was started from, when it was one. What "Remove from this playlist"
 	 *  in the player's track menu writes to; absent for radios, single songs and guest queues. */
@@ -135,7 +135,7 @@ export interface AccountIdentity {
 	selected: boolean;
 }
 
-/** One saved Google account (multi-account). Display fields only — cookies stay in Rust. */
+/** One saved Google account (multi-account). Display fields only - cookies stay in Rust. */
 export interface SavedAccount {
 	/** Opaque, process-local selector. */
 	id: string;
@@ -154,13 +154,13 @@ export interface BrowseItem {
 	title: string;
 	subtitle?: string;
 	thumbnail?: string;
-	/** "3:47" — song items from a list-style shelf only (card shelves don't carry one). */
+	/** "3:47" - song items from a list-style shelf only (card shelves don't carry one). */
 	duration?: string;
 	/** Song cards only: the track's album (`MPRE…`), what puts "Go to album" in its menus. */
 	albumId?: string;
 	/** Song cards only: the artist line run by run, so a card that gets played keeps its links. */
 	artistRuns?: ArtistRun[];
-	/** Play count as YouTube abbreviates it ("2.5B") — search song rows only. */
+	/** Play count as YouTube abbreviates it ("2.5B") - search song rows only. */
 	playCount?: string;
 	/** YouTube flags this track/album explicit. */
 	explicit?: boolean;
@@ -219,7 +219,7 @@ export const LIBRARY_UPLOADS_ID = 'FEmusic_library_privately_owned_tracks';
 
 /**
  * Local music (Rust `local.rs`). A file on disk is a song whose `video_id` is `LOCAL:<path>`, and
- * an album of them is a browseId `LOCALALBUM:<key>` — so local items ride every existing surface
+ * an album of them is a browseId `LOCALALBUM:<key>` - so local items ride every existing surface
  * (cards, queue, Shortcuts, the album page) and play with no network.
  */
 export const LOCAL_SONG_PREFIX = 'LOCAL:';
@@ -252,7 +252,7 @@ export interface LocalLibrary {
 	removed: string[];
 }
 
-/** The orders YouTube itself can put a playlist in — everything in `SortKey` but our own `plays`. */
+/** The orders YouTube itself can put a playlist in - everything in `SortKey` but our own `plays`. */
 export type ServerSort = 'default' | 'newest' | 'oldest' | 'title' | 'artist' | 'album' | 'top';
 
 export interface SortMenu {
@@ -328,7 +328,7 @@ export interface AlbumPage {
 	title?: string;
 	artist?: string;
 	artistId?: string;
-	/** The artist line run by run — links each artist of a collaborative album separately. */
+	/** The artist line run by run - links each artist of a collaborative album separately. */
 	artistRuns?: ArtistRun[];
 	artistThumbnail?: string;
 	subtitle?: string;
@@ -339,7 +339,7 @@ export interface AlbumPage {
 	continuation?: string;
 	/** The album itself is flagged explicit (the header wears the badge, not just some tracks). */
 	explicit?: boolean;
-	/** The album's audio playlist id (`OLAK5uy_…`) — autoplay's radio seed, and the save target. */
+	/** The album's audio playlist id (`OLAK5uy_…`) - autoplay's radio seed, and the save target. */
 	playlistId?: string;
 	/** Already saved to the signed-in user's library. */
 	inLibrary: boolean;
@@ -390,10 +390,10 @@ export const playIndex = (index: number, start?: number) =>
 	invoke<void>('play_index', { index, start });
 /** Play the current track's `counterpart` from the same position. Resolves once it plays. */
 export const switchVersion = () => invoke<void>('switch_version');
-/** Remove an upcoming track from the queue (host/local only — guests are add-only). */
+/** Remove an upcoming track from the queue (host/local only - guests are add-only). */
 export const removeFromQueue = (index: number) => invoke<void>('remove_from_queue', { index });
 /** Drag-to-reorder: move the upcoming queue item at `from` to index `to` (both past the playing
- * track — the history and the playing row don't move). */
+ * track - the history and the playing row don't move). */
 export const moveInQueue = (from: number, to: number) =>
 	invoke<void>('move_in_queue', { from, to });
 /**
@@ -664,7 +664,7 @@ export const closeMini = () => invoke<void>('close_mini');
 export const setMiniCompact = (compact: boolean) => invoke<void>('set_mini_compact', { compact });
 
 // --- browse / library (context/08) ---------------------------------------------------------
-/** `params` is a `HomeChip.params` token — omit for the unfiltered feed. */
+/** `params` is a `HomeChip.params` token - omit for the unfiltered feed. */
 export const getHome = (params?: string) => invoke<HomePage>('get_home', { params });
 /** Home's Live section: broadcasts on air from official artist channels, most watched first (#424). */
 export const getLiveNow = () => invoke<BrowseItem[]>('get_live_now');
@@ -802,13 +802,13 @@ const relabelOnRepeat = (item: BrowseItem): BrowseItem =>
 	item.id !== ON_REPEAT_ID
 		? item
 		: {
-				...item,
-				title: t('library.on_repeat'),
-				// The count is Rust's leading number ("20 songs"); left alone if it ever isn't.
-				subtitle: Number.isNaN(parseInt(item.subtitle ?? '', 10))
-					? item.subtitle
-					: t('library.songs_count', { count: parseInt(item.subtitle!, 10) })
-			};
+			...item,
+			title: t('library.on_repeat'),
+			// The count is Rust's leading number ("20 songs"); left alone if it ever isn't.
+			subtitle: Number.isNaN(parseInt(item.subtitle ?? '', 10))
+				? item.subtitle
+				: t('library.songs_count', { count: parseInt(item.subtitle!, 10) })
+		};
 
 /** Same reason as On Repeat: Rust's "12 songs" on a playlist kept on this machine. */
 const relabelLocal = (item: BrowseItem): BrowseItem => {
@@ -849,10 +849,10 @@ export const getPlaylist = (id: string, sort?: ServerSort, desc?: boolean) =>
 		id !== ON_REPEAT_ID
 			? page
 			: {
-					...page,
-					title: t('library.on_repeat'),
-					subtitle: t('library.on_repeat_subtitle', { count: page.items.length })
-				}
+				...page,
+				title: t('library.on_repeat'),
+				subtitle: t('library.on_repeat_subtitle', { count: page.items.length })
+			}
 	);
 /**
  * Store a sort order on a playlist, so YouTube Music and every other client show it the same way.
@@ -941,10 +941,10 @@ export const topArtists = (limit: number) => invoke<TopArtist[]>('top_artists', 
 export const clearListeningHistory = () => invoke<void>('clear_listening_history');
 /**
  * `start`: the clicked track index, or `null` for "just play it" (random opener under shuffle).
- * `sourceId`: the page's playlist/album playlist id — makes autoplay continue with that
+ * `sourceId`: the page's playlist/album playlist id - makes autoplay continue with that
  * context's radio (omit to fall back to song radio seeded from the queue's last track).
  * `sourceName`: the page title, for the queue panel's "Next from" header.
- * `shuffle`: turn shuffle on for this queue — pass items in their real order, Rust shuffles.
+ * `shuffle`: turn shuffle on for this queue - pass items in their real order, Rust shuffles.
  */
 export const playPlaylist = (
 	items: SongItem[],
@@ -956,7 +956,7 @@ export const playPlaylist = (
 ) => invoke<void>('play_playlist', { items, start, sourceId, sourceName, shuffle, continuation });
 /**
  * Start a radio: an endless YouTube-generated queue seeded on this item. `id` is the videoId
- * (song) or browseId/playlistId (everything else) — Rust resolves it to a radio playlist, so the
+ * (song) or browseId/playlistId (everything else) - Rust resolves it to a radio playlist, so the
  * UI never builds one. `name` titles the queue ("<name> Radio").
  *
  * A song radio on the track that's already playing splices in behind it (no re-buffer); every
@@ -1572,7 +1572,7 @@ export const theaterFullscreen = (on: boolean) => invoke<void>('theater_fullscre
 export interface LastfmState {
 	connected: boolean;
 	username?: string | null;
-	/** Set when a connect attempt failed (timeout, network, rejected) — show it as a toast. */
+	/** Set when a connect attempt failed (timeout, network, rejected) - show it as a toast. */
 	error?: string | null;
 }
 export const lastfmStatus = () => invoke<LastfmState>('lastfm_status');
@@ -1679,7 +1679,7 @@ export interface LtSuggestion {
 export interface LtState {
 	status: 'disconnected' | 'connecting' | 'connected';
 	role: 'none' | 'host' | 'guest';
-	/** Asked to create/join and awaiting the room (host approval) — show a waiting state. */
+	/** Asked to create/join and awaiting the room (host approval) - show a waiting state. */
 	requesting: boolean;
 	roomCode: string | null;
 	myId: string | null;
@@ -1816,7 +1816,7 @@ export const getDownloadedTracks = () => invoke<DownloadedTrack[]>('get_download
 export const onDownloadProgress = (cb: (task: DownloadTask) => void): Promise<UnlistenFn> =>
 	listen<DownloadTask>('download-progress', (e) => cb(e.payload));
 
-/** The launch scan re-registered downloaded files from disk — re-read the ids. */
+/** The launch scan re-registered downloaded files from disk - re-read the ids. */
 export const onDownloadedUpdated = (cb: () => void): Promise<UnlistenFn> =>
 	listen('downloaded-updated', () => cb());
 

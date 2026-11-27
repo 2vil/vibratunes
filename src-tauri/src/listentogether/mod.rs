@@ -54,9 +54,9 @@ pub enum SyncCommand {
     GuestAdd {
         track: Track,
     },
-    /// We just became host of a freshly-created room — seed the room with our current now-playing.
+    /// We just became host of a freshly-created room - seed the room with our current now-playing.
     HostSeed,
-    /// We left / were kicked / became host — stop applying remote playback.
+    /// We left / were kicked / became host - stop applying remote playback.
     Release,
 }
 
@@ -206,7 +206,7 @@ impl LtSession {
         self.inner.lock().await.role != Role::None
     }
 
-    /// True when we're a guest in a room — the caller should block local playback control.
+    /// True when we're a guest in a room - the caller should block local playback control.
     pub async fn is_guest(&self) -> bool {
         self.inner.lock().await.role == Role::Guest
     }
@@ -215,7 +215,7 @@ impl LtSession {
         self.inner.lock().await.role == Role::Host
     }
 
-    /// Our own display name in the room (None outside one) — stamps the host's queue adds.
+    /// Our own display name in the room (None outside one) - stamps the host's queue adds.
     pub async fn my_username(&self) -> Option<String> {
         let inner = self.inner.lock().await;
         let me = inner.my_id.as_deref()?;
@@ -423,7 +423,7 @@ impl LtSession {
                                 match serde_json::from_str::<ServerMessage>(&t) {
                                     Ok(sm) => {
                                         if self.handle(sm).await {
-                                            break; // fatal (kicked / rejected) — stop reading
+                                            break; // fatal (kicked / rejected) - stop reading
                                         }
                                     }
                                     Err(e) => tracing::debug!(error = %e, "bad server message"),
@@ -594,7 +594,7 @@ impl LtSession {
                     became
                 };
                 if became_host {
-                    // We now control playback locally — stop applying remote sync.
+                    // We now control playback locally - stop applying remote sync.
                     let _ = self.sync_tx.send(SyncCommand::Release);
                     self.emit_notice("You're the host now.").await;
                 }
@@ -618,7 +618,7 @@ impl LtSession {
             }
 
             ServerMessage::SuggestionReceived { suggestion } => {
-                // Spotify-Jam-style: guest adds go straight into the queue — no host approval
+                // Spotify-Jam-style: guest adds go straight into the queue - no host approval
                 // step. Stamp who added it, tell the server it's handled (notifies the guest),
                 // and hand the track to the bridge to insert at the guest boundary.
                 let mut track = suggestion.track;

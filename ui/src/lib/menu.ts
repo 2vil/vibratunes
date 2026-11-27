@@ -20,7 +20,7 @@ export type Anchor = { style: string; box: Box; gap: number; align: 'left' | 'ri
 
 /**
  * `transition:none` is load-bearing, not tidiness. The popups carry Tailwind's `duration-150` for
- * their fade, which sets `transition-duration` — and CSS's default `transition-property` is `all`,
+ * their fade, which sets `transition-duration` - and CSS's default `transition-property` is `all`,
  * so the moment `fitMenu` writes `top`, WebKit *transitions* the menu from wherever it was to where
  * it belongs, over 150ms. Measured: a menu with `top:258px` in its inline style rendered at 157 and
  * crept down to 258 over the next 150ms, which is the "slides in from the top" this was reported as.
@@ -73,7 +73,7 @@ export function place(a: Anchor, w: number, h: number) {
  * (`e.currentTarget`), a right-click anchors to the pointer. `align: 'right'` lines the menu's
  * right edge up with the trigger's, which is what a ⋯ button wants.
  *
- * Nothing is placed here — the size isn't known yet. `fitMenu` on the popup does the placing.
+ * Nothing is placed here - the size isn't known yet. `fitMenu` on the popup does the placing.
  */
 export function anchorMenu(e: Event, { align = 'left' }: { align?: 'left' | 'right' } = {}): Anchor {
 	const atPointer = e.type === 'contextmenu';
@@ -86,8 +86,8 @@ export function anchorMenu(e: Event, { align = 'left' }: { align?: 'left' | 'rig
 
 /**
  * Attachment for the popup itself: measure it, then place it, in the same tick it was created and
- * so before anything is painted. Sizes can't be guessed — a ten-item track menu is 380px tall and
- * "Remove from Liked Songs" makes it 260 wide — and a guess that has to be corrected is a menu that
+ * so before anything is painted. Sizes can't be guessed - a ten-item track menu is 380px tall and
+ * "Remove from Liked Songs" makes it 260 wide - and a guess that has to be corrected is a menu that
  * moves after you can already see it.
  *
  * Measuring happens at the top-left corner: a `fixed` box shrink-wraps to the room left of the
@@ -160,7 +160,7 @@ export function suppressNative(e: MouseEvent) {
  * opens the same menu at the pointer. The host marks the region; the menu that lives inside it does
  * the wiring, so a host only ever grows one attribute.
  *
- * A host is *an item* — a track row, a card, a library row, the now-playing block. Page headers,
+ * A host is *an item* - a track row, a card, a library row, the now-playing block. Page headers,
  * toolbars and hero artwork are not: they carry a ⋯ button of their own in plain sight, and making
  * half a page right-clickable only makes it unclear what the menu is even about.
  *

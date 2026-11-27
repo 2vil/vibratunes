@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/svelte';
+	import type { Snippet } from "svelte";
+	import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/svelte";
 	import {
 		FavouriteIcon,
 		PlayIcon,
@@ -11,31 +11,46 @@
 		Download04Icon,
 		Loading03Icon,
 		CheckmarkCircle02Icon,
-		Delete02Icon
-	} from '@hugeicons/core-free-icons';
-	import LogoMark from './LogoMark.svelte';
-	import * as api from '$lib/api';
-	import type { SongItem } from '$lib/api';
+		Delete02Icon,
+	} from "@hugeicons/core-free-icons";
+	import LogoMark from "./LogoMark.svelte";
+	import * as api from "$lib/api";
+	import type { SongItem } from "$lib/api";
 	import {
 		deleteDownloaded,
 		downloadSong,
-		getSongDownloadState
-	} from '$lib/download.svelte';
-	import { thumb } from '$lib/thumb';
-	import { lt } from '$lib/lt.svelte';
-	import { goto } from '$app/navigation';
-	import { anySaved, isLiked, openAddManyToPlaylist, ratingOf, savedPlaylists, toast, toggleRating } from '$lib/player.svelte';
-	import { addedLabel, addedTitle, CELL, END, TITLE, type TrackColumn } from '$lib/trackcolumns';
-	import { tagOf } from '$lib/stats';
-	import { myPlays } from './TrackColumns.svelte';
-	import SavedInPlaylists from './SavedInPlaylists.svelte';
-	import TrackMenu from './TrackMenu.svelte';
-	import ArtistLine from './ArtistLine.svelte';
-	import ExplicitIcon from './ExplicitIcon.svelte';
-	import { currentLocale, t } from '$lib/i18n.svelte';
-	import { keyOf } from '$lib/shortcuts';
-	import type { TrackSelection } from '$lib/selection.svelte';
-	import { Checkbox } from './ui/checkbox';
+		getSongDownloadState,
+	} from "$lib/download.svelte";
+	import { thumb } from "$lib/thumb";
+	import { lt } from "$lib/lt.svelte";
+	import { goto } from "$app/navigation";
+	import {
+		anySaved,
+		isLiked,
+		openAddManyToPlaylist,
+		ratingOf,
+		savedPlaylists,
+		toast,
+		toggleRating,
+	} from "$lib/player.svelte";
+	import {
+		addedLabel,
+		addedTitle,
+		CELL,
+		END,
+		TITLE,
+		type TrackColumn,
+	} from "$lib/trackcolumns";
+	import { tagOf } from "$lib/stats";
+	import { myPlays } from "./TrackColumns.svelte";
+	import SavedInPlaylists from "./SavedInPlaylists.svelte";
+	import TrackMenu from "./TrackMenu.svelte";
+	import ArtistLine from "./ArtistLine.svelte";
+	import ExplicitIcon from "./ExplicitIcon.svelte";
+	import { currentLocale, t } from "$lib/i18n.svelte";
+	import { keyOf } from "$lib/shortcuts";
+	import type { TrackSelection } from "$lib/selection.svelte";
+	import { Checkbox } from "./ui/checkbox";
 
 	let {
 		song,
@@ -49,14 +64,14 @@
 		onplay,
 		onAdd,
 		onRemove,
-		removeLabel = t('player.remove_from_playlist'),
+		removeLabel = t("player.remove_from_playlist"),
 		playlistId,
 		queueIndex,
 		inLibraryList = false,
 		selection,
 		selectionKey,
 		lazy = false,
-		trailing
+		trailing,
 	}: {
 		song: SongItem;
 		/** Position badge when set (playlist/queue); omitted for flat search results. */
@@ -66,7 +81,7 @@
 		hideThumb?: boolean;
 		/**
 		 * Grid variant (home's Forgotten favourites): the duration joins the artist line instead of
-		 * claiming its own column, and a like heart sits next to the ⋯ — narrow columns have no room
+		 * claiming its own column, and a like heart sits next to the ⋯ - narrow columns have no room
 		 * for a separate duration column, and hearting is the whole point of that shelf.
 		 */
 		compact?: boolean;
@@ -96,7 +111,7 @@
 		/** Adds a remove menu item (label via `removeLabel`). */
 		onRemove?: () => void;
 		removeLabel?: string;
-		/** The playlist this row is playing from — adds "Remove from this playlist" to its menu. */
+		/** The playlist this row is playing from - adds "Remove from this playlist" to its menu. */
 		playlistId?: string | null;
 		/** This row's index in the backend queue, where it is one (the queue panel). */
 		queueIndex?: number;
@@ -106,7 +121,7 @@
 		/**
 		 * For a list that mounts every row it has and grows without bound (Library ▸ Songs, Local
 		 * music, History, all three paginated by an IntersectionObserver): lets the browser skip the
-		 * rows that are off screen. Off by default because it is not free — see the comment on the
+		 * rows that are off screen. Off by default because it is not free - see the comment on the
 		 * row below.
 		 */
 		lazy?: boolean;
@@ -116,12 +131,14 @@
 	} = $props();
 	const selectionDescriptionId = $props.id();
 
-	// In a session as guest, clicking a song adds it to the shared queue instead of playing it —
+	// In a session as guest, clicking a song adds it to the shared queue instead of playing it -
 	// reflect that in the hover icon + label so the row doesn't lie.
-	const guestAdd = $derived(lt.role === 'guest');
+	const guestAdd = $derived(lt.role === "guest");
 	// Only in select mode: at rest the row is a plain click-to-play row, with no checkbox and no
 	// Space/click rebinding.
-	const selectable = $derived(!!selection?.active && selectionKey !== undefined);
+	const selectable = $derived(
+		!!selection?.active && selectionKey !== undefined,
+	);
 	const selected = $derived(selection?.has(selectionKey) ?? false);
 
 	// In select mode the row's menu acts on the whole selection when this row is in it; otherwise it
@@ -130,20 +147,24 @@
 	const rowAdd = $derived(
 		onAdd
 			? () => {
-					if (!(selectable && selected && selection!.count > 1)) onAdd();
+					if (!(selectable && selected && selection!.count > 1))
+						onAdd();
 					else if (selection!.pending || selection!.selectingAll)
 						toast(
 							selection!.pending
-								? t('selection.pending', { count: selection!.pending })
-								: t('common.loading')
+								? t("selection.pending", {
+										count: selection!.pending,
+									})
+								: t("common.loading"),
 						);
 					else openAddManyToPlaylist([...selection!.songs]);
 				}
-			: undefined
+			: undefined,
 	);
 
 	function select(range = false) {
-		if (selection && selectionKey !== undefined) selection.toggle(selectionKey, range);
+		if (selection && selectionKey !== undefined)
+			selection.toggle(selectionKey, range);
 	}
 
 	function clickRow(e: MouseEvent) {
@@ -159,12 +180,16 @@
 	// Digits and colons, nothing else. A queue saved before the parser stopped reading a name with a
 	// colon in it ("Cast of EPIC: The Musical") as a length still holds those strings, and printing
 	// one here squeezes the title and artists down to nothing.
-	const duration = $derived(/^[\d:]+$/.test(song.duration ?? '') ? song.duration : undefined);
+	const duration = $derived(
+		/^[\d:]+$/.test(song.duration ?? "") ? song.duration : undefined,
+	);
 
 	const rated = $derived(ratingOf(song));
 	// A local file has no YouTube identity, so there is nothing to rate (the same guard the ⋯ menu
 	// applies to its like item). The compact variant has no room: it keeps its single heart.
-	const showRating = $derived(!compact && !hideRating && !api.isLocalId(song.video_id));
+	const showRating = $derived(
+		!compact && !hideRating && !api.isLocalId(song.video_id),
+	);
 	const downloadState = $derived(getSongDownloadState(song.video_id));
 	// Hover swap: the green check reads "downloaded" at rest and turns into a delete (trash) only
 	// while the pointer is on the button.
@@ -173,34 +198,36 @@
 	// Your own playlists holding this song, for the "saved" mark. Gated on `showRating` because it
 	// answers the same three questions: a local file is in no YTM playlist, and the compact and
 	// queue variants have no width left for another mark.
-	const inPlaylists = $derived(showRating ? savedPlaylists(song.video_id) : []);
+	const inPlaylists = $derived(
+		showRating ? savedPlaylists(song.video_id) : [],
+	);
 
 	// The whole row is a play target (role="button"), so mirror native button keyboard activation.
-	// Only when the key lands on the row itself — keydowns bubble up from nested interactive
+	// Only when the key lands on the row itself - keydowns bubble up from nested interactive
 	// elements (⋯ menu, artist link), and hijacking those would play the row instead.
 	function onKey(e: KeyboardEvent) {
 		if (e.target !== e.currentTarget) {
-			if (e.key === ' ') e.stopPropagation();
+			if (e.key === " ") e.stopPropagation();
 			return;
 		}
 		if (selection && selectable) {
-			if ((e.ctrlKey || e.metaKey) && keyOf(e) === 'a') {
+			if ((e.ctrlKey || e.metaKey) && keyOf(e) === "a") {
 				e.preventDefault();
 				e.stopPropagation();
 				selection.selectAll();
 				return;
 			}
-			if (e.key === 'Escape' || e.key === ' ') {
+			if (e.key === "Escape" || e.key === " ") {
 				e.preventDefault();
 				e.stopPropagation();
 				if (!e.repeat) {
-					if (e.key === 'Escape') selection.exit();
+					if (e.key === "Escape") selection.exit();
 					else select(e.shiftKey);
 				}
 				return;
 			}
 		}
-		if (e.key === 'Enter' || e.key === ' ') {
+		if (e.key === "Enter" || e.key === " ") {
 			e.preventDefault();
 			onplay();
 		}
@@ -209,10 +236,14 @@
 
 <!-- Both rating buttons, so they can't drift apart. `icon` is a constant per call site, not a
      reactive ternary, which is the only way HugeiconsIcon takes it (it freezes at mount). -->
-{#snippet rateButton(icon: IconSvgElement, want: 'like' | 'dislike', label: string)}
+{#snippet rateButton(
+	icon: IconSvgElement,
+	want: "like" | "dislike",
+	label: string,
+)}
 	<button
 		class="cursor-pointer rounded-md p-1.5 text-muted-foreground hover:bg-accent/20 hover:text-foreground"
-		aria-label={rated === want ? t('player.remove_rating') : label}
+		aria-label={rated === want ? t("player.remove_rating") : label}
 		aria-pressed={rated === want}
 		onclick={(e) => {
 			e.stopPropagation();
@@ -243,7 +274,7 @@
 
      No `transition-colors`, and the hover-only controls below hide with `invisible`, not `opacity-0`
      (issue #311). Scrolling drags the whole list under a stationary pointer, so every row that goes
-     past takes :hover and drops it again — with a transition that is a 150 ms repaint per row with
+     past takes :hover and drops it again - with a transition that is a 150 ms repaint per row with
      several always in flight, and `opacity` below 1 puts an effect node in the paint property tree
      for every row, which Chromium re-walks on every frame it composites. Measured in Chromium at 4x
      CPU throttling (`ui/perf/scroll.mjs`), frames over 20 ms across a wheel gesture: queue panel
@@ -257,20 +288,28 @@
 	data-selection-key={selectionKey}
 	data-selected={selectable ? selected : undefined}
 	aria-describedby={selectable ? selectionDescriptionId : undefined}
-	aria-label={selectable ? t(guestAdd ? 'selection.track_guest' : 'selection.track', { title: song.title }) : guestAdd ? `Add ${song.title} to the session queue` : `Play ${song.title}`}
+	aria-label={selectable
+		? t(guestAdd ? "selection.track_guest" : "selection.track", {
+				title: song.title,
+			})
+		: guestAdd
+			? `Add ${song.title} to the session queue`
+			: `Play ${song.title}`}
 	class="group flex w-full cursor-pointer items-center gap-3 rounded-lg p-2 hover:bg-accent/10 {selected
 		? 'bg-primary/15'
 		: active
-		? 'bg-accent/10'
-		: ''} {lazy && !compact ? '[content-visibility:auto] [contain-intrinsic-size:auto_3.5rem]' : ''}"
+			? 'bg-accent/10'
+			: ''} {lazy && !compact
+		? '[content-visibility:auto] [contain-intrinsic-size:auto_3.5rem]'
+		: ''}"
 >
 	{#if selectable}
 		<span id={selectionDescriptionId} class="sr-only">
-			{t(selected ? 'selection.selected' : 'selection.not_selected')}
+			{t(selected ? "selection.selected" : "selection.not_selected")}
 		</span>
 		<Checkbox
 			checked={selected}
-			aria-label={t('selection.select_track', { title: song.title })}
+			aria-label={t("selection.select_track", { title: song.title })}
 			class="cursor-pointer"
 			onclick={(e) => {
 				// The list owns checked state, including Shift ranges whose endpoint stays selected.
@@ -279,13 +318,20 @@
 				select(e.shiftKey);
 			}}
 			onkeydown={(e) => {
-				if (e.key === ' ') {
-					e.preventDefault(); e.stopPropagation();
+				if (e.key === " ") {
+					e.preventDefault();
+					e.stopPropagation();
 					if (!e.repeat) select(e.shiftKey);
 				}
-				if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); selection!.exit(); }
-				if ((e.ctrlKey || e.metaKey) && keyOf(e) === 'a') {
-					e.preventDefault(); e.stopPropagation(); selection!.selectAll();
+				if (e.key === "Escape") {
+					e.preventDefault();
+					e.stopPropagation();
+					selection!.exit();
+				}
+				if ((e.ctrlKey || e.metaKey) && keyOf(e) === "a") {
+					e.preventDefault();
+					e.stopPropagation();
+					selection!.selectAll();
 				}
 			}}
 		/>
@@ -299,7 +345,13 @@
 						: 'text-muted-foreground'}"
 				>
 					<!-- Kept in flow on the playing row too, invisible: it is what sizes the column. -->
-					<span class={active ? 'invisible' : selectable ? '' : 'group-hover:invisible'}>
+					<span
+						class={active
+							? "invisible"
+							: selectable
+								? ""
+								: "group-hover:invisible"}
+					>
 						{index + 1}
 					</span>
 					{#if active}
@@ -307,18 +359,27 @@
 						     loops keeps the compositor from ever idling while a track plays. -->
 						<HugeiconsIcon
 							icon={VolumeHighIcon}
-							class="absolute inset-0 m-auto h-3.5 w-3.5 {selectable ? '' : 'group-hover:invisible'}"
+							class="absolute inset-0 m-auto h-3.5 w-3.5 {selectable
+								? ''
+								: 'group-hover:invisible'}"
 						/>
 					{/if}
 					<HugeiconsIcon
 						icon={guestAdd ? PlayListAddIcon : PlayIcon}
-						class="invisible absolute inset-0 m-auto h-3.5 w-3.5 {selectable ? '' : 'group-hover:visible'}"
+						class="invisible absolute inset-0 m-auto h-3.5 w-3.5 {selectable
+							? ''
+							: 'group-hover:visible'}"
 					/>
 				</span>
 			{/if}
 			{#if !hideThumb}
 				{#if song.thumbnail}
-					<img src={thumb(song.thumbnail, 96, song.video_id)} alt="" class="h-10 w-10 shrink-0 rounded-md object-cover" loading="lazy" />
+					<img
+						src={thumb(song.thumbnail, 96, song.video_id)}
+						alt=""
+						class="h-10 w-10 shrink-0 rounded-md object-cover"
+						loading="lazy"
+					/>
 				{:else}
 					<!-- An untagged file has no artwork of its own. The logo keeps the row aligned with
 					     its neighbours. -->
@@ -332,7 +393,11 @@
 		</div>
 		<div class="min-w-0 flex-1">
 			<div class="flex min-w-0 items-center gap-2">
-				<span class="min-w-0 truncate text-sm font-medium {active ? 'text-primary' : ''}">
+				<span
+					class="min-w-0 truncate text-sm font-medium {active
+						? 'text-primary'
+						: ''}"
+				>
 					{song.title}
 				</span>
 				{#if song.queued_by}
@@ -343,7 +408,9 @@
 					</span>
 				{/if}
 			</div>
-			<div class="flex min-w-0 items-center gap-1 text-xs text-muted-foreground">
+			<div
+				class="flex min-w-0 items-center gap-1 text-xs text-muted-foreground"
+			>
 				{#if columns && song.explicit}
 					<ExplicitIcon class="mr-0.5 h-3.5 w-3.5 shrink-0" />
 				{/if}
@@ -352,7 +419,9 @@
 					<!-- No leading dot with nothing before it: a search row can come back artist-less
 					     (YouTube drops the name when the query is the artist), leaving the length alone
 					     on the line. -->
-					<span class="shrink-0">{song.artists.trim() ? '· ' : ''}{duration}</span>
+					<span class="shrink-0"
+						>{song.artists.trim() ? "· " : ""}{duration}</span
+					>
 				{/if}
 			</div>
 		</div>
@@ -362,13 +431,20 @@
 	     centred column of its own there; narrow ones sit it next to the duration at its natural width
 	     rather than dropping it, since it never needs more than "1,234 plays" worth of room. -->
 	{#if song.play_count && showPlayCount && !compact && !columns}
-		<div class="flex shrink-0 items-center justify-center text-xs text-muted-foreground lg:flex-1">
-			<span class="truncate">{t('library.play_count', { count: song.play_count })}</span>
+		<div
+			class="flex shrink-0 items-center justify-center text-xs text-muted-foreground lg:flex-1"
+		>
+			<span class="truncate"
+				>{t("library.play_count", { count: song.play_count })}</span
+			>
 		</div>
 	{/if}
 
 	{#snippet avatars()}
-		<div class="flex shrink-0 -space-x-1.5" title={t('library.added_by', { user: song.added_by ?? '' })}>
+		<div
+			class="flex shrink-0 -space-x-1.5"
+			title={t("library.added_by", { user: song.added_by ?? "" })}
+		>
 			{#each song.added_by_avatars ?? [] as src, i (i)}
 				{#if i < 3}
 					<img
@@ -386,48 +462,64 @@
 		<!-- One cell per column, drawn on every row whether it has a value or not, so none can pull
 		     its neighbours out from under their labels. Widths and breakpoints: `CELL`. -->
 		{#each columns as c (c)}
-			{#if c === 'album'}
-				<span class="truncate text-xs text-muted-foreground {CELL.album}">
+			{#if c === "album"}
+				<span
+					class="truncate text-xs text-muted-foreground {CELL.album}"
+				>
 					{#if song.album_id}
 						<button
 							class="block max-w-full cursor-pointer truncate text-left hover:text-foreground hover:underline"
 							onclick={(e) => {
 								e.stopPropagation();
-								goto(`/album/${encodeURIComponent(song.album_id!)}`);
+								goto(
+									`/album/${encodeURIComponent(song.album_id!)}`,
+								);
 							}}
 						>
 							{song.album}
 						</button>
 					{:else}
-						{song.album ?? ''}
+						{song.album ?? ""}
 					{/if}
 				</span>
-			{:else if c === 'added'}
+			{:else if c === "added"}
 				<span
 					class="truncate text-xs text-muted-foreground {CELL.added}"
-					title={song.added_at ? addedTitle(song.added_at, tagOf(currentLocale.id)) : undefined}
+					title={song.added_at
+						? addedTitle(song.added_at, tagOf(currentLocale.id))
+						: undefined}
 				>
-					{song.added_at ? addedLabel(song.added_at, tagOf(currentLocale.id)) : ''}
+					{song.added_at
+						? addedLabel(song.added_at, tagOf(currentLocale.id))
+						: ""}
 				</span>
-			{:else if c === 'by'}
+			{:else if c === "by"}
 				<span class={CELL.by}>
 					{#if song.added_by_avatars?.length}{@render avatars()}{/if}
 				</span>
-			{:else if c === 'plays'}
-				<span class="truncate text-xs tabular-nums text-muted-foreground {CELL.plays}">
-					{song.play_count ?? ''}
+			{:else if c === "plays"}
+				<span
+					class="truncate text-xs tabular-nums text-muted-foreground {CELL.plays}"
+				>
+					{song.play_count ?? ""}
 				</span>
-			{:else if c === 'mine'}
+			{:else if c === "mine"}
 				<!-- Blank, not 0: on a list you're still getting to know, the few you have played
 				     should stand out. -->
-				<span class="truncate text-xs tabular-nums text-muted-foreground {CELL.mine}">
-					{myPlays.counts[song.video_id] || ''}
+				<span
+					class="truncate text-xs tabular-nums text-muted-foreground {CELL.mine}"
+				>
+					{myPlays.counts[song.video_id] || ""}
 				</span>
 			{/if}
 		{/each}
 	{/if}
 
-	<div class="flex shrink-0 items-center {compact ? 'gap-0.5' : 'gap-2'} {columns ? END : ''}">
+	<div
+		class="flex shrink-0 items-center {compact
+			? 'gap-0.5'
+			: 'gap-2'} {columns ? END : ''}"
+	>
 		<!-- Collaborative playlists only: who put this track in the list. Every row on such a page
 		     carries one, so it can't leave a hole on its neighbours. A Taste Match row that several
 		     members share overlaps their avatars, growing leftward so the marks stay in column.
@@ -468,22 +560,29 @@
 						? 'invisible group-focus-within:visible group-hover:visible'
 						: ''}"
 				>
-					{@render rateButton(ThumbsUpIcon, 'like', t('common.like'))}
-					{@render rateButton(ThumbsDownIcon, 'dislike', t('common.dislike'))}
+					{@render rateButton(ThumbsUpIcon, "like", t("common.like"))}
+					{@render rateButton(
+						ThumbsDownIcon,
+						"dislike",
+						t("common.dislike"),
+					)}
 				</div>
 				{#if !api.isLocalId(song.video_id)}
-					{#if downloadState === 'downloading'}
+					{#if downloadState === "downloading"}
 						<span
 							class="flex h-7 w-7 items-center justify-center text-primary"
-							title={t('download.downloading')}
+							title={t("download.downloading")}
 						>
-							<HugeiconsIcon icon={Loading03Icon} class="h-4 w-4 animate-spin" />
+							<HugeiconsIcon
+								icon={Loading03Icon}
+								class="h-4 w-4 animate-spin"
+							/>
 						</span>
-					{:else if downloadState === 'downloaded'}
+					{:else if downloadState === "downloaded"}
 						<button
 							class="flex h-7 w-7 items-center justify-center rounded-md text-emerald-500 transition hover:bg-destructive/20 hover:text-destructive"
-							title={t('download.delete')}
-							aria-label={t('download.delete')}
+							title={t("download.delete")}
+							aria-label={t("download.delete")}
 							onmouseenter={() => (deleteHovered = true)}
 							onmouseleave={() => (deleteHovered = false)}
 							onclick={(e) => {
@@ -492,22 +591,31 @@
 							}}
 						>
 							{#if deleteHovered}
-								<HugeiconsIcon icon={Delete02Icon} class="h-4 w-4" />
+								<HugeiconsIcon
+									icon={Delete02Icon}
+									class="h-4 w-4"
+								/>
 							{:else}
-								<HugeiconsIcon icon={CheckmarkCircle02Icon} class="h-4 w-4" />
+								<HugeiconsIcon
+									icon={CheckmarkCircle02Icon}
+									class="h-4 w-4"
+								/>
 							{/if}
 						</button>
 					{:else}
 						<button
 							class="invisible flex h-7 w-7 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition hover:bg-accent/20 hover:text-foreground group-focus-within:visible group-hover:visible"
-							title={t('download.download_track')}
-							aria-label={t('download.download_track')}
+							title={t("download.download_track")}
+							aria-label={t("download.download_track")}
 							onclick={(e) => {
 								e.stopPropagation();
 								downloadSong(song);
 							}}
 						>
-							<HugeiconsIcon icon={Download04Icon} class="h-4 w-4" />
+							<HugeiconsIcon
+								icon={Download04Icon}
+								class="h-4 w-4"
+							/>
 						</button>
 					{/if}
 				{/if}
@@ -516,26 +624,33 @@
 		<!-- Under a column header the checkmark sits by the duration, the thumbs that only show on
 		     hover to its left: at rest the row ends "✓ 3:06" instead of a mark, a gap, then the length. -->
 		{#if columns}{@render saved()}{/if}
-		{#if !compact && (columns ? columns.includes('duration') : duration)}
+		{#if !compact && (columns ? columns.includes("duration") : duration)}
 			<!-- A fixed slot, or every mark to its left moves with the digits (#463). `tabular-nums`
 			     alone isn't enough: DM Sans has no tabular figures, and 10:00 is wider in any font.
 			     5ch holds up to 59:59; an hour-long track still widens its own row. -->
-			<span class="min-w-[5ch] shrink-0 text-right text-xs tabular-nums text-muted-foreground">{duration}</span>
+			<span
+				class="min-w-[5ch] shrink-0 text-right text-xs tabular-nums text-muted-foreground"
+				>{duration}</span
+			>
 		{/if}
 		{#if compact}
 			<!-- Persistent, not hover-only: a filled heart is state the row has to keep showing. -->
 			<button
 				class="cursor-pointer rounded-md p-1.5 text-muted-foreground hover:bg-accent/20 hover:text-foreground"
-				aria-label={isLiked(song) ? t('player.remove_from_liked') : t('player.save_to_liked')}
+				aria-label={isLiked(song)
+					? t("player.remove_from_liked")
+					: t("player.save_to_liked")}
 				aria-pressed={isLiked(song)}
 				onclick={(e) => {
 					e.stopPropagation();
-					toggleRating(song, 'like');
+					toggleRating(song, "like");
 				}}
 			>
 				<HugeiconsIcon
 					icon={FavouriteIcon}
-					class="h-4 w-4 {isLiked(song) ? 'fill-current text-primary' : ''}"
+					class="h-4 w-4 {isLiked(song)
+						? 'fill-current text-primary'
+						: ''}"
 				/>
 			</button>
 		{/if}

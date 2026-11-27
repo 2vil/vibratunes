@@ -1,28 +1,28 @@
 <script lang="ts">
 	// Recently played playlists/albums/artists, as a list you scan rather than a row you page
-	// through. Recents are re-entry points — you already know what they are, you just want the one
-	// you want — so a title you can read beats a wall of identical squares.
+	// through. Recents are re-entry points - you already know what they are, you just want the one
+	// you want - so a title you can read beats a wall of identical squares.
 	//
 	// Bare rows on purpose, against the surfaced tiles of Shortcuts directly above: the things you
 	// chose are elevated, the ones the app noticed for you are not. The caller drops anything that
-	// is already a shortcut before it gets here — otherwise this is the same eight items again in a
+	// is already a shortcut before it gets here - otherwise this is the same eight items again in a
 	// different shape, which is exactly what it was.
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		PlayIcon,
 		ListRestartIcon,
-		ArrowTurnBackwardIcon
-	} from '@hugeicons/core-free-icons';
-	import LogoMark from './LogoMark.svelte';
-	import VibratunesLoader from './VibratunesLoader.svelte';
-	import SectionHeading from './SectionHeading.svelte';
-	import { ON_REPEAT_ID } from '$lib/api';
-	import type { BrowseItem } from '$lib/api';
-	import { thumb } from '$lib/thumb';
-	import { setDragItem } from '$lib/dnd';
-	import { openItem, playItem } from '$lib/browse';
-	import { t } from '$lib/i18n.svelte';
-	import ItemMenu from './ItemMenu.svelte';
+		ArrowTurnBackwardIcon,
+	} from "@hugeicons/core-free-icons";
+	import LogoMark from "./LogoMark.svelte";
+	import VibratunesLoader from "./VibratunesLoader.svelte";
+	import SectionHeading from "./SectionHeading.svelte";
+	import { ON_REPEAT_ID } from "$lib/api";
+	import type { BrowseItem } from "$lib/api";
+	import { thumb } from "$lib/thumb";
+	import { setDragItem } from "$lib/dnd";
+	import { openItem, playItem } from "$lib/browse";
+	import { t } from "$lib/i18n.svelte";
+	import ItemMenu from "./ItemMenu.svelte";
 
 	let { items }: { items: BrowseItem[] } = $props();
 
@@ -47,12 +47,15 @@
 </script>
 
 <section>
-	<SectionHeading title={t('home.jump_back_in')} icon={ArrowTurnBackwardIcon} />
+	<SectionHeading
+		title={t("home.jump_back_in")}
+		icon={ArrowTurnBackwardIcon}
+	/>
 	<!-- CSS columns, same idiom as Forgotten favourites: fills top-to-bottom, balances the last
 	     column itself, and needs no row count per breakpoint. -->
 	<div class="columns-1 gap-x-6 md:columns-2 xl:columns-3">
 		{#each items as item (item.id)}
-			{@const round = item.kind === 'artist'}
+			{@const round = item.kind === "artist"}
 			<div
 				class="group/row flex break-inside-avoid cursor-pointer items-center gap-3 rounded-lg p-1.5 text-left transition-colors hover:bg-accent/10"
 				data-ctx
@@ -63,12 +66,14 @@
 				onclick={() => openItem(item)}
 				onkeydown={(e) => {
 					if (e.target !== e.currentTarget) return;
-					if (e.key === 'Enter' || e.key === ' ') {
+					if (e.key === "Enter" || e.key === " ") {
 						e.preventDefault();
 						openItem(item);
 					}
 				}}
-				title={item.subtitle ? `${item.title} — ${item.subtitle}` : item.title}
+				title={item.subtitle
+					? `${item.title} - ${item.subtitle}`
+					: item.title}
 			>
 				<div
 					class="relative h-10 w-10 shrink-0 overflow-hidden bg-muted {round
@@ -84,7 +89,11 @@
 							class="h-full w-full object-cover"
 							loading="lazy"
 							draggable="false"
-							onerror={() => (failed = { ...failed, [item.thumbnail!]: true })}
+							onerror={() =>
+								(failed = {
+									...failed,
+									[item.thumbnail!]: true,
+								})}
 						/>
 					{:else}
 						{@const onRepeat = item.id === ON_REPEAT_ID}
@@ -94,7 +103,10 @@
 								: 'text-muted-foreground/20'}"
 						>
 							{#if onRepeat}
-								<HugeiconsIcon icon={ListRestartIcon} class="h-4 w-4" />
+								<HugeiconsIcon
+									icon={ListRestartIcon}
+									class="h-4 w-4"
+								/>
 							{:else}
 								<LogoMark class="size-3/4" />
 							{/if}
@@ -105,13 +117,19 @@
 					<div class="truncate text-sm font-medium">{item.title}</div>
 					<!-- Subtitle when there is one (a creator or an artist tells you more than the kind
 					     does); the kind is the fallback so the second line never collapses. -->
-					<div class="truncate text-xs capitalize text-muted-foreground">
-						{item.subtitle || (
-							item.kind === 'playlist' ? t('common.playlist_singular') :
-							item.kind === 'album' ? t('common.album_singular') :
-							item.kind === 'artist' ? t('common.artist_singular') :
-							item.kind === 'song' ? t('common.song_singular') : item.kind
-						)}
+					<div
+						class="truncate text-xs capitalize text-muted-foreground"
+					>
+						{item.subtitle ||
+							(item.kind === "playlist"
+								? t("common.playlist_singular")
+								: item.kind === "album"
+									? t("common.album_singular")
+									: item.kind === "artist"
+										? t("common.artist_singular")
+										: item.kind === "song"
+											? t("common.song_singular")
+											: item.kind)}
 					</div>
 				</div>
 				<ItemMenu
@@ -120,18 +138,26 @@
 				/>
 				{#if !round}
 					<button
-						class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-md transition-opacity hover:brightness-110 focus-visible:shown group-hover/row:shown {busy === item.id ? 'shown!' : ''}"
+						class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-md transition-opacity hover:brightness-110 focus-visible:shown group-hover/row:shown {busy ===
+						item.id
+							? 'shown!'
+							: ''}"
 						disabled={busy === item.id}
-						aria-label={t('a11y.play_item', { title: item.title })}
+						aria-label={t("a11y.play_item", { title: item.title })}
 						onclick={(e) => {
 							e.stopPropagation();
 							play(item);
 						}}
 					>
 						{#if busy === item.id}
-							<VibratunesLoader class="size-5 text-primary-foreground" />
+							<VibratunesLoader
+								class="size-5 text-primary-foreground"
+							/>
 						{:else}
-							<HugeiconsIcon icon={PlayIcon} class="h-3.5 w-3.5" />
+							<HugeiconsIcon
+								icon={PlayIcon}
+								class="h-3.5 w-3.5"
+							/>
 						{/if}
 					</button>
 				{/if}

@@ -4,30 +4,30 @@
 //! renderer classes, we walk the raw JSON for the two node types we need
 //! (`musicResponsiveListItemRenderer` for search, `playlistPanelVideoRenderer` for next) and
 //! pull only the handful of fields the playback path uses. Targeted and robust to the tree
-//! moving around (fixture reality wins over spec — see plan risks).
+//! moving around (fixture reality wins over spec - see plan risks).
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-/// A song item — the minimum the playback path (context/06) needs. context/08.
+/// A song item - the minimum the playback path (context/06) needs. context/08.
 /// Round-trips through the UI (serialized into search results, deserialized back into `play`).
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
 pub struct SongItem {
     pub video_id: String,
     pub title: String,
     pub artists: String,
-    /// The primary artist's channel browseId (`UC…`), when the row links one — lets the UI make
+    /// The primary artist's channel browseId (`UC…`), when the row links one - lets the UI make
     /// the artist name navigate to its artist page. context/08.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub artist_id: Option<String>,
     /// The artist line split into its original runs, each tagged with its own channel id when it
-    /// links one — a collab ("Future & Metro Boomin") links each name separately. Empty when the
+    /// links one - a collab ("Future & Metro Boomin") links each name separately. Empty when the
     /// row links no artist at all; the UI then falls back to plain `artists`. context/08.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub artist_runs: Vec<ArtistRun>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub album: Option<String>,
-    /// The album's browseId (`MPRE…`), when the row links one — lets the UI navigate to the album.
+    /// The album's browseId (`MPRE…`), when the row links one - lets the UI navigate to the album.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub album_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -38,7 +38,7 @@ pub struct SongItem {
     pub play_count: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumbnail: Option<String>,
-    /// `playlistSetVideoId` — the item's id *within a playlist*, needed to remove it (context/01
+    /// `playlistSetVideoId` - the item's id *within a playlist*, needed to remove it (context/01
     /// edit_playlist). Only present when the item came from a playlist page.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub set_video_id: Option<String>,
@@ -60,7 +60,7 @@ pub struct SongItem {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub rating: Option<Rating>,
     /// Listen Together: username of the guest who added this queue item (`None` for the user's own
-    /// tracks). Never parsed from YouTube — pure queue metadata, carried for attribution.
+    /// tracks). Never parsed from YouTube - pure queue metadata, carried for attribution.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub queued_by: Option<String>,
     /// "Play next" (or a guest's session add): marks the "up next" block so successive adds stack
@@ -68,7 +68,7 @@ pub struct SongItem {
     #[serde(default)]
     pub queued: bool,
     /// "Add to queue": appended at the tail, after everything the user picked. Its own block in the
-    /// queue panel — without this it would read as part of the playlist that's playing. Pure queue
+    /// queue panel - without this it would read as part of the playlist that's playing. Pure queue
     /// metadata, never parsed.
     #[serde(default)]
     pub queued_end: bool,
@@ -161,7 +161,7 @@ pub enum Rating {
     Indifferent,
 }
 
-/// `MUSIC_VIDEO_TYPE_ATV` — the audio track YouTube Music generates for a release. Anything else
+/// `MUSIC_VIDEO_TYPE_ATV` - the audio track YouTube Music generates for a release. Anything else
 /// (`_OMV`, `_UGC`) is a video upload, except [`UPLOADED_TRACK_TYPE`].
 pub(crate) const AUDIO_TRACK_TYPE: &str = "MUSIC_VIDEO_TYPE_ATV";
 
@@ -265,12 +265,12 @@ pub struct NextResult {
     pub items: Vec<SongItem>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<String>,
-    /// The lyrics tab's browseId (`MPLYt…`) — feed it to a lyrics `browse` (models::lyrics).
+    /// The lyrics tab's browseId (`MPLYt…`) - feed it to a lyrics `browse` (models::lyrics).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lyrics_browse_id: Option<String>,
     /// The mix the panel says it continues into (`automixPreviewVideoRenderer`, context/08): a
     /// radio playlist id to re-request `next` with. Present on a bare `next(videoId)`, which is
-    /// otherwise just the seed song — that's how a dead `RDAMVM` radio finds a live one.
+    /// otherwise just the seed song - that's how a dead `RDAMVM` radio finds a live one.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub automix_playlist_id: Option<String>,
     /// The signed-in user's rating of the **requested** video, off `playerOverlays`. The panel
@@ -597,7 +597,7 @@ pub(crate) fn parse_list_item(node: &Value) -> Option<SongItem> {
     let subtitle_runs = flex_runs(node, 1);
     let (artists, album, duration) = split_subtitle(subtitle_runs);
     // Playlist/album rows keep the length in a fixed column instead of the subtitle. context/08.
-    // Some rows carry it in the third *flex* column instead — the slot the album name and the
+    // Some rows carry it in the third *flex* column instead - the slot the album name and the
     // play count share. `play_count` rejects the duration shape (a count never carries a colon),
     // so read it the other way: a duration-shaped, unlinked third column is the length.
     let duration =
@@ -723,7 +723,7 @@ fn episode_duration(text: &str) -> Option<String> {
 ///
 /// A leading digit alone let a bare duration through on rows where the length sits in the third
 /// flex column rather than a fixed one: "3:42" opens with a digit, links nothing, and was read
-/// as a play count — the album page then printed the track's length where the plays go. A count
+/// as a play count - the album page then printed the track's length where the plays go. A count
 /// never carries a colon, so the duration shape is excluded the same way `is_duration` admits
 /// it.
 pub(crate) fn play_count(node: &Value) -> Option<String> {
@@ -744,7 +744,7 @@ fn flex_column_links(node: &Value, i: usize) -> bool {
         .is_some_and(|runs| runs.iter().any(|r| r.get("navigationEndpoint").is_some()))
 }
 
-/// The album name from that same third flex column — the other thing it can hold. A playlist row's
+/// The album name from that same third flex column - the other thing it can hold. A playlist row's
 /// subtitle is the artist alone ("Artist"), not the search/next form ("Artist • Album • 3:02"), so
 /// without this every playlist track comes back album-less. Same discriminator as [`play_count`],
 /// read the other way round. context/08.
@@ -757,7 +757,7 @@ fn album_column(node: &Value) -> Option<String> {
 }
 
 /// The album's browseId (`MPRE…`): either the linked album run or the row menu's "Go to album"
-/// entry — whichever the renderer carries. Tolerant: first `MPRE…` browseId in the node. context/08.
+/// entry - whichever the renderer carries. Tolerant: first `MPRE…` browseId in the node. context/08.
 pub(crate) fn album_id(node: &Value) -> Option<String> {
     find_all(node, "browseId")
         .into_iter()
@@ -872,7 +872,7 @@ fn removable(node: &Value) -> bool {
 /// different list) and "Pin to Listen again" (KEEP/KEEP_OFF). Live-checked 2026-08-28: search rows
 /// send BOOKMARK_BORDER/BOOKMARK; the LIBRARY_* spellings are kept as YouTube has used them too.
 fn library_toggle(node: &Value) -> Option<LibraryToggle> {
-    /// The bookmark is empty when the song is not in the library — that direction adds it.
+    /// The bookmark is empty when the song is not in the library - that direction adds it.
     const ADDS: [&str; 2] = ["BOOKMARK_BORDER", "LIBRARY_ADD"];
     /// Filled: it is in there, and this direction takes it out.
     const REMOVES: [&str; 3] = ["BOOKMARK", "LIBRARY_REMOVE", "LIBRARY_SAVED"];
@@ -1209,7 +1209,7 @@ pub(crate) fn find_all_shallow<'a>(root: &'a Value, key: &str) -> Vec<&'a Value>
             Value::Object(map) => {
                 for (k, val) in map {
                     if k == key {
-                        out.push(val); // matched — do NOT recurse into it
+                        out.push(val); // matched - do NOT recurse into it
                     } else {
                         walk(val, key, out);
                     }
@@ -1511,7 +1511,7 @@ mod tests {
         assert!(out.items.iter().all(|i| !i.is_video && i.counterpart_segments.is_empty()));
     }
 
-    // A real radio page has no automix marker — nothing to escalate to, and nothing to mistake a
+    // A real radio page has no automix marker - nothing to escalate to, and nothing to mistake a
     // regular playlist id for.
     #[test]
     fn no_automix_on_a_live_radio_page() {
@@ -1589,7 +1589,7 @@ mod tests {
         assert_eq!(plays(json!("53M plays")).unwrap().album, None);
         assert_eq!(plays(json!("")).unwrap().album, None);
         // A bare length in the third column (no fixed column on these rows) starts with a digit
-        // and links nothing — every discriminator a count passes. A count never carries a colon.
+        // and links nothing - every discriminator a count passes. A count never carries a colon.
         assert_eq!(plays(json!("3:42")).unwrap().play_count, None);
         assert_eq!(plays(json!("1:04:11")).unwrap().play_count, None);
         // The other side of the same fix: what the count gave up, the duration claims, so the row
@@ -1660,8 +1660,8 @@ mod tests {
     }
 
     // An artist page's Top songs row reads "Title | Artist | plays | Album", and the album in the
-    // fourth column links its own page. `album_column` reads the third one on a guess — anything
-    // that is not a length and not a count — and that guess only holds while the count opens with
+    // fourth column links its own page. `album_column` reads the third one on a guess - anything
+    // that is not a length and not a count - and that guess only holds while the count opens with
     // a digit. It does not: `hl` follows the UI language (#274), and Portuguese leads with the
     // verb ("Tocou 93 mi vezes"), so `play_count` declines it, `album_column` swallows it, and the
     // count ships as the album to Discord, MPRIS and the scrobbler while the real album sits in
@@ -1876,7 +1876,7 @@ mod tests {
     }
 
     /// An unfiltered search row leads with the result type ("Song • Delara • 3:02"). It must not
-    /// end up in `artists` — that string is what gets scrobbled.
+    /// end up in `artists` - that string is what gets scrobbled.
     #[test]
     fn drops_the_result_type_from_a_search_row() {
         let root = json!({
@@ -1896,7 +1896,7 @@ mod tests {
         assert_eq!(s.artists, "Delara");
         assert_eq!(s.album, None);
         assert_eq!(s.duration.as_deref(), Some("3:02"));
-        // The links describe the same field as `artists` — never the "Song" label in front of it.
+        // The links describe the same field as `artists` - never the "Song" label in front of it.
         assert_eq!(
             s.artist_runs.iter().map(|r| (r.text.as_str(), r.id.as_deref())).collect::<Vec<_>>(),
             [("Delara", Some("UCdelara"))]

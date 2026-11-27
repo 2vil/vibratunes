@@ -1,11 +1,11 @@
 //! Vibratunes "Listen Together" sync server. A self-hosted WebSocket hub that relays small playback
-//! control messages between a host and guests — audio never touches it; every client streams
+//! control messages between a host and guests - audio never touches it; every client streams
 //! direct from YouTube (context/19). Host-authoritative, server-extrapolated position.
 //!
 //! Plain `ws://` on `0.0.0.0:PORT` (default 8080). TLS is terminated by whatever you front it with
 //! (Tailscale Funnel / Cloudflare Tunnel), so there's none here.
 //!
-//! ponytail: one global `Mutex<HashMap<room, Room>>` and unbounded per-client channels — right for
+//! ponytail: one global `Mutex<HashMap<room, Room>>` and unbounded per-client channels - right for
 //! a personal server (tens of users). If it ever needs to scale, shard by room / add backpressure.
 
 use std::collections::HashMap;
@@ -55,7 +55,7 @@ const MAX_PAIR_CLAIMS: u8 = 3;
 /// Link rooms live in the same map as Listen Together rooms, under this prefix plus the secret.
 /// No room code contains `:`, so the two can't collide.
 const LINK_PREFIX: &str = "link:";
-/// Room code alphabet — no `I`/`O` to avoid confusion (context/19 §2.2).
+/// Room code alphabet - no `I`/`O` to avoid confusion (context/19 §2.2).
 const CODE_ALPHABET: &[u8] = b"1234567890QWERTYUPASDFGHJKLZXCVBNM";
 
 type Tx = mpsc::UnboundedSender<ServerMessage>;
@@ -143,7 +143,7 @@ impl Room {
         }
     }
 
-    /// Send to every connected peer except `except` (dropped receivers are ignored — the cleanup
+    /// Send to every connected peer except `except` (dropped receivers are ignored - the cleanup
     /// path removes them).
     fn broadcast(&self, msg: &ServerMessage, except: Option<&str>) {
         for (id, p) in &self.peers {
@@ -353,7 +353,7 @@ impl Server {
                     let _ = tx.send(err("room_not_found", "No room with that code."));
                     return;
                 };
-                // No reachable host means nobody can ever approve this request — say so instead of
+                // No reachable host means nobody can ever approve this request - say so instead of
                 // parking the joiner on "waiting for the host" forever.
                 if !room.host_is_reachable() {
                     let _ =
@@ -823,7 +823,7 @@ impl Server {
             }
         }
         // Last member gone: nobody holds a session token for this room anymore, so it can never be
-        // re-entered — only trap joiners. Close it, and turn away anyone still knocking.
+        // re-entered - only trap joiners. Close it, and turn away anyone still knocking.
         if room.peers.is_empty() {
             for (_, p) in room.pending.drain() {
                 let _ = p.tx.send(ServerMessage::JoinRejected {
@@ -989,7 +989,7 @@ async fn main() {
     let port: u16 = std::env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(8080);
     let addr = format!("0.0.0.0:{port}");
     let listener = TcpListener::bind(&addr).await.expect("bind");
-    tracing::info!(%addr, "limusic-sync listening (plain ws — front with Tailscale/Cloudflare for wss)");
+    tracing::info!(%addr, "limusic-sync listening (plain ws - front with Tailscale/Cloudflare for wss)");
 
     let server = Arc::new(Server::default());
 

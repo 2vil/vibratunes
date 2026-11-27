@@ -2,7 +2,7 @@
 //! is a plain `browse` call, but the response shape depends on the client:
 //!
 //! - **Mobile clients** (IOS_MUSIC) return line-synced lyrics: an element-renderer tree holding
-//!   `timedLyricsData: [{ lyricLine, cueRange: { startTimeMilliseconds, … } }, …]` — the same
+//!   `timedLyricsData: [{ lyricLine, cueRange: { startTimeMilliseconds, … } }, …]` - the same
 //!   real-time lyrics the YT Music app shows.
 //! - **WEB_REMIX** returns plain text: `musicDescriptionShelfRenderer` with the lyrics in
 //!   `description` and the attribution ("Source: Musixmatch") in `footer`.
@@ -32,7 +32,7 @@ pub fn parse_lyrics_timed(root: &Value) -> Vec<TimedLyricLine> {
     for data in find_all(root, "timedLyricsData") {
         let Some(entries) = data.as_array() else { continue };
         for e in entries {
-            // Credit/footer entries carry no cueRange — skip them, keep only real cue lines.
+            // Credit/footer entries carry no cueRange - skip them, keep only real cue lines.
             let Some(text) = e.get("lyricLine").and_then(Value::as_str) else { continue };
             let Some(ms) = e
                 .get("cueRange")

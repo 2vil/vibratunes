@@ -8,11 +8,11 @@
 //! - **Handles:** fetched fresh via `get_webview_window` per call and dropped before any `.await`,
 //!   so we never hold a non-`Send` handle across a suspension point.
 //! - **Lifecycle:** create/destroy run on the main thread via `run_on_main_thread` (GTK requires
-//!   it). Callers must invoke `create` from a spawned task, not from `setup()` — the event loop
+//!   it). Callers must invoke `create` from a spawned task, not from `setup()` - the event loop
 //!   isn't pumping yet during setup and the closure would never run.
 //! - **Harness HTML:** served over the app's own `limusicharness://` URI scheme (registered in
 //!   `lib.rs`), NOT a `data:` URL. Tauri hands a `data:` URL to wry as a plain URL, and on Windows
-//!   wry navigates to it — which Chromium refuses for a top-level document, so WebView2 sat on the
+//!   wry navigates to it - which Chromium refuses for a top-level document, so WebView2 sat on the
 //!   initial `about:blank` forever and the readiness probe (then `location.protocol==='data:'`)
 //!   could never pass. The cipher webview therefore never existed on Windows: no deciphered URLs,
 //!   so WEB_REMIX/TVHTML5/WEB_CREATOR produced nothing and the user's own uploads (the one thing
@@ -61,7 +61,7 @@ pub const SCHEME: &str = "limusicharness";
 /// The harness document. Everything the bridge needs lives in this inline script rather than in an
 /// `initialization_script`, because an init script is registered *after* the engine has already
 /// created its first `about:blank` document: if a navigation ever fails, the page that is left has
-/// no globals at all. Part of the document, they exist exactly when the document does — which is
+/// no globals at all. Part of the document, they exist exactly when the document does - which is
 /// also what `__harness` proves to the readiness probe.
 ///
 /// `_yt_player` is the IIFE argument YouTube's player.js expects (context/05); the error hooks feed
@@ -130,29 +130,29 @@ impl Bridge {
 
         // Give the page-load event a brief chance (WebKitGTK fires it in ~tens of ms, so no evals
         // are issued before load there); if it doesn't arrive, fall through to probing JS directly
-        // — a hidden WebView2 runs JS even when NavigationCompleted never fires.
+        // - a hidden WebView2 runs JS even when NavigationCompleted never fires.
         tokio::select! {
             _ = ready_rx => tracing::info!(label, "webview page loaded"),
             _ = tokio::time::sleep(Duration::from_secs(1)) =>
-                tracing::debug!(label, "no page-load event within 1s — probing JS directly"),
+                tracing::debug!(label, "no page-load event within 1s - probing JS directly"),
         }
 
         // Real readiness gate: poll until the harness's own global answers, which (unlike a plain
         // `1+1`, which would pass on `about:blank` too) proves BOTH the JS↔Rust round-trip works
         // AND that the document we asked for is the one running. Short per-attempt timeout so an
         // eval whose callback is dropped pre-load (WebKitGTK quirk) retries instead of stalling.
-        // On timeout the window exists but is unusable — destroy it.
+        // On timeout the window exists but is unusable - destroy it.
         let deadline = Instant::now() + Duration::from_secs(12);
         loop {
             let ready = bridge.eval_json(probe.to_owned(), Duration::from_millis(800)).await;
             if matches!(ready, Ok(Value::Bool(true))) {
-                tracing::info!(label, "webview bridge OK — harness loaded, eval round-trips");
+                tracing::info!(label, "webview bridge OK - harness loaded, eval round-trips");
                 return Ok(bridge);
             }
             if Instant::now() >= deadline {
                 tracing::error!(
                     label,
-                    "webview never became ready — harness never loaded / JS never round-tripped"
+                    "webview never became ready - harness never loaded / JS never round-tripped"
                 );
                 let _ = bridge.destroy();
                 return Err(Error::Timeout(Duration::from_secs(12)));
@@ -192,7 +192,7 @@ impl Bridge {
                 }
             })
             .map_err(|e| Error::Eval(e.to_string()))?;
-            // wv dropped here — never held across the await below.
+            // wv dropped here - never held across the await below.
         }
         let raw = tokio::time::timeout(timeout, rx)
             .await
@@ -206,7 +206,7 @@ impl Bridge {
 
     /// Poll a synchronous JS expression until it evaluates non-null, or time out. Also fails fast
     /// if the harness recorded an uncaught JS error. An individual eval that times out or errors is
-    /// treated as "not ready yet" — only the outer `timeout` aborts the poll.
+    /// treated as "not ready yet" - only the outer `timeout` aborts the poll.
     async fn poll_json(&self, expr: &str, timeout: Duration) -> Result<Value, Error> {
         let deadline = Instant::now() + timeout;
         let step = Duration::from_millis(100);
@@ -214,7 +214,7 @@ impl Bridge {
             match self.eval_json(format!("({expr})"), Duration::from_secs(3)).await {
                 Ok(v) if !v.is_null() => return Ok(v),
                 Ok(_) => {}                                        // null → still pending
-                Err(Error::Gone(l)) => return Err(Error::Gone(l)), // window died — stop
+                Err(Error::Gone(l)) => return Err(Error::Gone(l)), // window died - stop
                 Err(_) => {} // a transient eval timeout/error → keep polling until the deadline
             }
             if let Ok(Some(msg)) = self
@@ -288,5 +288,5 @@ pub(crate) async fn destroy_and_wait(app: &AppHandle, label: &str) {
         }
         tokio::time::sleep(Duration::from_millis(50)).await;
     }
-    tracing::warn!(label, "webview label still present after destroy — create may collide");
+    tracing::warn!(label, "webview label still present after destroy - create may collide");
 }

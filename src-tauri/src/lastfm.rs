@@ -1,5 +1,5 @@
 //! Last.fm + ListenBrainz scrobbling. One consumer of the same track/duration/position stream
-//! that feeds `discord.rs` — but simpler: neither service cares about live position, only two
+//! that feeds `discord.rs` - but simpler: neither service cares about live position, only two
 //! moments per track. A now-playing ping when a track starts, and one scrobble once the track
 //! has played half its length or 4 minutes, whichever comes first (Last.fm's official rule;
 //! tracks under 30s never scrobble). Both numbers are the user's to change in the Scrobbling
@@ -7,12 +7,12 @@
 //!
 //! One task, one clock: the [`Scrobbler`] holds the Last.fm session key next to the ListenBrainz
 //! user token and sends to whichever service is connected from the same `now_playing` and
-//! `scrobble`. Only the transports differ — Last.fm's signed calls live here, ListenBrainz's
+//! `scrobble`. Only the transports differ - Last.fm's signed calls live here, ListenBrainz's
 //! `submit-listens` calls in [`crate::listenbrainz`]. A fix to when a play counts (repeat-one,
 //! real played time) lands once, not in two tasks.
 //!
 //! Everything is best-effort (context/16 fail-soft, same as Discord/media): a failed scrobble is
-//! a `debug!` line, never a user-facing error. No offline queue — Last.fm accepts scrobbles up to
+//! a `debug!` line, never a user-facing error. No offline queue - Last.fm accepts scrobbles up to
 //! two weeks late, but a queue is complexity we add only if dropped scrobbles ever show up.
 //! ponytail: no offline queue; add one if scrobbles visibly go missing.
 //!
@@ -20,7 +20,7 @@
 //! poll `auth.getSession` until they approve. Session keys never expire, so the key + username in
 //! settings (`lastfm_session_key` / `lastfm_username`) are the whole persistent state.
 //!
-//! The scrobble threshold runs off mpv's *position*, not accumulated play time — seeking forward
+//! The scrobble threshold runs off mpv's *position*, not accumulated play time - seeking forward
 //! can technically trigger it early, which is how most desktop scrobblers behave anyway.
 //! ponytail: position-based threshold; track real played-time if cheating ever matters.
 
@@ -37,7 +37,7 @@ use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 use crate::state::AppState;
 
 /// Last.fm API credentials. Baked in at compile time from the gitignored `src-tauri/lastfm.keys`
-/// (via build.rs) — never from source, the repo is public. Registered at
+/// (via build.rs) - never from source, the repo is public. Registered at
 /// <https://www.last.fm/api/account/create>. Without them the titlebar button errors out with a
 /// clear message instead of silently doing nothing.
 const API_KEY: &str = match option_env!("LIMUSIC_LASTFM_API_KEY") {
@@ -53,13 +53,13 @@ const API_ROOT: &str = "https://ws.audioscrobbler.com/2.0/";
 const AUTH_URL: &str = "https://www.last.fm/api/auth/";
 
 /// How long the user gets to approve the app in their browser: 60 polls × 5s = 5 minutes.
-/// (The token itself is valid for 60 minutes — the UI spinner is the real constraint.)
+/// (The token itself is valid for 60 minutes - the UI spinner is the real constraint.)
 const AUTH_POLL_EVERY: Duration = Duration::from_secs(5);
 const AUTH_POLL_TRIES: u32 = 60;
 
-/// Last.fm error 14: "token has not been authorized" — the user hasn't clicked Allow yet.
+/// Last.fm error 14: "token has not been authorized" - the user hasn't clicked Allow yet.
 const ERR_TOKEN_PENDING: i64 = 14;
-/// Last.fm error 16: service temporarily unavailable — retryable, same as pending.
+/// Last.fm error 16: service temporarily unavailable - retryable, same as pending.
 const ERR_TEMP_UNAVAILABLE: i64 = 16;
 
 /// How scrobbling behaves, from the Scrobbling settings tab (#327, #404). One JSON blob in the
@@ -311,7 +311,7 @@ struct Scrobbler {
     lb_problem: Option<&'static str>,
     cfg: ScrobbleConfig,
     track: Option<Track>,
-    /// Epoch secs when the current track started — the scrobble's `timestamp` / `listened_at`.
+    /// Epoch secs when the current track started - the scrobble's `timestamp` / `listened_at`.
     started_at: u64,
     duration: f64,
     scrobbled: bool,
@@ -367,7 +367,7 @@ impl Scrobbler {
             Msg::Duration(secs) => self.duration = secs,
             Msg::Position(pos) => {
                 if !self.scrobbled && crosses_threshold(pos, self.duration, &self.cfg) {
-                    self.scrobbled = true; // latch even on failure — never re-fire per tick
+                    self.scrobbled = true; // latch even on failure - never re-fire per tick
                     self.scrobble().await;
                 }
             }
@@ -641,7 +641,7 @@ fn apply_rule(re: &regex::Regex, field: &str, replace: &str, r: &mut Resolved) -
 /// dash) and text on both sides.
 fn split_title(title: &str) -> Option<(String, String)> {
     let (at, sep) =
-        [" - ", " – ", " — "].iter().filter_map(|s| title.find(s).map(|i| (i, *s))).min()?;
+        [" - ", " – ", " - "].iter().filter_map(|s| title.find(s).map(|i| (i, *s))).min()?;
     let (artist, song) = (title[..at].trim(), title[at + sep.len()..].trim());
     (!artist.is_empty() && !song.is_empty()).then(|| (artist.to_owned(), song.to_owned()))
 }
@@ -805,7 +805,7 @@ fn emit_state(
 /// is superseded). Resolution arrives via the `lastfm-state` event, not this command.
 pub async fn connect(state: Arc<AppState>) -> Result<(), String> {
     if API_KEY.is_empty() || API_SECRET.is_empty() {
-        return Err("Last.fm isn't configured in this build — paste an API key into lastfm.rs \
+        return Err("Last.fm isn't configured in this build - paste an API key into lastfm.rs \
                     (see https://www.last.fm/api/account/create)."
             .into());
     }
@@ -847,14 +847,14 @@ pub async fn connect(state: Arc<AppState>) -> Result<(), String> {
                     emit_state(&state.app, true, Some(name), None);
                     return;
                 }
-                Err(e) if e.retryable() => continue, // not approved yet (or transient) — keep polling
+                Err(e) if e.retryable() => continue, // not approved yet (or transient) - keep polling
                 Err(e) => {
                     emit_state(&state.app, false, None, Some(&format!("Last.fm: {}", e.message)));
                     return;
                 }
             }
         }
-        emit_state(&state.app, false, None, Some("Last.fm authorization timed out — try again"));
+        emit_state(&state.app, false, None, Some("Last.fm authorization timed out - try again"));
     });
     Ok(())
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
-	// Discord brand mark — a user-supplied asset; brand logos aren't in HugeIcons' free set.
-	let { class: cls = '' }: { class?: string } = $props();
+	// Discord brand mark - a user-supplied asset; brand logos aren't in HugeIcons' free set.
+	let { class: cls = "" }: { class?: string } = $props();
 </script>
 
 <svg viewBox="0 0 32 32" fill="currentColor" class={cls} aria-hidden="true">

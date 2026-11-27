@@ -1,4 +1,4 @@
-//! Tauri commands — the ONLY API the UI calls. context/11 UI contract. No YouTube shapes leak
+//! Tauri commands - the ONLY API the UI calls. context/11 UI contract. No YouTube shapes leak
 //! past here; the UI never sees a stream URL.
 
 use std::sync::Arc;
@@ -104,7 +104,7 @@ pub async fn switch_version(state: St<'_>) -> Result<(), String> {
     Ok(())
 }
 
-/// Remove an upcoming track from the queue (not the one playing). Guests are add-only — blocked
+/// Remove an upcoming track from the queue (not the one playing). Guests are add-only - blocked
 /// inside AppState.
 #[tauri::command]
 pub async fn remove_from_queue(state: St<'_>, index: usize) -> Result<(), String> {
@@ -135,7 +135,7 @@ pub async fn move_in_queue(state: St<'_>, from: usize, to: usize) -> Result<(), 
 
 /// "Add to queue": the tracks go at the back of the "Next in queue" block, so they play after
 /// everything already queued by hand and ahead of the playing context (and its radio/filler).
-/// `from` heads the block in the queue panel; `continuation` is the source page's next-page token —
+/// `from` heads the block in the queue panel; `continuation` is the source page's next-page token -
 /// the rest of a long playlist is walked in in the background.
 #[tauri::command]
 pub async fn add_to_queue(
@@ -502,7 +502,7 @@ pub async fn set_setting(
     if key == "ambient_light" {
         crate::set_webgl(&app, value == "true");
     }
-    // Presence connects/clears the moment it's toggled — the user shouldn't have to skip a track
+    // Presence connects/clears the moment it's toggled - the user shouldn't have to skip a track
     // to see it take effect.
     if key == "discord_rpc" {
         state.set_discord_enabled(value == "true");
@@ -628,7 +628,7 @@ pub async fn get_stream_clients() -> Result<Vec<String>, String> {
 ///
 /// Same runtime-scope trick as local artwork (`local::allow_covers`): the static asset scope stays
 /// empty, and only the exact file gets a URL. The extension check keeps the command from being a
-/// general "give the page a URL for any path on this machine" — today only the main window holds a
+/// general "give the page a URL for any path on this machine" - today only the main window holds a
 /// capability to call commands at all, and this stays safe if that ever widens.
 #[tauri::command]
 pub async fn allow_font_file(app: tauri::AppHandle, path: String) -> Result<(), String> {
@@ -842,7 +842,7 @@ pub async fn sign_out(state: St<'_>) -> Result<(), String> {
 
 // --- saved Google accounts (multi-account, context/15) ---------------------------------------
 
-/// Saved Google accounts for the account menu. Display fields only — cookies, delegated ids and
+/// Saved Google accounts for the account menu. Display fields only - cookies, delegated ids and
 /// visitorData never cross the Tauri boundary.
 #[tauri::command]
 pub async fn get_google_accounts(state: St<'_>) -> Result<Vec<serde_json::Value>, String> {
@@ -1664,7 +1664,7 @@ pub async fn get_browse_grid(
 /// `source_id` (the page's playlist/album playlist id) makes autoplay continue with that
 /// context's radio when the queue runs out. `source_name` (the page title) feeds the queue
 /// panel's "Next from" header; `shuffle: true` (page Shuffle buttons) turns shuffle on for
-/// this queue — pass the items in their real order, the backend shuffles. `continuation` is the
+/// this queue - pass the items in their real order, the backend shuffles. `continuation` is the
 /// page's next-page token when it has one: pass the tracks that are loaded and the backend walks
 /// the rest into the queue in the background, so playback starts on page 1.
 #[tauri::command]
@@ -1686,7 +1686,7 @@ pub async fn play_playlist(
 
 /// Start a radio seeded on a song, artist, album or playlist (context/08). `kind` is
 /// `song` | `artist` | `album` | `playlist`; `id` is the videoId (song) or browseId/playlistId
-/// (everything else) — the backend resolves it to a radio playlist. `name` titles the queue.
+/// (everything else) - the backend resolves it to a radio playlist. `name` titles the queue.
 ///
 /// Starting a song radio on the track that's already playing keeps it playing and replaces only
 /// what comes after it; every other case replaces the queue.
@@ -1880,7 +1880,7 @@ pub fn readonly_playlists(state: St<'_>) -> Vec<String> {
         .unwrap_or_default()
 }
 
-/// `false` means the playlist already had the track and YouTube added nothing — not an error, but
+/// `false` means the playlist already had the track and YouTube added nothing - not an error, but
 /// the UI must not draw an optimistic row for it (there is no real row to remove later).
 /// With `allow_duplicates` set to `true`, `true` is returned for a duplicate that was added on purpose.
 #[tauri::command]
@@ -2552,7 +2552,7 @@ pub async fn add_local_folder(
 }
 
 /// Stop watching a folder. Its tracks disappear from the library on the rescan that follows (they
-/// come back untouched if the folder is added again — nothing on disk is modified).
+/// come back untouched if the folder is added again - nothing on disk is modified).
 #[tauri::command]
 pub async fn remove_local_folder(
     state: St<'_>,
@@ -2687,7 +2687,7 @@ pub async fn lt_suggest(state: St<'_>, item: SongItem) -> Result<(), String> {
     Ok(())
 }
 
-/// Host: approve a suggestion — add it to the real queue and notify the suggester. (Unused since
+/// Host: approve a suggestion - add it to the real queue and notify the suggester. (Unused since
 /// guest adds auto-approve, kept for a future "require approval" setting.)
 #[tauri::command]
 pub async fn lt_approve_suggestion(state: St<'_>, id: String) -> Result<(), String> {
@@ -3267,7 +3267,7 @@ pub async fn lastfm_disconnect(state: St<'_>) -> Result<(), String> {
     Ok(())
 }
 
-/// `{ connected, username }` from the persisted session — seeds the titlebar button on mount.
+/// `{ connected, username }` from the persisted session - seeds the titlebar button on mount.
 #[tauri::command]
 pub async fn lastfm_status(state: St<'_>) -> Result<serde_json::Value, String> {
     Ok(crate::lastfm::status(&state))
@@ -3312,7 +3312,7 @@ pub async fn listenbrainz_disconnect(state: St<'_>) -> Result<(), String> {
     Ok(())
 }
 
-/// `{ connected, username }` from the persisted token — seeds the Scrobbling tab on mount.
+/// `{ connected, username }` from the persisted token - seeds the Scrobbling tab on mount.
 #[tauri::command]
 pub async fn listenbrainz_status(state: St<'_>) -> Result<serde_json::Value, String> {
     Ok(crate::listenbrainz::status(&state))

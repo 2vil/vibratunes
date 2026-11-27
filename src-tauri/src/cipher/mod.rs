@@ -1,14 +1,14 @@
-//! `CipherDeobfuscator` (context/05) — the signature/`n`-transform runtime the orchestrator calls.
+//! `CipherDeobfuscator` (context/05) - the signature/`n`-transform runtime the orchestrator calls.
 //!
 //! Ties [`fetcher`] (player.js) + [`extractor`]/[`config`] (function names) + a hidden cipher
 //! webview ([`crate::webview`]) that runs YouTube's own code (its `_yt_player` harness global comes
-//! with the document — see `webview::HARNESS_HTML`). Every public method degrades
+//! with the document - see `webview::HARNESS_HTML`). Every public method degrades
 //! gracefully: a webview or extraction failure yields `None` / the original URL, and the
 //! orchestrator falls through to the non-cipher fallback clients (context/06 §5).
 //!
 //! The webview is built on demand and torn down when idle (`teardown_if_idle`), never held for the
-//! life of the process: it is a second `WebKitWebProcess`, and STS — the one thing every /player
-//! request needs — comes from analysis alone.
+//! life of the process: it is a second `WebKitWebProcess`, and STS - the one thing every /player
+//! request needs - comes from analysis alone.
 
 mod config;
 mod extractor;
@@ -45,8 +45,8 @@ const UNKNOWN_PLAYER_RETRY: Duration = Duration::from_secs(15 * 60);
 /// orchestrator commits to this player, by running each on a sample input.
 ///
 /// The old brute-force ("scan `window` for any 1-arg function that transforms a probe string") is
-/// gone. It never had a chance — the sig function and `n` class live inside player.js's IIFE
-/// closure and are never on `window` — and calling every enumerable 1-arg global to find out is a
+/// gone. It never had a chance - the sig function and `n` class live inside player.js's IIFE
+/// closure and are never on `window` - and calling every enumerable 1-arg global to find out is a
 /// side-effecting scan: it invokes `fetch` among others.
 const DISCOVERY_JS: &str = r#"(function(){
   var t="grut12Abc_-";
@@ -65,7 +65,7 @@ struct Inner {
     built_epoch: u64,
     n_available: bool,
     /// Whether an `_cipherSigFunc` export exists (i.e. a sig function name was found). When false,
-    /// deciphering is impossible on this player regardless of freshness — so we skip refetch/retry.
+    /// deciphering is impossible on this player regardless of freshness - so we skip refetch/retry.
     sig_available: bool,
     /// player.js has been fetched and its config/STS resolved for `built_epoch`. This alone
     /// answers `signature_timestamp`, which is why it is separate from `discovered`: the /player
@@ -100,7 +100,7 @@ impl Inner {
             return false; // STS is already in hand; no web process needed to hand it over
         }
         if !self.discovered {
-            return true; // an analysis-only pass got us here — the webview was never built
+            return true; // an analysis-only pass got us here - the webview was never built
         }
         // An undecipherable player owes no webview: discovery already proved there is nothing to
         // call, and a rebuild would find the same thing.
@@ -153,7 +153,7 @@ impl CipherDeobfuscator {
             return Some(u);
         }
         // One self-heal retry: a stale player.js can silently produce a wrong signature. context/05.
-        tracing::warn!(video_id, "decipher failed — refetching player.js and retrying once");
+        tracing::warn!(video_id, "decipher failed - refetching player.js and retrying once");
         self.fetcher.invalidate();
         {
             let mut inner = self.inner.lock().await;
@@ -240,7 +240,7 @@ impl CipherDeobfuscator {
     ///
     /// Analysis ONLY: it deliberately does not build the webview. That used to happen here, which
     /// meant an app that was merely open (never played a note) carried a second
-    /// `WebKitWebProcess` for the whole session — measured at 91 MiB PSS / 234 MiB RSS on Fedora.
+    /// `WebKitWebProcess` for the whole session - measured at 91 MiB PSS / 234 MiB RSS on Fedora.
     /// STS is what the /player request actually needs at startup, and analysis alone produces it;
     /// the webview is built by the first call that has a signature to decipher.
     pub async fn prewarm(&self) {
@@ -249,7 +249,7 @@ impl CipherDeobfuscator {
         }
     }
 
-    /// Drop the webview if sig/n haven't been needed for `idle` — the same mint-and-drop policy
+    /// Drop the webview if sig/n haven't been needed for `idle` - the same mint-and-drop policy
     /// the BotGuard isolate uses (Phase-0 hybrid decision), now that the webview is built on
     /// demand rather than held for the life of the process. The analysis survives, so a rebuild is
     /// a disk-cached player.js plus one injection (~400ms), and STS keeps answering meanwhile.
@@ -282,7 +282,7 @@ impl CipherDeobfuscator {
 
     /// Ensure player.js analysis (STS + config lookup) is fresh for the current config epoch.
     ///
-    /// With `want_bridge`, also ensure the cipher webview exists and discovery has run — but only
+    /// With `want_bridge`, also ensure the cipher webview exists and discovery has run - but only
     /// when the player is decipherable at all; otherwise the webview is destroyed/never built and
     /// the analysis alone satisfies `signature_timestamp`. Callers that only need STS pass `false`
     /// and never pay for a web process (see [`Self::prewarm`]).
@@ -295,7 +295,7 @@ impl CipherDeobfuscator {
                 return Ok(());
             }
         }
-        // Fetch player.js and look up its config — the only way in on the 2025+ players.
+        // Fetch player.js and look up its config - the only way in on the 2025+ players.
         let player = self.fetcher.fetch().await.map_err(|e| e.to_string())?;
         let cfg = self.config.get(&player.hash);
         if cfg.is_none() {
@@ -341,7 +341,7 @@ impl CipherDeobfuscator {
         if !want_bridge {
             let mut inner = self.inner.lock().await;
             if let Some(b) = inner.bridge.take() {
-                let _ = b.destroy(); // player.js rotated or the config epoch moved — it's stale
+                let _ = b.destroy(); // player.js rotated or the config epoch moved - it's stale
                 inner.last_used = None;
             }
             inner.sts = sts;
@@ -383,7 +383,7 @@ impl CipherDeobfuscator {
             inner.last_used = Some(Instant::now());
         } else {
             tracing::info!(
-                "cipher: discovery found no usable sig/n on this player — dropping the webview \
+                "cipher: discovery found no usable sig/n on this player - dropping the webview \
                  (KI-1; rebuilt on config-epoch change or self-heal)"
             );
             let _ = bridge.destroy();
@@ -516,8 +516,8 @@ mod tests {
             built_epoch: 7,
             ..Inner::default()
         };
-        assert!(!discovered.owes_work(7, true, true), "webview is up — nothing owed");
-        assert!(discovered.owes_work(7, true, false), "torn down while idle — rebuild it");
+        assert!(!discovered.owes_work(7, true, true), "webview is up - nothing owed");
+        assert!(discovered.owes_work(7, true, false), "torn down while idle - rebuild it");
 
         // Discovery proved there is nothing callable, so a missing webview is not a debt.
         let undecipherable = Inner { sig_available: false, ..discovered };

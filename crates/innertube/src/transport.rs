@@ -1,4 +1,4 @@
-//! HTTP transport. context/01. Pure — no Tauri/webview/mpv.
+//! HTTP transport. context/01. Pure - no Tauri/webview/mpv.
 
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, RwLock};
@@ -57,7 +57,7 @@ pub enum Error {
     Json(#[from] serde_json::Error),
     #[error("visitorData not found in sw.js_data")]
     VisitorDataNotFound,
-    #[error("Your YouTube Music session expired — open the account menu and sign in again.")]
+    #[error("Your YouTube Music session expired - open the account menu and sign in again.")]
     SessionExpired,
     #[error("This track is already in the playlist.")]
     AlreadyInPlaylist,
@@ -275,7 +275,7 @@ impl InnerTube {
     /// Google rotates `__Secure-1PSIDTS` / `__Secure-3PSIDTS` on the very requests this client
     /// makes, and invalidates the previous value when it does. Dropping the new one (which is
     /// what a `reqwest` client with no cookie store does) is what killed the login a few hours
-    /// into every session — issue #165 / KI-2. Note that `cookie_store(true)` would not help:
+    /// into every session - issue #165 / KI-2. Note that `cookie_store(true)` would not help:
     /// reqwest skips its own store whenever a `Cookie` header is already set, and `headers()`
     /// always sets one.
     fn absorb_cookies(&self, headers: &HeaderMap) {
@@ -329,7 +329,7 @@ impl InnerTube {
         self.session.read().unwrap().cookie.is_some()
     }
 
-    /// The current visitorData (read fresh per resolve — a login may have refreshed it).
+    /// The current visitorData (read fresh per resolve - a login may have refreshed it).
     pub fn visitor_data(&self) -> Option<String> {
         self.session.read().unwrap().visitor_data.clone()
     }
@@ -382,7 +382,7 @@ impl InnerTube {
         self.session.write().unwrap().locale.hl = hl.to_owned();
     }
 
-    /// Build the request `context` for a client from the current session. Crate-internal — the
+    /// Build the request `context` for a client from the current session. Crate-internal - the
     /// endpoints facade calls it. Reads and drops the lock synchronously (no `.await` inside).
     pub(crate) fn context_for(&self, client: &YouTubeClient) -> crate::models::context::Context {
         let s = self.session.read().unwrap();
@@ -596,7 +596,7 @@ impl InnerTube {
     }
 
     /// Per-request headers. context/01 §ytClient. Note `X-YouTube-Client-Name` carries the
-    /// numeric client **id**, not the name string — intentional and required.
+    /// numeric client **id**, not the name string - intentional and required.
     fn headers(&self, client: &YouTubeClient, set_login: bool) -> HeaderMap {
         let mut h = HeaderMap::new();
         let set = |h: &mut HeaderMap, k: &'static str, v: &str| {
@@ -619,7 +619,7 @@ impl InnerTube {
             set(&mut h, "x-goog-visitor-id", vd);
         }
 
-        // SAPISIDHASH cookie auth — only when logged in AND the client supports it (Phase 3).
+        // SAPISIDHASH cookie auth - only when logged in AND the client supports it (Phase 3).
         if set_login && client.login_supported {
             if let Some(cookie) = &s.cookie {
                 set(&mut h, "cookie", cookie);
@@ -642,7 +642,7 @@ impl InnerTube {
 
     /// Register a play in watch history: GET the response's
     /// `playbackTracking.videostatsPlaybackUrl.baseUrl` with `c`/`cpn`/`ver` (+ `list`/`referrer`
-    /// in a playlist) and the authed client headers. context/01 §registerPlayback. Best-effort —
+    /// in a playlist) and the authed client headers. context/01 §registerPlayback. Best-effort -
     /// the caller logs-and-ignores errors.
     pub async fn register_playback(
         &self,
@@ -749,7 +749,7 @@ impl Drop for Healing {
     }
 }
 
-/// Build the playback-tracking GET URL. context/01 §registerPlayback. Pure — unit-tested. The
+/// Build the playback-tracking GET URL. context/01 §registerPlayback. Pure - unit-tested. The
 /// `base_url` already carries YouTube's own query params, so we chain onto it.
 fn build_playback_url(
     base_url: &str,
@@ -770,11 +770,11 @@ fn build_playback_url(
     url
 }
 
-/// CPN alphabet — 64 URL-safe chars, exactly 6 bits each. context/01.
+/// CPN alphabet - 64 URL-safe chars, exactly 6 bits each. context/01.
 const CPN_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 /// A fresh 16-char Content Playback Nonce for one playback. context/01 §registerPlayback.
-// ponytail: time+counter-seeded xorshift, not crypto-rand — a CPN only needs to be unique per
+// ponytail: time+counter-seeded xorshift, not crypto-rand - a CPN only needs to be unique per
 // playback, not unpredictable; keeps the `rand` crate out of the tree.
 pub fn generate_cpn() -> String {
     use std::sync::atomic::{AtomicU64, Ordering};

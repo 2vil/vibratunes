@@ -15,7 +15,7 @@ fn title(item: Option<&SongItem>) -> String {
     if artists.is_empty() {
         item.title.clone()
     } else {
-        format!("{} — {artists}", item.title)
+        format!("{} - {artists}", item.title)
     }
 }
 
@@ -35,7 +35,7 @@ mod tests {
 
     #[test]
     fn names_the_track_and_its_artists() {
-        assert_eq!(title(Some(&song("Blue Monday", "New Order"))), "Blue Monday — New Order");
+        assert_eq!(title(Some(&song("Blue Monday", "New Order"))), "Blue Monday - New Order");
     }
 
     #[test]

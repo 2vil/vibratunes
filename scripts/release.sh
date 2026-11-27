@@ -114,11 +114,11 @@ echo "    clean tree, pushed, $VERSION > ${HIGHEST:-none}"
 # Bake a snapshot of the community player-cipher registry into the binary, same as both CI
 # workflows do. src-tauri/cipher_configs.json is `include_str!`d and tracked-empty; the app
 # refreshes it from these registries at runtime, so the snapshot only matters on a first run that
-# can't reach raw.githubusercontent.com — without it that user has no cipher and every restricted
+# can't reach raw.githubusercontent.com - without it that user has no cipher and every restricted
 # track is skipped. Never fatal: a third-party registry being down must not block a release.
 #
 # This machine is not a throwaway CI checkout, so the file is put back on exit however the script
-# ends — a 34 KB snapshot left staged in the working tree would get committed by accident.
+# ends - a 34 KB snapshot left staged in the working tree would get committed by accident.
 CIPHER_CONFIGS=src-tauri/cipher_configs.json
 restore_cipher_configs() { git checkout -- "$CIPHER_CONFIGS" 2>/dev/null || true; }
 trap restore_cipher_configs EXIT
@@ -143,7 +143,7 @@ done
 export TAURI_SIGNING_PRIVATE_KEY="$(cat "$KEY")"
 export TAURI_SIGNING_PRIVATE_KEY_PASSWORD="${TAURI_SIGNING_PRIVATE_KEY_PASSWORD:-}"
 
-# latest.json: the manifest the updater reads. Published with no platforms — each CI workflow
+# latest.json: the manifest the updater reads. Published with no platforms - each CI workflow
 # merges its own entry in (jq, so they don't clobber each other) once its binary is attached.
 mkdir -p target/release/bundle
 cat > target/release/bundle/latest.json <<EOF
@@ -186,7 +186,7 @@ BEFORE_MAC="$(latest_run "macOS release binaries")"
 # Dispatched from master rather than fired by the `release: published` event, and that ref matters:
 # Actions caches are readable only from the ref that wrote them plus the default branch. A
 # release-triggered run executes on the tag ref, so it could never reuse the previous release's
-# cache — Windows recompiled all of Rust from scratch every time, 11m25s of a 15m run. Dispatching
+# cache - Windows recompiled all of Rust from scratch every time, 11m25s of a 15m run. Dispatching
 # from master shares one cache across releases. All three workflows check out $TAG regardless, so
 # the binaries still come from the tagged source. They also run in parallel with each other, and now
 # with the local rpm build below as well.
@@ -217,7 +217,7 @@ else
     exit 1
   fi
 
-  # Pin to $VERSION — a stale bundle from a previous build otherwise sorts first and gets shipped
+  # Pin to $VERSION - a stale bundle from a previous build otherwise sorts first and gets shipped
   # (e.g. an old 0.1.1 rpm uploaded to the 0.1.2 release).
   RPM="$(ls target/release/bundle/rpm/vibratunes-${VERSION}-*.rpm 2>/dev/null | head -1)"
   [ -n "$RPM" ] || die "no rpm for $VERSION in target/release/bundle/rpm"

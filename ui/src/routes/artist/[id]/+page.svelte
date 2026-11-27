@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { page } from "$app/state";
+	import { goto } from "$app/navigation";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		ShuffleIcon,
 		Radio02Icon,
@@ -13,14 +13,14 @@
 		UserBlock01Icon,
 		BookmarkAdd02Icon,
 		BookmarkCheck02Icon,
-		ArrowRight01Icon
-	} from '@hugeicons/core-free-icons';
-	import VibratunesLoader from '$lib/components/VibratunesLoader.svelte';
-	import TrackRow from '$lib/components/TrackRow.svelte';
-	import ErrorState from '$lib/components/ErrorState.svelte';
-	import Shelf from '$lib/components/Shelf.svelte';
-	import * as api from '$lib/api';
-	import type { ArtistPage, BrowseItem, PlaylistPage } from '$lib/api';
+		ArrowRight01Icon,
+	} from "@hugeicons/core-free-icons";
+	import VibratunesLoader from "$lib/components/VibratunesLoader.svelte";
+	import TrackRow from "$lib/components/TrackRow.svelte";
+	import ErrorState from "$lib/components/ErrorState.svelte";
+	import Shelf from "$lib/components/Shelf.svelte";
+	import * as api from "$lib/api";
+	import type { ArtistPage, BrowseItem, PlaylistPage } from "$lib/api";
 	import {
 		addPick,
 		blockArtist,
@@ -33,11 +33,11 @@
 		startRadio,
 		toast,
 		noteLibrary,
-		toggleSaved
-	} from '$lib/player.svelte';
-	import { getCached, putCached } from '$lib/pagecache';
-	import { anchorMenu, fitMenu, NO_ANCHOR } from '$lib/menu';
-	import { t } from '$lib/i18n.svelte';
+		toggleSaved,
+	} from "$lib/player.svelte";
+	import { getCached, putCached } from "$lib/pagecache";
+	import { anchorMenu, fitMenu, NO_ANCHOR } from "$lib/menu";
+	import { t } from "$lib/i18n.svelte";
 
 	let artist = $state<ArtistPage | null>(null);
 	let loading = $state(true);
@@ -48,7 +48,7 @@
 	let shuffleBusy = $state(false);
 	let appearsOn = $state<BrowseItem[]>([]);
 
-	const id = $derived(page.params.id ?? '');
+	const id = $derived(page.params.id ?? "");
 	const nowId = $derived(playback.now?.videoId);
 	// Saved to the library on this machine (the signed-out counterpart of subscribing).
 	const savedHere = $derived(isSaved(id));
@@ -69,7 +69,7 @@
 		appearsOn = getCached<BrowseItem[]>(`appears:${cid}`) ?? [];
 		try {
 			const fresh = await api.getArtist(cid);
-			if (cid !== id) return; // superseded by navigation — drop the stale response
+			if (cid !== id) return; // superseded by navigation - drop the stale response
 			artist = fresh;
 			subscribed = fresh.subscribed;
 			putCached(key, fresh);
@@ -87,7 +87,9 @@
 	async function loadAppearsOn(cid: string, a: ArtistPage) {
 		if (!a.topSongsId) return;
 		try {
-			const own = new Set(a.sections.flatMap((s) => s.items.map((i) => i.id)));
+			const own = new Set(
+				a.sections.flatMap((s) => s.items.map((i) => i.id)),
+			);
 			const items = await api.getArtistAppearsOn(cid, a.topSongsId);
 			if (cid !== id) return;
 			appearsOn = items.filter((i) => !own.has(i.id));
@@ -110,12 +112,12 @@
 
 	// This artist as a card, for the sidebar's last-played sort and the Shortcuts grid.
 	const asItem = (): BrowseItem => ({
-		kind: 'artist',
+		kind: "artist",
 		id,
-		title: artist?.name ?? t('common.artist_singular'),
+		title: artist?.name ?? t("common.artist_singular"),
 		subtitle: artist?.subscribers,
 		// Cards elsewhere carry the round avatar; the banner is only the fallback.
-		thumbnail: artist?.avatar ?? artist?.thumbnail
+		thumbnail: artist?.avatar ?? artist?.thumbnail,
 	});
 
 	// Shuffles the whole top-songs playlist (what "See all" opens), not just the 5 rows on this
@@ -129,11 +131,20 @@
 			shuffleBusy = true;
 			try {
 				const key = `playlist:${pid}`;
-				const pl = getCached<PlaylistPage>(key) ?? (await api.getPlaylist(pid));
+				const pl =
+					getCached<PlaylistPage>(key) ??
+					(await api.getPlaylist(pid));
 				if (cid !== id) return; // navigated away mid-fetch
 				putCached(key, pl);
 				if (pl.items.length) {
-					playFrom(asItem(), pl.items, null, pid, true, pl.continuation);
+					playFrom(
+						asItem(),
+						pl.items,
+						null,
+						pid,
+						true,
+						pl.continuation,
+					);
 					return;
 				}
 			} catch (e) {
@@ -143,7 +154,8 @@
 				shuffleBusy = false;
 			}
 		}
-		if (artist.topSongs.length) playFrom(asItem(), artist.topSongs, null, undefined, true);
+		if (artist.topSongs.length)
+			playFrom(asItem(), artist.topSongs, null, undefined, true);
 	}
 
 	async function toggleSub() {
@@ -162,7 +174,9 @@
 			if (cid === id) subscribed = next; // left and came back: `load` repainted the old answer
 			noteLibrary(item, next); // so every card's menu agrees the artist is in the library
 			toast.success(
-				next ? t('toasts.subscribed', { name: who.name ?? '' }) : t('toasts.unsubscribed')
+				next
+					? t("toasts.subscribed", { name: who.name ?? "" })
+					: t("toasts.unsubscribed"),
 			);
 		} catch (e) {
 			if (cid === id) subscribed = !next; // revert, unless we've since left that artist
@@ -172,44 +186,70 @@
 		}
 	}
 
-	function showMore(section: { title: string; moreBrowseId?: string; moreParams?: string }) {
-		const q = new URLSearchParams({ id: section.moreBrowseId!, title: section.title });
-		if (section.moreParams) q.set('params', section.moreParams);
+	function showMore(section: {
+		title: string;
+		moreBrowseId?: string;
+		moreParams?: string;
+	}) {
+		const q = new URLSearchParams({
+			id: section.moreBrowseId!,
+			title: section.title,
+		});
+		if (section.moreParams) q.set("params", section.moreParams);
 		goto(`/list?${q.toString()}`);
 	}
 </script>
 
 {#if loading}
-	<div class="flex h-full items-center justify-center"><VibratunesLoader /></div>
+	<div class="flex h-full items-center justify-center">
+		<VibratunesLoader />
+	</div>
 {:else if error}
-	<div class="p-6"><ErrorState message={error} onRetry={() => load(id)} /></div>
+	<div class="p-6">
+		<ErrorState message={error} onRetry={() => load(id)} />
+	</div>
 {:else if artist}
 	<!-- Hero -->
-	<div class="content-in relative flex min-h-[45vh] flex-col justify-end overflow-hidden">
+	<div
+		class="content-in relative flex min-h-[45vh] flex-col justify-end overflow-hidden"
+	>
 		{#if artist.thumbnail}
-			<img src={artist.thumbnail} alt="" class="absolute inset-0 h-full w-full object-cover" />
+			<img
+				src={artist.thumbnail}
+				alt=""
+				class="absolute inset-0 h-full w-full object-cover"
+			/>
 		{/if}
 		<div
 			class="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/10"
 		></div>
 		<div class="relative max-w-3xl p-8">
-			<h1 class="font-heading text-5xl font-bold tracking-tight drop-shadow-lg">{artist.name}</h1>
+			<h1
+				class="font-heading text-5xl font-bold tracking-tight drop-shadow-lg"
+			>
+				{artist.name}
+			</h1>
 			{#if artist.subscribers || artist.monthlyListeners}
 				<p class="mt-2 text-sm text-muted-foreground">
 					{#if artist.subscribers}{artist.subscribers}{/if}
-					{#if artist.subscribers && artist.monthlyListeners}<br />{/if}
+					{#if artist.subscribers && artist.monthlyListeners}<br
+						/>{/if}
 					{#if artist.monthlyListeners}{artist.monthlyListeners}{/if}
 				</p>
 			{/if}
 			{#if artist.description}
-				<p class="mt-3 max-w-2xl text-sm text-foreground/80 {expanded ? '' : 'line-clamp-2'}">
+				<p
+					class="mt-3 max-w-2xl text-sm text-foreground/80 {expanded
+						? ''
+						: 'line-clamp-2'}"
+				>
 					{artist.description}
 				</p>
 				<button
 					class="mt-1 text-xs font-semibold uppercase text-muted-foreground hover:text-foreground"
 					onclick={() => (expanded = !expanded)}
 				>
-					{expanded ? t('common.less') : t('common.more')}
+					{expanded ? t("common.less") : t("common.more")}
 				</button>
 			{/if}
 			<div class="mt-5 flex items-center gap-3">
@@ -218,15 +258,17 @@
 					onclick={shuffle}
 					disabled={!artist.topSongs.length || shuffleBusy}
 				>
-					<HugeiconsIcon icon={ShuffleIcon} class="h-4 w-4" /> {t('common.shuffle')}
+					<HugeiconsIcon icon={ShuffleIcon} class="h-4 w-4" />
+					{t("common.shuffle")}
 				</button>
 				<!-- The deep counterpart to Shuffle above: that one is the finite top-songs playlist,
 				     this one asks YouTube for the artist's own endless mix. -->
 				<button
 					class="flex cursor-pointer items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition hover:bg-accent/10"
-					onclick={() => startRadio('artist', id, artist?.name)}
+					onclick={() => startRadio("artist", id, artist?.name)}
 				>
-					<HugeiconsIcon icon={Radio02Icon} class="h-4 w-4" /> {t('common.radio')}
+					<HugeiconsIcon icon={Radio02Icon} class="h-4 w-4" />
+					{t("common.radio")}
 				</button>
 				<!-- Subscribing is a YouTube write action. Signed out, the same slot saves the artist to
 				     the local library instead of offering a button that can only fail. -->
@@ -238,8 +280,15 @@
 						onclick={toggleSub}
 						disabled={subBusy}
 					>
-						<HugeiconsIcon icon={Add01Icon} altIcon={Tick02Icon} showAlt={subscribed} class="h-4 w-4" />
-						{subscribed ? t('artist.subscribed') : t('artist.subscribe')}
+						<HugeiconsIcon
+							icon={Add01Icon}
+							altIcon={Tick02Icon}
+							showAlt={subscribed}
+							class="h-4 w-4"
+						/>
+						{subscribed
+							? t("artist.subscribed")
+							: t("artist.subscribe")}
 					</button>
 				{:else}
 					<button
@@ -248,7 +297,9 @@
 							: ''}"
 						onclick={() =>
 							toast.success(
-								toggleSaved(asItem()) ? t('library.in_library') : t('common.remove')
+								toggleSaved(asItem())
+									? t("library.in_library")
+									: t("common.remove"),
 							)}
 					>
 						<HugeiconsIcon
@@ -257,13 +308,15 @@
 							showAlt={savedHere}
 							class="h-4 w-4"
 						/>
-						{savedHere ? t('library.in_library') : t('library.save_to_library')}
+						{savedHere
+							? t("library.in_library")
+							: t("library.save_to_library")}
 					</button>
 				{/if}
 				<button
 					class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border text-muted-foreground transition hover:bg-accent/10 hover:text-foreground"
 					onclick={openMenu}
-					aria-label={t('common.more')}
+					aria-label={t("common.more")}
 				>
 					<HugeiconsIcon icon={MoreVerticalIcon} class="h-5 w-5" />
 				</button>
@@ -279,20 +332,29 @@
 					{#if artist.topSongsId}
 						<button
 							class="min-w-0 cursor-pointer text-left hover:underline"
-							onclick={() => goto(`/playlist/${artist!.topSongsId}`)}
-							title={t('common.see_all')}
+							onclick={() =>
+								goto(`/playlist/${artist!.topSongsId}`)}
+							title={t("common.see_all")}
 						>
-							<h2 class="truncate font-heading text-xl font-bold">{t('artist.top_songs')}</h2>
+							<h2 class="truncate font-heading text-xl font-bold">
+								{t("artist.top_songs")}
+							</h2>
 						</button>
 						<button
 							class="flex shrink-0 cursor-pointer items-center gap-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-							onclick={() => goto(`/playlist/${artist!.topSongsId}`)}
+							onclick={() =>
+								goto(`/playlist/${artist!.topSongsId}`)}
 						>
-							{t('common.see_all')}
-							<HugeiconsIcon icon={ArrowRight01Icon} class="h-3.5 w-3.5" />
+							{t("common.see_all")}
+							<HugeiconsIcon
+								icon={ArrowRight01Icon}
+								class="h-3.5 w-3.5"
+							/>
 						</button>
 					{:else}
-						<h2 class="truncate font-heading text-xl font-bold">{t('artist.top_songs')}</h2>
+						<h2 class="truncate font-heading text-xl font-bold">
+							{t("artist.top_songs")}
+						</h2>
 					{/if}
 				</div>
 				{#each artist.topSongs as song, i (song.video_id + i)}
@@ -307,16 +369,18 @@
 			</section>
 		{/if}
 
-		{#each artist.sections as section, i (i + ':' + section.title)}
+		{#each artist.sections as section, i (i + ":" + section.title)}
 			<Shelf
 				title={section.title}
 				items={section.items}
-				onMore={section.moreBrowseId ? () => showMore(section) : undefined}
+				onMore={section.moreBrowseId
+					? () => showMore(section)
+					: undefined}
 			/>
 		{/each}
 
 		{#if appearsOn.length}
-			<Shelf title={t('artist.appears_on')} items={appearsOn} />
+			<Shelf title={t("artist.appears_on")} items={appearsOn} />
 		{/if}
 	</div>
 {/if}
@@ -329,7 +393,7 @@
 			e.preventDefault();
 			menuOpen = false;
 		}}
-		aria-label={t('common.close')}
+		aria-label={t("common.close")}
 	></button>
 	<div
 		class="fixed z-50 min-w-52 animate-in rounded-lg border bg-popover p-1 text-popover-foreground shadow-xl duration-150 fade-in-0 zoom-in-95"
@@ -343,7 +407,8 @@
 				addPick(asItem());
 			}}
 		>
-			<HugeiconsIcon icon={DashboardSquare02Icon} class="h-4 w-4" /> {t('home.add_shortcut')}
+			<HugeiconsIcon icon={DashboardSquare02Icon} class="h-4 w-4" />
+			{t("home.add_shortcut")}
 		</button>
 		<button
 			class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
@@ -352,7 +417,8 @@
 				openShare(asItem());
 			}}
 		>
-			<HugeiconsIcon icon={Share08Icon} class="h-4 w-4" /> {t('player.share')}
+			<HugeiconsIcon icon={Share08Icon} class="h-4 w-4" />
+			{t("player.share")}
 		</button>
 		{#if artist?.name}
 			<button
@@ -362,7 +428,8 @@
 					blockArtist(id, artist!.name!);
 				}}
 			>
-				<HugeiconsIcon icon={UserBlock01Icon} class="h-4 w-4" /> {t('player.block_artist')}
+				<HugeiconsIcon icon={UserBlock01Icon} class="h-4 w-4" />
+				{t("player.block_artist")}
 			</button>
 		{/if}
 	</div>

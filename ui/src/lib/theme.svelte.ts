@@ -11,7 +11,7 @@
 // On top of whichever preset is selected sits the *custom* layer (accent colour, background tint,
 // roundness, fonts). It's inline styles too, applied after the preset, so it wins over the class
 // and survives switching presets. Anything the user hasn't touched stays null and the preset shows
-// through — the customization is a set of overrides, not a rival theme to maintain.
+// through - the customization is a set of overrides, not a rival theme to maintain.
 
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { logUi } from './errlog';
@@ -78,7 +78,7 @@ export type Custom = {
 	radius: number | null; // rem
 	fontSans: string | null; // a CSS font-family value
 	fontHeading: string | null;
-	// Font files the user loaded from disk, by absolute path. Not an override — a small library that
+	// Font files the user loaded from disk, by absolute path. Not an override - a small library that
 	// both font rows can then choose from, which is why `resetCustom` leaves it alone.
 	fontFiles: string[];
 };
@@ -321,7 +321,7 @@ const FONT_STYLE_ID = 'custom-font-files';
 /** Family name for a loaded file: its base name, minus extension and anything CSS-unsafe. */
 export function fileFamily(path: string): string {
 	const base = path.split(/[\\/]/).pop() ?? path;
-	// ponytail: two files with the same name collide on one family — last one registered wins.
+	// ponytail: two files with the same name collide on one family - last one registered wins.
 	return base.replace(/\.[^.]+$/, '').replace(/[^\w \-]/g, '').trim() || 'Custom font';
 }
 
@@ -342,7 +342,7 @@ function forget(path: string): void {
 }
 
 /**
- * (Re)build the `@font-face` rules, and forget any file that has since been deleted or moved —
+ * (Re)build the `@font-face` rules, and forget any file that has since been deleted or moved -
  * the grant is what tells us, since it checks the file exists. Without the pruning, a font that is
  * no longer on disk keeps its dropdown entry and its row keeps *claiming* to use it while the app
  * silently renders the fallback. Runs at startup and whenever the settings modal opens.
@@ -392,7 +392,7 @@ export function removeFontFile(path: string): void {
 	registerFontFiles();
 }
 
-/** First family in a font stack, unquoted — what the UI shows and matches on. */
+/** First family in a font stack, unquoted - what the UI shows and matches on. */
 export function familyName(stack: string): string {
 	return (stack.split(',')[0] ?? '').replace(/["']/g, '').trim();
 }
@@ -400,7 +400,7 @@ export function familyName(stack: string): string {
 /**
  * Is this font family installed? Renders a string in it and compares the width against a fallback.
  * ponytail: a custom font that happens to measure exactly like monospace reads as missing. It's a
- * hint next to the input, not a gate — the font is applied either way.
+ * hint next to the input, not a gate - the font is applied either way.
  */
 export function fontAvailable(name: string): boolean {
 	const ctx = document.createElement('canvas').getContext('2d');
@@ -575,7 +575,7 @@ export function initTheme(): void {
 			custom.fontFiles = saved.fontFiles.filter((p: unknown) => typeof p === 'string');
 		}
 	} catch {
-		// unparseable — start clean
+		// unparseable - start clean
 	}
 	if (stored && stored in LEGACY_ACCENTS) {
 		const hex = LEGACY_ACCENTS[stored];
@@ -621,7 +621,7 @@ export function initTheme(): void {
 			appearance.lyricsGlow = Math.min(100, Math.max(0, saved.lyricsGlow));
 		}
 	} catch {
-		// unparseable — keep the defaults
+		// unparseable - keep the defaults
 	}
 	apply();
 	if (appearance.matugen) syncMatugen();

@@ -6,7 +6,7 @@ import { toast } from './player.svelte';
 
 export const tunnel = $state({
 	status: { status: 'off' } as api.TunnelStatus,
-	/** The imported `.conf`'s file name, for display only — the config itself stays in Rust. */
+	/** The imported `.conf`'s file name, for display only - the config itself stays in Rust. */
 	confName: null as string | null
 });
 
@@ -35,7 +35,7 @@ export async function setTunnelEnabled(on: boolean) {
 	try {
 		await api.setSetting('warp_enabled', String(on));
 	} catch (e) {
-		// A failed start leaves the setting on in the backend (a restart retries) — read back
+		// A failed start leaves the setting on in the backend (a restart retries) - read back
 		// whatever it actually decided, and say why.
 		const fallback: api.TunnelStatus = { status: 'failed', msg: String(e) };
 		tunnel.status = await api.tunnelStatus().catch(() => fallback);

@@ -27,7 +27,7 @@ rand = "0.8"
 listen-protocol = { path = "crates/listen-protocol" }
 
 # Release profile: thin LTO + one codegen unit for cross-crate optimization, symbols stripped
-# for size (this binary ships via AppImage self-update — size = every user's download).
+# for size (this binary ships via AppImage self-update - size = every user's download).
 # panic stays "unwind": an abort in the mpv event thread or a tokio task would kill playback
 # for the whole app instead of degrading.
 [profile.release]

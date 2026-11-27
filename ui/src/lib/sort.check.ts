@@ -1,4 +1,4 @@
-// Self-check for playlist sorting (`sort.ts`). Same deal as `rows.check.ts` — no test runner in
+// Self-check for playlist sorting (`sort.ts`). Same deal as `rows.check.ts` - no test runner in
 // `ui/`, node 22 runs TypeScript directly:
 //
 //     node --experimental-strip-types ui/src/lib/sort.check.ts
@@ -76,13 +76,13 @@ ok(ids(sortSongs(items, 'oldest', true, true)) === 'abcd', 'oldest descending on
 ok(ids(sortSongs(items, 'title', false, true)) === 'abcd', 'title descending is Z to A');
 // The Alpha pair flips with everything else, tiebreak included: "track 10" then "track 9".
 ok(ids(sortSongs(items, 'artist', false, true)) === 'dabc', 'artist descending flips the tiebreak');
-// The album groups reverse, but "First" keeps b before d — a descending sort is still not a
+// The album groups reverse, but "First" keeps b before d - a descending sort is still not a
 // reason to play an album backwards. And an albumless track stays last, it does not lead.
 ok(ids(sortSongs(items, 'album', false, true)) === 'abdc', 'album descending, albumless still last');
 ok(ids(sortSongs(tied, 'artist', false, true)) === 'xy', 'a total tie keeps playlist order either way');
 
 // --- most played: local history, missing means zero --------------------------------------------
-// b played 4 times, d once, a and c never — and the two unplayed keep playlist order between them.
+// b played 4 times, d once, a and c never - and the two unplayed keep playlist order between them.
 const counts = { b: 4, d: 1 };
 ok(ids(sortSongs(items, 'plays', false, false, counts)) === 'bdac', 'most played leads');
 ok(ids(sortSongs(items, 'plays', false, true, counts)) === 'acdb', 'descending is least played');

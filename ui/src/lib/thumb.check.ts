@@ -3,7 +3,7 @@
 //     node --experimental-strip-types ui/src/lib/thumb.check.ts
 //
 // Prints "ok" and exits 0, or throws on the first broken invariant. Not imported by the app.
-import { thumb } from './thumb.ts';
+import { thumbUrl as thumb } from './thumb-url.ts';
 
 function ok(cond: boolean, what: string): void {
 	if (!cond) throw new Error(`FAIL: ${what}`);

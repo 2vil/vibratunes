@@ -4,7 +4,7 @@ name: Windows release binaries
 # and adds the `windows-x86_64` entry to latest.json so Windows installs get auto-updates.
 #
 # `scripts/release.sh` on Fedora creates the GitHub release and its .rpm. Publishing it fires this
-# workflow automatically — a few minutes later the Windows assets appear on the same release. Nobody
+# workflow automatically - a few minutes later the Windows assets appear on the same release. Nobody
 # boots Windows. The Linux AppImage is built the same way, by linux-release.yml.
 #
 # It can also be run by hand against an older tag to backfill:
@@ -13,11 +13,11 @@ name: Windows release binaries
 # Requires repo secrets (Settings ▸ Secrets and variables ▸ Actions):
 #   TAURI_SIGNING_PRIVATE_KEY           contents of ~/.tauri/vibratunes.key
 #   TAURI_SIGNING_PRIVATE_KEY_PASSWORD  empty string (the key has no password)
-#   LASTFM_API_KEY / LASTFM_API_SECRET  Last.fm credentials (optional — warn-only if absent)
+#   LASTFM_API_KEY / LASTFM_API_SECRET  Last.fm credentials (optional - warn-only if absent)
 # Without the signing pair the bundler emits no .sig and this job fails loudly rather than
 # shipping an unsignable update.
 
-# DISPATCH ONLY, ON PURPOSE — do not add `release: published` back. Actions caches are ref-scoped,
+# DISPATCH ONLY, ON PURPOSE - do not add `release: published` back. Actions caches are ref-scoped,
 # and a release-triggered run executes on the *tag* ref, so it can never read the cache any previous
 # release wrote. This job was recompiling all of Rust from scratch every single time, 11m25s of a
 # 15m run, while dutifully saving a 0.55 GB cache nothing would ever read. A dispatched run executes
@@ -89,7 +89,7 @@ jobs:
 
       # The tag is the contract: the binaries must be built from the source that tag points at, and
       # the updater compares tauri.conf.json's version. If they disagree, the version bump never got
-      # committed — stop before shipping a mislabelled installer.
+      # committed - stop before shipping a mislabelled installer.
       #
       # A dry run is allowed to disagree, because that is the only way to test this workflow against
       # a branch instead of a published tag. Nothing is uploaded on a dry run, so a mislabelled
@@ -112,7 +112,7 @@ jobs:
 
       # Bake a snapshot of the community player-cipher registry into src-tauri/cipher_configs.json,
       # which is `include_str!`d into the binary. Nothing needing a deciphered stream URL plays
-      # without a config for the current player.js, and the tracked file is deliberately empty —
+      # without a config for the current player.js, and the tracked file is deliberately empty -
       # the table is refreshed from these same registries at runtime.
       #
       # So this only covers the case where that refresh can't happen: a first run on a network that
@@ -139,7 +139,7 @@ jobs:
             fi
             echo "::warning::player-cipher registry unusable: $url"
           done
-          echo "::warning::no player-cipher registry reachable — shipping the empty table; clients will fetch it at runtime"
+          echo "::warning::no player-cipher registry reachable - shipping the empty table; clients will fetch it at runtime"
 
       # pnpm before setup-node, so `cache: pnpm` below can find the binary and cache its store.
       # This step was 44s on Windows against 5s on Linux, all of it re-downloading the same
@@ -204,7 +204,7 @@ jobs:
 
       - name: Tauri CLI
         shell: bash
-        # The npm CLI ships a prebuilt binary — `cargo install tauri-cli` would compile it from
+        # The npm CLI ships a prebuilt binary - `cargo install tauri-cli` would compile it from
         # source on every cache miss (~5 min for nothing).
         #
         # PINNED, like the actions. `^2` took 2.12.0 the day it was published and broke two legs at
@@ -215,7 +215,7 @@ jobs:
         run: npm install -g "@tauri-apps/cli@2.11.5"
 
       # libmpv is the whole reason Windows builds are a chore. The dev package ships the DLL and a
-      # MinGW import lib (libmpv.dll.a) that the MSVC linker cannot consume, and no .def file — so
+      # MinGW import lib (libmpv.dll.a) that the MSVC linker cannot consume, and no .def file - so
       # synthesise the .def from the DLL's own export table and build a real mpv.lib. The Rust side
       # just emits `cargo:rustc-link-lib=mpv` (pregenerated bindings, no headers needed).
       - name: Build the libmpv import library
@@ -226,7 +226,7 @@ jobs:
           curl.exe -fsSL -o "$env:MPV_DIR\mpv-dev.7z" "$env:MPV_DEV_URL"
           if ((Get-FileHash "$env:MPV_DIR\mpv-dev.7z" -Algorithm SHA256).Hash -ne $env:MPV_DEV_SHA256) { throw "mpv-dev.7z does not match MPV_DEV_SHA256" }
           7z x "$env:MPV_DIR\mpv-dev.7z" -o"$env:MPV_DIR" -y | Out-Null
-          if (-not (Test-Path "$env:MPV_DIR\libmpv-2.dll")) { throw "libmpv-2.dll not found in the dev package — did MPV_DEV_URL change shape?" }
+          if (-not (Test-Path "$env:MPV_DIR\libmpv-2.dll")) { throw "libmpv-2.dll not found in the dev package - did MPV_DEV_URL change shape?" }
 
           # dumpbin/lib live in the MSVC toolchain. (cargo itself finds MSVC on its own; this is
           # only so we can run the two tools.)
@@ -239,7 +239,7 @@ jobs:
           $names = & dumpbin /exports libmpv-2.dll |
             Select-String -Pattern '^\s+\d+\s+[0-9A-Fa-f]+\s+[0-9A-Fa-f]+\s+(\w+)' |
             ForEach-Object { $_.Matches[0].Groups[1].Value }
-          if ($names.Count -lt 50) { throw "parsed only $($names.Count) exports from libmpv-2.dll — dumpbin output format changed?" }
+          if ($names.Count -lt 50) { throw "parsed only $($names.Count) exports from libmpv-2.dll - dumpbin output format changed?" }
           @("EXPORTS") + ($names | ForEach-Object { "    $_" }) | Set-Content -Path mpv.def -Encoding ascii
           & lib /def:mpv.def /name:libmpv-2.dll /out:mpv.lib /machine:x64
           if (-not (Test-Path "$env:MPV_DIR\mpv.lib")) { throw "lib.exe did not produce mpv.lib" }
@@ -310,7 +310,7 @@ jobs:
               Write-Host "$dll version $major.$minor size $($item.Length)"
           }
 
-      # The gitignored src-tauri/lastfm.keys (read by build.rs) obviously isn't in the checkout —
+      # The gitignored src-tauri/lastfm.keys (read by build.rs) obviously isn't in the checkout -
       # recreate it from repo secrets so Windows builds scrobble too. Missing secrets are a warning,
       # not a failure: the app is fully functional without Last.fm.
       - name: Last.fm API keys
@@ -324,13 +324,13 @@ jobs:
               "$LASTFM_API_KEY" "$LASTFM_API_SECRET" > src-tauri/lastfm.keys
             echo "lastfm.keys written"
           else
-            echo "::warning::LASTFM_API_KEY / LASTFM_API_SECRET secrets not set — this Windows build ships without Last.fm scrobbling"
+            echo "::warning::LASTFM_API_KEY / LASTFM_API_SECRET secrets not set - this Windows build ships without Last.fm scrobbling"
           fi
 
       - name: Build + sign the installers
         shell: bash
         env:
-          # Scoped to this step only — no other step (or third-party action) sees the signing key.
+          # Scoped to this step only - no other step (or third-party action) sees the signing key.
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           # NOTE: RUSTFLAGS is deliberately NOT set here. It is exported to $GITHUB_ENV before
@@ -338,7 +338,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${TAURI_SIGNING_PRIVATE_KEY:-}" ]; then
-            echo "::error::TAURI_SIGNING_PRIVATE_KEY secret is not set — the build would produce unsignable installers"
+            echo "::error::TAURI_SIGNING_PRIVATE_KEY secret is not set - the build would produce unsignable installers"
             exit 1
           fi
 
@@ -346,7 +346,7 @@ jobs:
           (cd ui && pnpm build)
           # beforeBuildCommand emptied: we just ran it. Left on, tauri runs `pnpm build` from the
           # repo root, which has no package.json, so pnpm's choice between ui/ and website/ is down
-          # to the filesystem — it resolves to ui here and to website on Linux. Working by accident.
+          # to the filesystem - it resolves to ui here and to website on Linux. Working by accident.
           # A release candidate builds the NSIS installer only. The updater never uses the MSI, and
           # WiX refuses a version whose prerelease suffix isn't numeric, which -rc.1 isn't.
           BUNDLES=(); [ "$PRERELEASE" = false ] || BUNDLES=(--bundles nsis)
@@ -359,7 +359,7 @@ jobs:
         shell: pwsh
         run: ./scripts/check-windows-imports.ps1 -Exe target/release/vibratunes-app.exe
 
-      - name: Dry run — built and signed, attaching nothing
+      - name: Dry run - built and signed, attaching nothing
         if: ${{ inputs.dry_run }}
         shell: bash
         run: echo "dry_run - build and signing succeeded; release assets left untouched."
@@ -472,7 +472,7 @@ jobs:
             echo "::error::expected installer not found: $EXE"; find target/release/bundle -maxdepth 2; exit 1
           fi
           if [ ! -f "$SIG" ]; then
-            echo "::error::no .sig next to the installer — signing key missing, or createUpdaterArtifacts got turned off"; exit 1
+            echo "::error::no .sig next to the installer - signing key missing, or createUpdaterArtifacts got turned off"; exit 1
           fi
 
           retry 5 upload "$EXE" "$SIG" ${MSI:+"$MSI"}
@@ -480,7 +480,7 @@ jobs:
           # latest.json is the one thing both release workflows write, and they now run in parallel.
           # There is no compare-and-swap on release assets, so: merge, upload, read back, and retry
           # if the other job clobbered us in between. Whoever loses a round re-merges onto the
-          # winner's copy, so it converges — normally on the first attempt, worst case the second.
+          # winner's copy, so it converges - normally on the first attempt, worst case the second.
           URL="https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$(basename "$EXE")"
           for attempt in 1 2 3 4 5; do
             retry 3 fetch_manifest manifest

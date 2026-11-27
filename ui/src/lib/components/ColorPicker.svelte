@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Saturation/value square + hue slider + hex field. Ported down from Kibo UI's React component:
 	// no alpha (a translucent --primary just breaks the theme), no format dropdown (HEX/RGB/HSL is a
-	// dev-facing control), and the hex field is editable here — theirs is read-only, which blocks the
+	// dev-facing control), and the hex field is editable here - theirs is read-only, which blocks the
 	// one thing people actually want to do, paste a hex.
 	//
 	// The square is a pointer target with no keyboard equivalent; the hex field is the accessible
@@ -10,23 +10,29 @@
 	// Two callbacks: `oninput` on every move, for a preview on a leaf element, and `onchange` once
 	// the pointer lets go (or a hex is typed). The theme's accent lives on <html>, and writing it
 	// per pointer move restyled the whole document each time, which is what made dragging lag.
-	import { untrack } from 'svelte';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { ColorPickerIcon } from '@hugeicons/core-free-icons';
-	import { Slider } from '$lib/components/ui/slider';
-	import { Input } from '$lib/components/ui/input';
-	import { hexToHsv, hsvToHex, type Hsv } from '$lib/color';
-	import { t } from '$lib/i18n.svelte';
+	import { untrack } from "svelte";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+	import { ColorPickerIcon } from "@hugeicons/core-free-icons";
+	import { Slider } from "$lib/components/ui/slider";
+	import { Input } from "$lib/components/ui/input";
+	import { hexToHsv, hsvToHex, type Hsv } from "$lib/color";
+	import { t } from "$lib/i18n.svelte";
 
 	let {
 		value,
 		onchange,
-		oninput
-	}: { value: string; onchange: (hex: string) => void; oninput?: (hex: string) => void } = $props();
+		oninput,
+	}: {
+		value: string;
+		onchange: (hex: string) => void;
+		oninput?: (hex: string) => void;
+	} = $props();
 
 	// HSV is the picker's own state, not derived from `value` on every frame: hex can't say where the
 	// cursor sat (every hue is black at v=0), so a round-trip per drag would make the square jump.
-	let hsv = $state<Hsv>(untrack(() => hexToHsv(value)) ?? { h: 0, s: 1, v: 1 });
+	let hsv = $state<Hsv>(
+		untrack(() => hexToHsv(value)) ?? { h: 0, s: 1, v: 1 },
+	);
 	let text = $state(untrack(() => value));
 
 	// Reseat only on changes that came from outside (preset switch, reset). Our own edits already
@@ -41,7 +47,8 @@
 		}
 	});
 
-	const hasEyeDropper = typeof window !== 'undefined' && 'EyeDropper' in window;
+	const hasEyeDropper =
+		typeof window !== "undefined" && "EyeDropper" in window;
 
 	function set(next: Hsv, commit = true) {
 		hsv = next;
@@ -57,9 +64,9 @@
 			{
 				...hsv,
 				s: clamp((e.clientX - r.left) / r.width),
-				v: 1 - clamp((e.clientY - r.top) / r.height)
+				v: 1 - clamp((e.clientY - r.top) / r.height),
 			},
-			false
+			false,
 		);
 	}
 
@@ -74,12 +81,12 @@
 
 	async function eyeDrop() {
 		try {
-			// @ts-expect-error — EyeDropper is Chromium-only and untyped; feature-detected above.
+			// @ts-expect-error - EyeDropper is Chromium-only and untyped; feature-detected above.
 			const { sRGBHex } = await new window.EyeDropper().open();
 			const next = hexToHsv(sRGBHex);
 			if (next) set(next);
 		} catch {
-			// cancelled with Escape — nothing to do
+			// cancelled with Escape - nothing to do
 		}
 	}
 </script>
@@ -89,7 +96,7 @@
 	     page, and the hex input below is the accessible route to any colour. -->
 	<div
 		role="application"
-		aria-label={t('a11y.saturation_brightness')}
+		aria-label={t("a11y.saturation_brightness")}
 		class="relative h-32 w-full cursor-crosshair rounded-lg"
 		style="background:
 			linear-gradient(to top, #000, transparent),
@@ -115,7 +122,7 @@
 	     reported a change nobody made, which used to save a custom accent just by opening this. -->
 	<Slider
 		type="single"
-		aria-label={t('a11y.hue')}
+		aria-label={t("a11y.hue")}
 		max={360}
 		step={1}
 		value={Math.round(hsv.h)}
@@ -129,7 +136,7 @@
 			<button
 				type="button"
 				onclick={eyeDrop}
-				aria-label={t('a11y.pick_colour')}
+				aria-label={t("a11y.pick_colour")}
 				class="flex size-8 shrink-0 items-center justify-center rounded-md border text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
 			>
 				<HugeiconsIcon icon={ColorPickerIcon} size={16} />
@@ -138,7 +145,7 @@
 		<Input
 			value={text}
 			oninput={(e) => typed(e.currentTarget.value)}
-			aria-label={t('a11y.hex_colour')}
+			aria-label={t("a11y.hex_colour")}
 			spellcheck={false}
 			class="h-8 bg-secondary px-2 font-mono text-xs shadow-none"
 		/>

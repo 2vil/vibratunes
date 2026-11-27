@@ -1,6 +1,6 @@
 // Auto-update via Tauri's updater plugin. Checks a signed latest.json on GitHub Releases; the
 // startup check is silent unless an update exists, the Settings check always reports a result.
-// Only self-updates the AppImage build on Linux (Tauri limitation) — .deb, .rpm and distro packages
+// Only self-updates the AppImage build on Linux (Tauri limitation) - .deb, .rpm and distro packages
 // update through their package manager, so they get a download link instead. See `canInstall`.
 import { check, Update } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
@@ -117,7 +117,7 @@ export async function checkForUpdatesQuiet() {
 		if ((await getSettings()).update_banner === 'false') return;
 		await look();
 	} catch (e) {
-		console.error('update check failed', e); // no endpoint / offline — don't nag on launch
+		console.error('update check failed', e); // no endpoint / offline - don't nag on launch
 	}
 }
 

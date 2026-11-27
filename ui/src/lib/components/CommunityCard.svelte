@@ -2,33 +2,38 @@
 	// A "From the community" playlist card: cover, title, a peek at the first three tracks, and
 	// play / add-to-playlist. Wider than a MediaCard, so the shelf stretches these instead of
 	// packing more of them per row (see Shelf's `community` prop).
-	import { goto } from '$app/navigation';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { PlayIcon, PlayListAddIcon } from '@hugeicons/core-free-icons';
-	import LogoMark from './LogoMark.svelte';
-	import VibratunesLoader from './VibratunesLoader.svelte';
-	import { Skeleton } from '$lib/components/ui/skeleton';
-	import * as api from '$lib/api';
-	import type { BrowseItem, PlaylistPage } from '$lib/api';
-	import { thumb } from '$lib/thumb';
-	import { getCached, putCached } from '$lib/pagecache';
-	import { openAddManyToPlaylist, playFrom, toast, touchPick } from '$lib/player.svelte';
-	import ItemMenu from './ItemMenu.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { goto } from "$app/navigation";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+	import { PlayIcon, PlayListAddIcon } from "@hugeicons/core-free-icons";
+	import LogoMark from "./LogoMark.svelte";
+	import VibratunesLoader from "./VibratunesLoader.svelte";
+	import { Skeleton } from "$lib/components/ui/skeleton";
+	import * as api from "$lib/api";
+	import type { BrowseItem, PlaylistPage } from "$lib/api";
+	import { thumb } from "$lib/thumb";
+	import { getCached, putCached } from "$lib/pagecache";
+	import {
+		openAddManyToPlaylist,
+		playFrom,
+		toast,
+		touchPick,
+	} from "$lib/player.svelte";
+	import ItemMenu from "./ItemMenu.svelte";
+	import { t } from "$lib/i18n.svelte";
 
 	let { item }: { item: BrowseItem } = $props();
 
-	// A community playlist's "cover" is usually just the creator's channel avatar — often the
+	// A community playlist's "cover" is usually just the creator's channel avatar - often the
 	// generated first-letter tile. Those are served from yt3.*; a real playlist cover is an
 	// i.ytimg video thumb or lh3 playlist art. When it's an avatar, build the cover from the
 	// tracks' own artwork instead (2×2, like every other multi-track cover in the app).
-	const avatar = $derived(/\/\/yt3\./.test(item.thumbnail ?? ''));
+	const avatar = $derived(/\/\/yt3\./.test(item.thumbnail ?? ""));
 
 	let pl = $state<PlaylistPage | null>(null);
 	let root = $state<HTMLElement | null>(null);
 	let busy = $state(false); // in-flight guard for the fetch-then-act buttons
 
-	// Same key the playlist page uses — a card that loaded makes opening it instant, and vice versa.
+	// Same key the playlist page uses - a card that loaded makes opening it instant, and vice versa.
 	const key = $derived(`playlist:${item.id}`);
 
 	async function load(): Promise<PlaylistPage> {
@@ -40,7 +45,7 @@
 		return (pl = fresh);
 	}
 
-	// Every card is one browse call, and a shelf holds 20 — only spend it once the card is on screen
+	// Every card is one browse call, and a shelf holds 20 - only spend it once the card is on screen
 	// long enough to settle. A fast swipe used to fire dozens of fetches while the shelf was still
 	// moving, which is what made the community row feel sticky. Defer the request a little so the
 	// scroll stays smooth while the user is still moving, and cancel it when the card leaves again.
@@ -86,13 +91,23 @@
 	// Distinct covers only: playlists of art tracks repeat one album's artwork, and a mosaic of four
 	// identical tiles looks broken. Under four, a single track cover still beats a letter avatar.
 	const covers = $derived([
-		...new Set((pl?.items ?? []).map((s) => s.thumbnail).filter((t): t is string => !!t))
+		...new Set(
+			(pl?.items ?? [])
+				.map((s) => s.thumbnail)
+				.filter((t): t is string => !!t),
+		),
 	]);
-	const mosaic = $derived(avatar && covers.length >= 4 ? covers.slice(0, 4) : []);
-	const cover = $derived(avatar ? covers[0] ?? item.thumbnail : item.thumbnail);
+	const mosaic = $derived(
+		avatar && covers.length >= 4 ? covers.slice(0, 4) : [],
+	);
+	const cover = $derived(
+		avatar ? (covers[0] ?? item.thumbnail) : item.thumbnail,
+	);
 	// The playlist header's own subtitle is "31K views • 46 tracks • 3 hours, 11 minutes"; the card's
 	// subtitle already says "Creator • 31K views", so drop the duplicated views run.
-	const stats = $derived(pl?.subtitle?.replace(/^[^•]*views\s*•\s*/i, '') ?? '');
+	const stats = $derived(
+		pl?.subtitle?.replace(/^[^•]*views\s*•\s*/i, "") ?? "",
+	);
 
 	function open() {
 		touchPick(item.id);
@@ -105,7 +120,7 @@
 		try {
 			run(await load());
 		} catch {
-			toast.error(t('toasts.could_not_load_playlist'));
+			toast.error(t("toasts.could_not_load_playlist"));
 		} finally {
 			busy = false;
 		}
@@ -130,7 +145,7 @@
 		onclick={open}
 		onkeydown={(e) => {
 			if (e.target !== e.currentTarget) return;
-			if (e.key === 'Enter' || e.key === ' ') {
+			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
 				open();
 			}
@@ -146,7 +161,12 @@
 			{#if mosaic.length === 4}
 				<div class="grid h-full w-full grid-cols-2 grid-rows-2">
 					{#each mosaic as m (m)}
-						<img src={thumb(m, 200)} alt="" class="h-full w-full object-cover" loading="lazy" />
+						<img
+							src={thumb(m, 200)}
+							alt=""
+							class="h-full w-full object-cover"
+							loading="lazy"
+						/>
 					{/each}
 				</div>
 			{:else if cover}
@@ -157,27 +177,45 @@
 					loading="lazy"
 				/>
 			{:else}
-				<div class="flex h-full w-full items-center justify-center text-muted-foreground/20">
+				<div
+					class="flex h-full w-full items-center justify-center text-muted-foreground/20"
+				>
 					<LogoMark class="size-3/4" />
 				</div>
 			{/if}
 		</div>
-		<div class="mt-2 truncate text-center text-sm font-medium">{item.title}</div>
+		<div class="mt-2 truncate text-center text-sm font-medium">
+			{item.title}
+		</div>
 		{#if item.subtitle}
-			<div class="truncate text-center text-xs text-muted-foreground">{item.subtitle}</div>
+			<div class="truncate text-center text-xs text-muted-foreground">
+				{item.subtitle}
+			</div>
 		{/if}
 		{#if stats}
-			<div class="truncate text-center text-[0.6875rem] text-muted-foreground/70">{stats}</div>
+			<div
+				class="truncate text-center text-[0.6875rem] text-muted-foreground/70"
+			>
+				{stats}
+			</div>
 		{/if}
 	</div>
 
 	<div class="flex min-w-0 flex-col gap-0.5">
 		{#if tracks.length}
-			{#each tracks as t, i (t.video_id + ':' + i)}
+			{#each tracks as t, i (t.video_id + ":" + i)}
 				<button
 					class="flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-lg p-1 text-left transition-colors hover:bg-accent/10"
-					onclick={() => playFrom(item, pl!.items, i, item.id, undefined, pl!.continuation)}
-					title={t.artists ? `${t.title} — ${t.artists}` : t.title}
+					onclick={() =>
+						playFrom(
+							item,
+							pl!.items,
+							i,
+							item.id,
+							undefined,
+							pl!.continuation,
+						)}
+					title={t.artists ? `${t.title} - ${t.artists}` : t.title}
 				>
 					{#if t.thumbnail}
 						<img
@@ -193,8 +231,13 @@
 					     content's width and a long title pushes the row wide instead of ellipsing. The
 					     skeleton rows below always had this; the real ones did not. -->
 					<span class="min-w-0 flex-1">
-						<span class="block truncate text-xs font-medium">{t.title}</span>
-						<span class="block truncate text-[0.6875rem] text-muted-foreground">{t.artists}</span>
+						<span class="block truncate text-xs font-medium"
+							>{t.title}</span
+						>
+						<span
+							class="block truncate text-[0.6875rem] text-muted-foreground"
+							>{t.artists}</span
+						>
 					</span>
 				</button>
 			{/each}
@@ -205,7 +248,7 @@
 			     animations running off-screen for the whole session, which is most of the app's
 			     idle CPU. A card that has not started fetching is not loading, so it does not
 			     animate. -->
-			{@const still = loading ? '' : 'animate-none'}
+			{@const still = loading ? "" : "animate-none"}
 			{#each Array(3) as _, i (i)}
 				<div class="flex items-center gap-2 p-1">
 					<Skeleton class="h-8 w-8 shrink-0 rounded-md {still}" />
@@ -220,10 +263,20 @@
 
 	<div class="mt-auto flex items-center justify-center gap-3 pt-1">
 		<button
-			aria-label={t('a11y.play')}
+			aria-label={t("a11y.play")}
 			disabled={busy}
 			class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:brightness-110"
-			onclick={() => act((p) => playFrom(item, p.items, null, item.id, undefined, p.continuation))}
+			onclick={() =>
+				act((p) =>
+					playFrom(
+						item,
+						p.items,
+						null,
+						item.id,
+						undefined,
+						p.continuation,
+					),
+				)}
 		>
 			{#if busy}
 				<VibratunesLoader class="size-5 text-primary-foreground" />
@@ -232,7 +285,7 @@
 			{/if}
 		</button>
 		<button
-			aria-label={t('player.add_to_playlist')}
+			aria-label={t("player.add_to_playlist")}
 			disabled={busy}
 			class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border text-foreground transition-colors hover:bg-accent/10"
 			onclick={() => act((p) => openAddManyToPlaylist(p.items))}

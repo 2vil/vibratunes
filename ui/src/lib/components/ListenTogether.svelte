@@ -1,8 +1,8 @@
 <script lang="ts">
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import * as Dialog from "$lib/components/ui/dialog";
+	import { Button } from "$lib/components/ui/button";
+	import { Input } from "$lib/components/ui/input";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		Copy01Icon,
 		Logout01Icon,
@@ -14,22 +14,22 @@
 		RefreshIcon,
 		UserGroupIcon,
 		ServerStack01Icon,
-		PlusSignIcon
-	} from '@hugeicons/core-free-icons';
-	import VibratunesLoader from './VibratunesLoader.svelte';
-	import * as api from '$lib/api';
-	import { copyText } from '$lib/clipboard';
-	import { ui, toast } from '$lib/player.svelte';
-	import { lt } from '$lib/lt.svelte';
-	import { t } from '$lib/i18n.svelte';
-	import { makeInvite, parseInvite } from '$lib/invite';
-	import QrCode from '$lib/components/QrCode.svelte';
+		PlusSignIcon,
+	} from "@hugeicons/core-free-icons";
+	import VibratunesLoader from "./VibratunesLoader.svelte";
+	import * as api from "$lib/api";
+	import { copyText } from "$lib/clipboard";
+	import { ui, toast } from "$lib/player.svelte";
+	import { lt } from "$lib/lt.svelte";
+	import { t } from "$lib/i18n.svelte";
+	import { makeInvite, parseInvite } from "$lib/invite";
+	import QrCode from "$lib/components/QrCode.svelte";
 
-	let mode = $state<'join' | 'host'>('join');
-	let name = $state('');
-	let serverUrl = $state('');
+	let mode = $state<"join" | "host">("join");
+	let name = $state("");
+	let serverUrl = $state("");
 	let showServer = $state(false);
-	let inviteInput = $state('');
+	let inviteInput = $state("");
 	let busy = $state(false);
 	let copied = $state(false);
 
@@ -38,43 +38,45 @@
 	// opens the panel below and asks for it.
 	$effect(() => {
 		if (ui.ltOpen) {
-			name = localStorage.getItem('lt_name') ?? '';
+			name = localStorage.getItem("lt_name") ?? "";
 			serverUrl = lt.serverUrl;
 			showServer = false;
 			copied = false;
 		}
 	});
 
-	const inRoom = $derived(lt.role !== 'none');
-	const isHost = $derived(lt.role === 'host');
+	const inRoom = $derived(lt.role !== "none");
+	const isHost = $derived(lt.role === "host");
 	const onCustomServer = $derived(!!lt.serverUrl);
 	// What a guest has to be sent. On the default server that is the bare room code and nothing
 	// else; a self-hosted room has to carry its address or the code means nothing.
-	const invite = $derived(makeInvite(lt.serverUrl, lt.roomCode ?? ''));
-	// Sitting between "asked to join" and "in the room" — show a waiting state, block re-sends.
-	const waiting = $derived(lt.requesting && lt.role === 'none');
+	const invite = $derived(makeInvite(lt.serverUrl, lt.roomCode ?? ""));
+	// Sitting between "asked to join" and "in the room" - show a waiting state, block re-sends.
+	const waiting = $derived(lt.requesting && lt.role === "none");
 	const statusLabel = $derived(
-		lt.status === 'connecting'
-			? t('dialogs.listen_together.status_connecting')
-			: lt.status === 'connected'
-				? t('dialogs.listen_together.status_connected')
-				: t('dialogs.listen_together.status_disconnected')
+		lt.status === "connecting"
+			? t("dialogs.listen_together.status_connecting")
+			: lt.status === "connected"
+				? t("dialogs.listen_together.status_connected")
+				: t("dialogs.listen_together.status_disconnected"),
 	);
-	const others = $derived(lt.users.filter((u) => u.user_id !== lt.myId).length);
+	const others = $derived(
+		lt.users.filter((u) => u.user_id !== lt.myId).length,
+	);
 
 	function rememberName() {
-		localStorage.setItem('lt_name', name.trim());
+		localStorage.setItem("lt_name", name.trim());
 	}
 
 	/** First letter of a display name, for the participant circles. */
 	function initial(username: string): string {
-		return (username.trim()[0] ?? '?').toUpperCase();
+		return (username.trim()[0] ?? "?").toUpperCase();
 	}
 
 	/** The default is stored as empty, so typing it in by hand still mints bare invites. */
 	function normalize(url: string): string {
 		const u = url.trim();
-		return u === lt.defaultServerUrl ? '' : u;
+		return u === lt.defaultServerUrl ? "" : u;
 	}
 
 	function toggleServerPanel() {
@@ -86,7 +88,8 @@
 
 	async function host(e?: Event) {
 		e?.preventDefault();
-		if (!name.trim()) return toast.error(t('dialogs.listen_together.err_enter_name'));
+		if (!name.trim())
+			return toast.error(t("dialogs.listen_together.err_enter_name"));
 		const u = normalize(serverUrl);
 		busy = true;
 		try {
@@ -100,12 +103,14 @@
 
 	async function join(e?: Event) {
 		e?.preventDefault();
-		if (!name.trim()) return toast.error(t('dialogs.listen_together.err_enter_name'));
+		if (!name.trim())
+			return toast.error(t("dialogs.listen_together.err_enter_name"));
 		const parsed = parseInvite(inviteInput);
-		if (!parsed || !parsed.code) return toast.error(t('dialogs.listen_together.err_paste_code'));
+		if (!parsed || !parsed.code)
+			return toast.error(t("dialogs.listen_together.err_paste_code"));
 		// A bare code is what a host on the default server sends (`makeInvite`), so it means the
 		// default even for a guest who set their own: a self-hosted room's invite carries its address.
-		const server = parsed.server ? normalize(parsed.server) : '';
+		const server = parsed.server ? normalize(parsed.server) : "";
 		busy = true;
 		try {
 			if (server !== lt.serverUrl) await api.ltSetServerUrl(server);
@@ -126,7 +131,7 @@
 				copied = true;
 				setTimeout(() => (copied = false), 1600);
 			},
-			() => toast.error(t('dialogs.listen_together.invite_copy_failed'))
+			() => toast.error(t("dialogs.listen_together.invite_copy_failed")),
 		);
 	}
 </script>
@@ -135,26 +140,33 @@
 	<Dialog.Content class="gap-0 overflow-hidden sm:max-w-md">
 		<Dialog.Header class="gap-1">
 			<Dialog.Title class="flex items-center gap-2">
-				<HugeiconsIcon icon={UserGroupIcon} class="h-5 w-5 text-primary" />
-				{t('dialogs.listen_together.title')}
+				<HugeiconsIcon
+					icon={UserGroupIcon}
+					class="h-5 w-5 text-primary"
+				/>
+				{t("dialogs.listen_together.title")}
 			</Dialog.Title>
-			<Dialog.Description class={inRoom || waiting ? 'sr-only' : 'text-xs'}>
+			<Dialog.Description
+				class={inRoom || waiting ? "sr-only" : "text-xs"}
+			>
 				{inRoom || waiting
-					? t('dialogs.listen_together.desc')
-					: t('dialogs.listen_together.subtitle')}
+					? t("dialogs.listen_together.desc")
+					: t("dialogs.listen_together.subtitle")}
 			</Dialog.Description>
 		</Dialog.Header>
 
 		{#if waiting}
-			<!-- Asked to join / creating — waiting on the room. -->
+			<!-- Asked to join / creating - waiting on the room. -->
 			<div class="flex min-w-0 flex-col items-center gap-4 py-12">
 				<VibratunesLoader />
 				<p class="text-center text-sm text-muted-foreground">
-					{lt.status === 'connecting'
-						? t('dialogs.listen_together.connecting')
-						: t('dialogs.listen_together.waiting_for_host')}
+					{lt.status === "connecting"
+						? t("dialogs.listen_together.connecting")
+						: t("dialogs.listen_together.waiting_for_host")}
 				</p>
-				<Button variant="ghost" size="sm" onclick={leave}>{t('common.cancel')}</Button>
+				<Button variant="ghost" size="sm" onclick={leave}
+					>{t("common.cancel")}</Button
+				>
 			</div>
 		{:else if !inRoom}
 			<!-- Setup: join with a code, or open a room of your own. -->
@@ -165,35 +177,45 @@
 						'join'
 							? 'bg-background text-foreground shadow-sm'
 							: 'text-muted-foreground hover:text-foreground'}"
-						onclick={() => (mode = 'join')}>{t('dialogs.listen_together.join_tab')}</button
+						onclick={() => (mode = "join")}
+						>{t("dialogs.listen_together.join_tab")}</button
 					>
 					<button
 						class="flex-1 cursor-pointer rounded-full py-1.5 font-medium transition-colors {mode ===
 						'host'
 							? 'bg-background text-foreground shadow-sm'
 							: 'text-muted-foreground hover:text-foreground'}"
-						onclick={() => (mode = 'host')}>{t('dialogs.listen_together.host_tab')}</button
+						onclick={() => (mode = "host")}
+						>{t("dialogs.listen_together.host_tab")}</button
 					>
 				</div>
 
 				<!-- Both paths need a name, so it is asked once, above the split. -->
 				<div class="flex flex-col gap-1.5">
-					<label class="text-xs font-medium text-muted-foreground" for="lt-name">
-						{t('dialogs.listen_together.your_name')}
+					<label
+						class="text-xs font-medium text-muted-foreground"
+						for="lt-name"
+					>
+						{t("dialogs.listen_together.your_name")}
 					</label>
 					<Input
 						id="lt-name"
 						bind:value={name}
 						maxlength={24}
-						placeholder={t('dialogs.listen_together.your_name_placeholder')}
+						placeholder={t(
+							"dialogs.listen_together.your_name_placeholder",
+						)}
 					/>
 				</div>
 
-				{#if mode === 'join'}
+				{#if mode === "join"}
 					<form class="flex flex-col gap-5" onsubmit={join}>
 						<div class="flex flex-col gap-1.5">
-							<label class="text-xs font-medium text-muted-foreground" for="lt-invite">
-								{t('dialogs.listen_together.invite_code')}
+							<label
+								class="text-xs font-medium text-muted-foreground"
+								for="lt-invite"
+							>
+								{t("dialogs.listen_together.invite_code")}
 							</label>
 							<Input
 								id="lt-invite"
@@ -201,26 +223,35 @@
 								autocapitalize="characters"
 								spellcheck={false}
 								class="font-mono uppercase tracking-widest placeholder:normal-case placeholder:tracking-normal"
-								placeholder={t('dialogs.listen_together.invite_placeholder')}
+								placeholder={t(
+									"dialogs.listen_together.invite_placeholder",
+								)}
 							/>
 							<p class="text-xs text-muted-foreground">
-								{t('dialogs.listen_together.invite_hint')}
+								{t("dialogs.listen_together.invite_hint")}
 							</p>
 						</div>
 						<Button type="submit" class="w-full" disabled={busy}>
-							{t('dialogs.listen_together.join_button')}
+							{t("dialogs.listen_together.join_button")}
 						</Button>
 					</form>
 				{:else}
 					<form class="flex flex-col gap-5" onsubmit={host}>
-						<div class="flex gap-3 rounded-2xl border bg-muted/40 p-3.5">
-							<HugeiconsIcon icon={PlusSignIcon} class="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-							<p class="text-xs leading-relaxed text-muted-foreground">
-								{t('dialogs.listen_together.host_blurb')}
+						<div
+							class="flex gap-3 rounded-2xl border bg-muted/40 p-3.5"
+						>
+							<HugeiconsIcon
+								icon={PlusSignIcon}
+								class="mt-0.5 h-4 w-4 shrink-0 text-primary"
+							/>
+							<p
+								class="text-xs leading-relaxed text-muted-foreground"
+							>
+								{t("dialogs.listen_together.host_blurb")}
 							</p>
 						</div>
 						<Button type="submit" class="w-full" disabled={busy}>
-							{t('dialogs.listen_together.start_button')}
+							{t("dialogs.listen_together.start_button")}
 						</Button>
 
 						<!-- The server address lives behind this, and nowhere else. Almost nobody runs
@@ -232,11 +263,18 @@
 								onclick={toggleServerPanel}
 								aria-expanded={showServer}
 							>
-								<HugeiconsIcon icon={ServerStack01Icon} class="h-3.5 w-3.5" />
-								{t('dialogs.listen_together.change_server')}
+								<HugeiconsIcon
+									icon={ServerStack01Icon}
+									class="h-3.5 w-3.5"
+								/>
+								{t("dialogs.listen_together.change_server")}
 								{#if onCustomServer}
-									<span class="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
-										{t('dialogs.listen_together.custom_server')}
+									<span
+										class="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary"
+									>
+										{t(
+											"dialogs.listen_together.custom_server",
+										)}
 									</span>
 								{/if}
 							</button>
@@ -246,19 +284,31 @@
 										bind:value={serverUrl}
 										spellcheck={false}
 										class="font-mono text-xs"
-										placeholder={t('dialogs.listen_together.sync_server_placeholder')}
+										placeholder={t(
+											"dialogs.listen_together.sync_server_placeholder",
+										)}
 									/>
-									<div class="flex items-start justify-between gap-3">
-										<p class="text-xs text-muted-foreground">
-											{t('dialogs.listen_together.sync_server_hint')}
+									<div
+										class="flex items-start justify-between gap-3"
+									>
+										<p
+											class="text-xs text-muted-foreground"
+										>
+											{t(
+												"dialogs.listen_together.sync_server_hint",
+											)}
 										</p>
-										{#if normalize(serverUrl) !== ''}
+										{#if normalize(serverUrl) !== ""}
 											<button
 												type="button"
 												class="shrink-0 cursor-pointer text-xs text-primary hover:underline"
-												onclick={() => (serverUrl = lt.defaultServerUrl)}
+												onclick={() =>
+													(serverUrl =
+														lt.defaultServerUrl)}
 											>
-												{t('dialogs.listen_together.use_default')}
+												{t(
+													"dialogs.listen_together.use_default",
+												)}
 											</button>
 										{/if}
 									</div>
@@ -277,21 +327,24 @@
 						class="flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground"
 					>
 						<span
-							class="h-1.5 w-1.5 rounded-full {lt.status === 'connected'
+							class="h-1.5 w-1.5 rounded-full {lt.status ===
+							'connected'
 								? 'bg-green-500'
 								: lt.status === 'connecting'
 									? 'animate-pulse bg-amber-500'
 									: 'bg-muted-foreground/40'}"
 						></span>
 						{statusLabel} · {isHost
-							? t('dialogs.listen_together.hosting')
-							: t('dialogs.listen_together.listening')}
+							? t("dialogs.listen_together.hosting")
+							: t("dialogs.listen_together.listening")}
 					</div>
 
 					<!-- Spaced out because this gets read aloud and typed by hand. The left padding
 					     puts the trailing letter-space back on the right so it stays centred. -->
-					<div class="mt-3 select-all pl-[0.3em] font-mono text-3xl font-semibold tracking-[0.3em]">
-						{lt.roomCode ?? '······'}
+					<div
+						class="mt-3 select-all pl-[0.3em] font-mono text-3xl font-semibold tracking-[0.3em]"
+					>
+						{lt.roomCode ?? "······"}
 					</div>
 					{#if invite}
 						<div class="mt-3 flex justify-center">
@@ -299,22 +352,34 @@
 						</div>
 					{/if}
 					{#if onCustomServer}
-						<div class="mt-1.5 select-all truncate font-mono text-[11px] text-muted-foreground">
+						<div
+							class="mt-1.5 select-all truncate font-mono text-[11px] text-muted-foreground"
+						>
 							{invite}
 						</div>
 					{/if}
 
-					<Button variant="outline" size="sm" class="mt-4 w-full" onclick={copyInvite}>
+					<Button
+						variant="outline"
+						size="sm"
+						class="mt-4 w-full"
+						onclick={copyInvite}
+					>
 						<!-- icon swap via altIcon/showAlt: `icon` is frozen at mount -->
-						<HugeiconsIcon icon={Copy01Icon} altIcon={Tick02Icon} showAlt={copied} class="h-4 w-4" />
+						<HugeiconsIcon
+							icon={Copy01Icon}
+							altIcon={Tick02Icon}
+							showAlt={copied}
+							class="h-4 w-4"
+						/>
 						{copied
-							? t('dialogs.listen_together.copied')
+							? t("dialogs.listen_together.copied")
 							: onCustomServer
-								? t('dialogs.listen_together.copy_invite')
-								: t('dialogs.listen_together.copy_code')}
+								? t("dialogs.listen_together.copy_invite")
+								: t("dialogs.listen_together.copy_code")}
 					</Button>
 					<p class="mt-2 text-xs text-muted-foreground">
-						{t('dialogs.listen_together.share_hint')}
+						{t("dialogs.listen_together.share_hint")}
 					</p>
 				</div>
 
@@ -329,34 +394,60 @@
 							/>
 						{/if}
 						<div class="min-w-0 flex-1">
-							<div class="truncate text-sm font-medium">{lt.currentTrack.title}</div>
-							<div class="truncate text-xs text-muted-foreground">{lt.currentTrack.artist}</div>
+							<div class="truncate text-sm font-medium">
+								{lt.currentTrack.title}
+							</div>
+							<div class="truncate text-xs text-muted-foreground">
+								{lt.currentTrack.artist}
+							</div>
 						</div>
 					</div>
 				{/if}
 
 				<!-- Everything that grows with the room scrolls; the invite and the footer do not. -->
-				<div class="-mx-1 flex min-w-0 max-h-[38vh] flex-col gap-5 overflow-y-auto px-1">
+				<div
+					class="-mx-1 flex min-w-0 max-h-[38vh] flex-col gap-5 overflow-y-auto px-1"
+				>
 					<!-- Host: pending join requests -->
 					{#if isHost && lt.pendingJoins.length}
 						<div>
-							<div class="mb-2 text-xs font-medium text-muted-foreground">
-								{t('dialogs.listen_together.join_requests')}
+							<div
+								class="mb-2 text-xs font-medium text-muted-foreground"
+							>
+								{t("dialogs.listen_together.join_requests")}
 							</div>
 							<div class="flex flex-col gap-2">
 								{#each lt.pendingJoins as p (p.userId)}
-									<div class="flex min-w-0 items-center gap-2.5 rounded-xl border bg-muted/40 p-2">
+									<div
+										class="flex min-w-0 items-center gap-2.5 rounded-xl border bg-muted/40 p-2"
+									>
 										<span
 											class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary"
 										>
 											{initial(p.username)}
 										</span>
-										<span class="min-w-0 flex-1 truncate text-sm">{p.username}</span>
-										<Button size="sm" onclick={() => api.ltApproveJoin(p.userId)}>
-											{t('dialogs.listen_together.approve')}
+										<span
+											class="min-w-0 flex-1 truncate text-sm"
+											>{p.username}</span
+										>
+										<Button
+											size="sm"
+											onclick={() =>
+												api.ltApproveJoin(p.userId)}
+										>
+											{t(
+												"dialogs.listen_together.approve",
+											)}
 										</Button>
-										<Button size="sm" variant="ghost" onclick={() => api.ltRejectJoin(p.userId)}>
-											{t('dialogs.listen_together.decline')}
+										<Button
+											size="sm"
+											variant="ghost"
+											onclick={() =>
+												api.ltRejectJoin(p.userId)}
+										>
+											{t(
+												"dialogs.listen_together.decline",
+											)}
 										</Button>
 									</div>
 								{/each}
@@ -366,17 +457,25 @@
 
 					<!-- Participants -->
 					<div>
-						<div class="mb-2 text-xs font-medium text-muted-foreground">
-							{t('dialogs.listen_together.in_room', { count: lt.users.length })}
+						<div
+							class="mb-2 text-xs font-medium text-muted-foreground"
+						>
+							{t("dialogs.listen_together.in_room", {
+								count: lt.users.length,
+							})}
 						</div>
 						<div class="flex flex-col gap-0.5">
 							{#each lt.users as u (u.user_id)}
-								<div class="group flex min-w-0 items-center gap-2.5 rounded-lg py-1">
+								<div
+									class="group flex min-w-0 items-center gap-2.5 rounded-lg py-1"
+								>
 									<span class="relative shrink-0">
 										<span
 											class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold {u.is_host
 												? 'bg-primary/10 text-primary'
-												: 'bg-muted text-muted-foreground'} {u.is_connected ? '' : 'opacity-40'}"
+												: 'bg-muted text-muted-foreground'} {u.is_connected
+												? ''
+												: 'opacity-40'}"
 										>
 											{initial(u.username)}
 										</span>
@@ -385,33 +484,60 @@
 												? 'bg-green-500'
 												: 'bg-muted-foreground/40'}"
 											title={u.is_connected
-												? t('dialogs.listen_together.connected')
-												: t('dialogs.listen_together.disconnected')}
+												? t(
+														"dialogs.listen_together.connected",
+													)
+												: t(
+														"dialogs.listen_together.disconnected",
+													)}
 										></span>
 									</span>
-									<span class="min-w-0 flex-1 truncate text-sm {u.is_connected ? '' : 'opacity-50'}">
+									<span
+										class="min-w-0 flex-1 truncate text-sm {u.is_connected
+											? ''
+											: 'opacity-50'}"
+									>
 										{u.username}{u.user_id === lt.myId
-											? ` ${t('dialogs.listen_together.you')}`
-											: ''}
+											? ` ${t("dialogs.listen_together.you")}`
+											: ""}
 									</span>
 									{#if u.is_host}
-										<HugeiconsIcon icon={CrownIcon} class="h-3.5 w-3.5 shrink-0 text-amber-500" />
+										<HugeiconsIcon
+											icon={CrownIcon}
+											class="h-3.5 w-3.5 shrink-0 text-amber-500"
+										/>
 									{/if}
 									{#if isHost && u.user_id !== lt.myId}
 										<!-- Revealed on hover, but always in the tab order and always named. -->
 										<button
 											class="shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground opacity-0 transition hover:bg-muted hover:text-foreground focus-visible:shown group-hover:shown"
-											onclick={() => api.ltTransferHost(u.user_id)}
+											onclick={() =>
+												api.ltTransferHost(u.user_id)}
 										>
-											<HugeiconsIcon icon={Exchange01Icon} class="h-4 w-4" />
-											<span class="sr-only">{t('dialogs.listen_together.make_host')}</span>
+											<HugeiconsIcon
+												icon={Exchange01Icon}
+												class="h-4 w-4"
+											/>
+											<span class="sr-only"
+												>{t(
+													"dialogs.listen_together.make_host",
+												)}</span
+											>
 										</button>
 										<button
 											class="shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground opacity-0 transition hover:bg-muted hover:text-destructive focus-visible:shown group-hover:shown"
-											onclick={() => api.ltKick(u.user_id)}
+											onclick={() =>
+												api.ltKick(u.user_id)}
 										>
-											<HugeiconsIcon icon={UserRemove01Icon} class="h-4 w-4" />
-											<span class="sr-only">{t('dialogs.listen_together.remove')}</span>
+											<HugeiconsIcon
+												icon={UserRemove01Icon}
+												class="h-4 w-4"
+											/>
+											<span class="sr-only"
+												>{t(
+													"dialogs.listen_together.remove",
+												)}</span
+											>
 										</button>
 									{/if}
 								</div>
@@ -419,7 +545,7 @@
 						</div>
 						{#if isHost && others === 0 && !lt.pendingJoins.length}
 							<p class="mt-2 text-xs text-muted-foreground">
-								{t('dialogs.listen_together.alone_hint')}
+								{t("dialogs.listen_together.alone_hint")}
 							</p>
 						{/if}
 					</div>
@@ -427,26 +553,55 @@
 					<!-- Host: suggestions from guests -->
 					{#if isHost && lt.suggestions.length}
 						<div>
-							<div class="mb-2 text-xs font-medium text-muted-foreground">
-								{t('dialogs.listen_together.suggestions')}
+							<div
+								class="mb-2 text-xs font-medium text-muted-foreground"
+							>
+								{t("dialogs.listen_together.suggestions")}
 							</div>
 							<div class="flex flex-col gap-2">
 								{#each lt.suggestions as s (s.id)}
-									<div class="flex min-w-0 items-center gap-2.5 rounded-xl border bg-muted/40 p-2">
+									<div
+										class="flex min-w-0 items-center gap-2.5 rounded-xl border bg-muted/40 p-2"
+									>
 										<div class="min-w-0 flex-1">
-											<div class="truncate text-sm">{s.track.title}</div>
-											<div class="truncate text-xs text-muted-foreground">
-												{s.track.artist} · {t('dialogs.listen_together.from_user', {
-													user: s.from_username
-												})}
+											<div class="truncate text-sm">
+												{s.track.title}
+											</div>
+											<div
+												class="truncate text-xs text-muted-foreground"
+											>
+												{s.track.artist} · {t(
+													"dialogs.listen_together.from_user",
+													{
+														user: s.from_username,
+													},
+												)}
 											</div>
 										</div>
-										<Button size="sm" onclick={() => api.ltApproveSuggestion(s.id)}>
-											{t('dialogs.listen_together.queue_it')}
+										<Button
+											size="sm"
+											onclick={() =>
+												api.ltApproveSuggestion(s.id)}
+										>
+											{t(
+												"dialogs.listen_together.queue_it",
+											)}
 										</Button>
-										<Button size="sm" variant="ghost" onclick={() => api.ltRejectSuggestion(s.id)}>
-											<HugeiconsIcon icon={Cancel01Icon} class="h-4 w-4" />
-											<span class="sr-only">{t('dialogs.listen_together.dismiss')}</span>
+										<Button
+											size="sm"
+											variant="ghost"
+											onclick={() =>
+												api.ltRejectSuggestion(s.id)}
+										>
+											<HugeiconsIcon
+												icon={Cancel01Icon}
+												class="h-4 w-4"
+											/>
+											<span class="sr-only"
+												>{t(
+													"dialogs.listen_together.dismiss",
+												)}</span
+											>
 										</Button>
 									</div>
 								{/each}
@@ -458,15 +613,19 @@
 				<!-- Footer actions -->
 				<div class="flex items-center gap-2 border-t pt-3">
 					{#if !isHost}
-						<Button variant="ghost" size="sm" onclick={() => api.ltRequestSync()}>
+						<Button
+							variant="ghost"
+							size="sm"
+							onclick={() => api.ltRequestSync()}
+						>
 							<HugeiconsIcon icon={RefreshIcon} class="h-4 w-4" />
-							{t('dialogs.listen_together.resync')}
+							{t("dialogs.listen_together.resync")}
 						</Button>
 					{/if}
 					<div class="flex-1"></div>
 					<Button variant="destructive" size="sm" onclick={leave}>
 						<HugeiconsIcon icon={Logout01Icon} class="h-4 w-4" />
-						{t('dialogs.listen_together.leave')}
+						{t("dialogs.listen_together.leave")}
 					</Button>
 				</div>
 			</div>

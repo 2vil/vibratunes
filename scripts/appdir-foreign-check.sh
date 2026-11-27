@@ -11,7 +11,7 @@
 #
 # Six checks, in the order they catch things:
 #
-#   1. ldd -r on the app binary — every load-time symbol resolves. Catches KI-6, KI-7, KI-8.
+#   1. ldd -r on the app binary - every load-time symbol resolves. Catches KI-6, KI-7, KI-8.
 #   2. Host libraries the app dlopens are still loadable with the AppDir on the search path.
 #      An AppDir is first on LD_LIBRARY_PATH, so anything the host dlopens later (Mesa's EGL
 #      vendor, gio modules, pixbuf loaders, IM modules) links against *our* copies of the shared
@@ -139,15 +139,15 @@ for d in /usr/lib/x86_64-linux-gnu /usr/lib64 /usr/lib; do
   done
 done
 if [ "$BROKEN" = 1 ]; then
-  bad "the AppDir breaks host libraries the app loads at runtime — drop the shadowing library from the AppDir in scripts/fix-appdir-tls.sh"
+  bad "the AppDir breaks host libraries the app loads at runtime - drop the shadowing library from the AppDir in scripts/fix-appdir-tls.sh"
 else
   echo "   clean"
 fi
 
 step "the TLS stack can reach this host's trust anchors"
-# Loads whichever libgnutls this host resolves to under the app's own library path — the host's
+# Loads whichever libgnutls this host resolves to under the app's own library path - the host's
 # normally, the bundled fallback where fix-appdir-tls.sh's 2a decided the host can't serve the chain
-# — and asks it to populate a trust list from the system store, which is exactly what
+# - and asks it to populate a trust list from the system store, which is exactly what
 # glib-networking's gnutls backend does for every https:// the webview opens. Zero anchors is a
 # webview that trusts nothing, and every other check here passes right through it.
 cat > /tmp/trustprobe.py <<'PROBE'
@@ -161,7 +161,7 @@ print(f"   system trust anchors: {n}")
 sys.exit(0 if n > 0 else 1)
 PROBE
 LD_LIBRARY_PATH="$APPDIR_LD" python3 /tmp/trustprobe.py \
-  || bad "the webview's TLS stack finds no trust anchors on this host — every https:// load fails as \"Unacceptable TLS certificate\""
+  || bad "the webview's TLS stack finds no trust anchors on this host - every https:// load fails as \"Unacceptable TLS certificate\""
 
 step "the bundled GStreamer can decode a music video"
 # Sources the AppRun hook rather than setting GST_PLUGIN_SYSTEM_PATH_1_0 by hand, because half of

@@ -44,7 +44,7 @@ export interface DiscordConfig {
 	button2: string;
 }
 
-/** Must match `impl Default for RpcConfig` — the card Vibratunes showed before the tab existed, plus
+/** Must match `impl Default for RpcConfig` - the card Vibratunes showed before the tab existed, plus
  *  the badge, which is on by default. */
 export const DISCORD_DEFAULTS: DiscordConfig = {
 	status_line: 'line2',
@@ -86,7 +86,7 @@ export interface PreviewTrack {
 }
 
 /**
- * The text a slot resolves to, or `null` when the track carries nothing for it — an album-less
+ * The text a slot resolves to, or `null` when the track carries nothing for it - an album-less
  * single with line 2 set to "Album" drops the line rather than showing a blank one. Mirrors
  * `text_for` in `discord.rs`.
  */
@@ -101,7 +101,7 @@ export function cardText(slot: string, t: PreviewTrack): string | null {
 		case 'album':
 			return album;
 		case 'artist_album':
-			return artist && album ? `${artist} — ${album}` : (artist ?? album);
+			return artist && album ? `${artist} - ${album}` : (artist ?? album);
 		default:
 			return null;
 	}

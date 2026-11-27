@@ -382,7 +382,8 @@ fn relaunch_on_x11(env: Vec<(std::ffi::OsString, std::ffi::OsString)>) {
         .args(args)
         .env_clear()
         .envs(env)
-        .env("VIBRATUNES_GDK_BACKEND", "x11").env("LIMUSIC_GDK_BACKEND", "x11")
+        .env("VIBRATUNES_GDK_BACKEND", "x11")
+        .env("LIMUSIC_GDK_BACKEND", "x11")
         .exec();
     eprintln!("vibratunes: could not start again ({err}), staying on Wayland");
 }
@@ -710,7 +711,7 @@ fn should_start_minimized(db: &Db) -> bool {
 pub fn run() {
     // One process-wide crypto provider for every rustls consumer. reqwest 0.13 (pulled by tauri
     // itself and the updater) builds its clients expecting one to be installed and panics on the
-    // first use without it — on Android that was a SIGABRT right after launch. Desktop never hit
+    // first use without it - on Android that was a SIGABRT right after launch. Desktop never hit
     // it; installing is idempotent and free everywhere.
     let _ = rustls::crypto::ring::default_provider().install_default();
 
@@ -750,7 +751,9 @@ pub fn run() {
         // way back for a desktop where the Wayland backend misbehaves.
         //
         // ponytail: an escape hatch, not a setting.
-        if let Some(backend) = std::env::var_os("VIBRATUNES_GDK_BACKEND").or_else(|| std::env::var_os("LIMUSIC_GDK_BACKEND")) {
+        if let Some(backend) = std::env::var_os("VIBRATUNES_GDK_BACKEND")
+            .or_else(|| std::env::var_os("LIMUSIC_GDK_BACKEND"))
+        {
             std::env::set_var("GDK_BACKEND", backend);
         }
         // Without this the window dies at startup with "Gdk-Message: Error 71 (Protocol error)
@@ -871,8 +874,8 @@ pub fn run() {
 
     let mut builder = tauri::Builder::default();
 
-    // Must be the first plugin registered (its documented requirement). A second launch —
-    // e.g. clicking the app icon while we're hidden in the tray — re-shows this instance
+    // Must be the first plugin registered (its documented requirement). A second launch -
+    // e.g. clicking the app icon while we're hidden in the tray - re-shows this instance
     // instead of spawning a second one (which would fight over SQLite and mpv).
     //
     // `LIMUSIC_MULTI=1` lifts the guard, because the guard is exactly what makes Listen Together
@@ -936,7 +939,7 @@ pub fn run() {
         ))
         // Reopen at the size/position the window was left at. Only "main": the mini widget is
         // fixed-size and the login/cipher/PoToken webviews are windows too. Size, position and
-        // maximized only — VISIBLE would restore a window hidden to the tray as invisible, and
+        // maximized only - VISIBLE would restore a window hidden to the tray as invisible, and
         // DECORATIONS would fight the custom titlebar.
         .plugin(
             tauri_plugin_window_state::Builder::new()
@@ -1038,7 +1041,7 @@ pub fn run() {
                 None
             };
             // The tunnel fronts differ by consumer: API clients and webviews take SOCKS5, mpv
-            // takes the HTTP CONNECT proxy (libavformat speaks no SOCKS — `tunnel::http_url`).
+            // takes the HTTP CONNECT proxy (libavformat speaks no SOCKS - `tunnel::http_url`).
             let (api_proxy, mpv_proxy) = match tunnel_ports {
                 Some((socks, http)) => (
                     Some(tunnel::socks_url(socks)),
@@ -1142,13 +1145,13 @@ pub fn run() {
             #[cfg(target_os = "windows")]
             taskbar::init(&handle);
 
-            // Discord rich presence — off unless the user opted in; parks on its channel until then.
+            // Discord rich presence - off unless the user opted in; parks on its channel until then.
             let discord = discord::spawn(
                 db.get_setting("discord_rpc").as_deref() == Some("true"),
                 discord::RpcConfig::parse(db.get_setting("discord_rpc_config").as_deref()),
             );
 
-            // Scrobbler — one task, one clock for Last.fm + ListenBrainz. Each half parks until
+            // Scrobbler - one task, one clock for Last.fm + ListenBrainz. Each half parks until
             // its own credential exists (session key via the titlebar flow, user token via settings).
             let lastfm = lastfm::spawn(
                 handle.clone(),
@@ -1215,7 +1218,7 @@ pub fn run() {
             audioproxy::start();
 
             // Local music artwork reaches the webview over the asset protocol, whose configured
-            // scope is empty — the folders it may read are the ones the user picked (local.rs).
+            // scope is empty - the folders it may read are the ones the user picked (local.rs).
             local::allow_music_paths(&handle, &app_state.db);
 
             // The login entry runs whichever binary last wrote it. A dev build that wrote it leaves
@@ -1718,7 +1721,7 @@ pub fn run() {
                         }
                     }
                     // Nothing in the widget closes it, but a WM shortcut still can. Turn that into
-                    // the ordinary "back to the app" path — closing it on its own would leave the
+                    // the ordinary "back to the app" path - closing it on its own would leave the
                     // app running with no window at all.
                     mini::LABEL => {
                         api.prevent_close();
@@ -1857,7 +1860,7 @@ fn spawn_event_pump(
                     state.media_set_playing(playing);
                     // Playing here ends showing another linked device; pausing may start it.
                     state.link_remote_refresh().await;
-                    // Keep the tray's toggle label honest — this arm is the same chokepoint
+                    // Keep the tray's toggle label honest - this arm is the same chokepoint
                     // MPRIS uses, so tray state can't drift from media-key state.
                     tray::set_playing(&app, playing);
                 }
@@ -1873,7 +1876,7 @@ fn spawn_event_pump(
                 PlayerEvent::TrackFailed(msg) => {
                     // The track died (dead/403 URL etc). on_track_failed records a WEB_REMIX 403
                     // (context/06 §2), evicts the poisoned cache, and retries the track once via
-                    // the fallback clients — only toast the error if it gave up and advanced.
+                    // the fallback clients - only toast the error if it gave up and advanced.
                     //
                     // Read the client before the retry: it advances the queue when it gives up,
                     // and which client served the dead URL is the one fact a bug report has to

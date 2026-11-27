@@ -844,7 +844,7 @@ async fn lrclib_search_by(
         _ => f64::INFINITY,
     };
     let close = |t: &LrclibTrack| ours.is_none() || dist(t) <= 5.0;
-    // Prefer the synced candidate whose duration is CLOSEST to ours — LRCLIB carries multiple
+    // Prefer the synced candidate whose duration is CLOSEST to ours - LRCLIB carries multiple
     // cuts of popular tracks, and a 4s-different cut plays lyrics 4s off the audio.
     let mut best_synced: Option<(f64, LrclibTrack)> = None;
     let mut best_plain: Option<LrclibTrack> = None;
@@ -920,7 +920,7 @@ fn from_parsed(source: &str, lines: Vec<LyricLine>) -> Option<Lyrics> {
 // --- LRC parsing ----------------------------------------------------------------------------
 
 /// Parse LRC text (`[mm:ss.xx] line`) into sorted lines. Handles multiple timestamps per line
-/// (`[t1][t2]text` — the line repeats at both cues) and skips metadata tags (`[ar:…]`).
+/// (`[t1][t2]text` - the line repeats at both cues) and skips metadata tags (`[ar:…]`).
 /// Timestamped empty lines are kept: they're instrumental gaps the UI can show as such.
 fn parse_lrc(lrc: &str) -> Vec<LyricLine> {
     let mut out = Vec::new();
@@ -934,8 +934,8 @@ fn parse_lrc(lrc: &str) -> Vec<LyricLine> {
                     times.push(ms);
                     rest = after[end + 1..].trim_start();
                 }
-                // Not a timestamp: a metadata tag ([ar:…] — no times yet, line skipped) or
-                // bracketed lyric text ("[Chorus]" — keep it as the line's text).
+                // Not a timestamp: a metadata tag ([ar:…] - no times yet, line skipped) or
+                // bracketed lyric text ("[Chorus]" - keep it as the line's text).
                 None => break,
             }
         }
@@ -1401,7 +1401,7 @@ const MATCH_TOLERANCE_SECS: f64 = 5.0;
 /// window too, and only the distance separates it from the real cut.
 ///
 /// With no length on our side there is nothing to check, so the first hit stands. A candidate whose
-/// own length is missing ranks last but is not dropped — if a provider renames the field we want
+/// own length is missing ranks last but is not dropped - if a provider renames the field we want
 /// degraded matching, not a provider that silently returns nothing.
 fn best_by_duration<T>(
     ours: Option<f64>,

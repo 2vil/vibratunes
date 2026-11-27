@@ -1,4 +1,4 @@
-//! Local SQLite state. context/11 §state. `rusqlite` (bundled) behind a Mutex — one file, low
+//! Local SQLite state. context/11 §state. `rusqlite` (bundled) behind a Mutex - one file, low
 //! write volume, no async pool needed (plan decision).
 
 use std::sync::Mutex;
@@ -66,7 +66,7 @@ pub struct ImportMatch {
     pub updated_at: i64,
 }
 
-/// A cached stream URL with its expiry. Never a source of truth — purely a latency cache.
+/// A cached stream URL with its expiry. Never a source of truth - purely a latency cache.
 pub struct CachedStream {
     pub url: String,
     pub itag: i64,
@@ -280,7 +280,7 @@ impl Db {
             "#,
         )?;
         // Migrate pre-Phase-4 DBs that predate the loudness_db column. Errors ("duplicate column")
-        // on fresh DBs are expected and ignored — the cache is disposable anyway.
+        // on fresh DBs are expected and ignored - the cache is disposable anyway.
         let _ = conn.execute("ALTER TABLE stream_url_cache ADD COLUMN loudness_db REAL", []);
         // Same for the AlbumArtist tag, which older scans read but never stored. The SCAN_VERSION
         // bump in local.rs is what refills it; this only makes the column exist.
@@ -1362,7 +1362,7 @@ impl Db {
 
     // --- local music library (local.rs) -------------------------------------------------------
 
-    /// Every known file with its recorded mtime — the scanner re-reads tags only where it differs.
+    /// Every known file with its recorded mtime - the scanner re-reads tags only where it differs.
     pub fn local_mtimes(&self) -> std::collections::HashMap<String, i64> {
         let conn = self.0.lock().unwrap();
         let mut out = std::collections::HashMap::new();
@@ -1416,7 +1416,7 @@ impl Db {
         let _ = tx.commit();
     }
 
-    /// All tracks, or one album's, in album order. ponytail: loads the whole table — a personal
+    /// All tracks, or one album's, in album order. ponytail: loads the whole table - a personal
     /// collection is thousands of rows, so paging it would buy nothing.
     pub fn local_tracks(&self, album_key: Option<&str>) -> Vec<LocalTrack> {
         let conn = self.0.lock().unwrap();

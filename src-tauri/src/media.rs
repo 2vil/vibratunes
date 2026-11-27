@@ -1,7 +1,7 @@
 //! OS media integration (MPRIS / SMTC / NowPlaying) via `souvlaki`. context/16, D11.
 //!
 //! `souvlaki`'s `MediaControls` isn't `Send`, and on Windows/macOS its events arrive on the
-//! platform's own loop — so we give it a dedicated owner thread. The app talks to that thread over
+//! platform's own loop - so we give it a dedicated owner thread. The app talks to that thread over
 //! a channel ([`MediaHandle`]); OS control presses route back into [`AppState`] through the
 //! captured `AppHandle`. The two share the same commands the UI uses, so they never drift.
 
@@ -27,7 +27,7 @@ enum MediaUpdate {
 }
 
 /// App-side handle to the media-controls thread. Cheap to clone-send into. `None` when the OS
-/// integration failed to initialize (e.g. no session bus) — every push is then a no-op.
+/// integration failed to initialize (e.g. no session bus) - every push is then a no-op.
 pub struct MediaHandle {
     tx: Sender<MediaUpdate>,
 }
@@ -69,7 +69,7 @@ impl MediaHandle {
 }
 
 /// Spawn the media-controls owner thread. Returns `None` if the platform controls can't be
-/// created (integration simply absent then — MPRIS-only fallback is blessed, context/16).
+/// created (integration simply absent then - MPRIS-only fallback is blessed, context/16).
 pub fn spawn(app: AppHandle) -> Option<MediaHandle> {
     let (tx, rx) = channel::<MediaUpdate>();
     let spawned =
@@ -106,7 +106,7 @@ fn run(app: AppHandle, rx: std::sync::mpsc::Receiver<MediaUpdate>) {
     let mut controls = match MediaControls::new(config) {
         Ok(c) => c,
         Err(e) => {
-            tracing::warn!(error = ?e, "OS media controls unavailable — skipping (context/16)");
+            tracing::warn!(error = ?e, "OS media controls unavailable - skipping (context/16)");
             return;
         }
     };
@@ -134,7 +134,7 @@ fn run(app: AppHandle, rx: std::sync::mpsc::Receiver<MediaUpdate>) {
                 artist = a;
                 album = al;
                 cover = c;
-                duration = None; // new track — length not known until mpv reports it
+                duration = None; // new track - length not known until mpv reports it
                 apply_metadata(&mut controls, &title, &artist, &album, &cover, duration);
             }
             MediaUpdate::Album(al) => {

@@ -223,12 +223,12 @@ async fn library_grids_page_past_the_first_response() {
             paged += 1;
         }
     }
-    assert!(paged > 0, "no library grid exceeded one page — test this on a fuller account");
+    assert!(paged > 0, "no library grid exceeded one page - test this on a fuller account");
 }
 
 /// The playlist sort is YouTube's, not ours: the app asks for an order and renders what comes back
 /// (`PlaylistSort::params`). Those params are a protobuf literal copied out of YouTube's own menu,
-/// so this pins the half that moves under us — that they still sort, and that the menu still says
+/// so this pins the half that moves under us - that they still sort, and that the menu still says
 /// which order the list is in and whether the choice can be written back.
 ///
 /// Read-only on purpose. The write side (`playlist_set_sort`) changes a real playlist for every
@@ -461,7 +461,7 @@ async fn library_songs_browse_returns_tracks() {
         page.title,
         page.subtitle
     );
-    assert!(!page.items.is_empty(), "no tracks came back — is the account's library empty?");
+    assert!(!page.items.is_empty(), "no tracks came back - is the account's library empty?");
     for i in &page.items {
         assert!(!i.video_id.is_empty(), "row {:?} has no videoId", i.title);
     }
@@ -555,11 +555,11 @@ async fn song_rows_carry_library_tokens() {
 
     // Search is the surface this feature lives on: every row there carried the toggle when this was
     // written (20/20, 2026-08-28). Zero means the menu shape moved again, and the dump above says how.
-    assert!(with_tokens > 0, "no search row carried a library action — the menu shape changed");
+    assert!(with_tokens > 0, "no search row carried a library action - the menu shape changed");
 
     // Library ▸ Songs rows come from a browse, a different response with its own menus. Most of
     // them ship without a menu at all, so this half only reports: it is not a guard.
-    // Note the rows that do carry one report `in_library: false` — that list is your *liked*
+    // Note the rows that do carry one report `in_library: false` - that list is your *liked*
     // songs, and liking is not the same write as saving to the library.
     let page = it.playlist(client, "FEmusic_liked_videos", None).await.expect("library songs");
     let saved = page.items.iter().filter(|s| s.library.is_some()).count();
@@ -631,7 +631,7 @@ async fn video_search_returns_video_rows() {
     for s in videos.items.iter().take(3) {
         eprintln!("  {:?} - {:?} ({:?})", s.title, s.artists, s.duration);
     }
-    assert!(!videos.items.is_empty(), "FILTER_VIDEO returned nothing — the param moved");
+    assert!(!videos.items.is_empty(), "FILTER_VIDEO returned nothing - the param moved");
     // Every row of a video-filtered search is a video. Anything less means `musicVideoType` moved
     // and the "hide music videos" setting is leaking videos through this shelf.
     assert_eq!(tagged, videos.items.len(), "a video-filtered row was not tagged is_video");

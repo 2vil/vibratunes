@@ -1,26 +1,27 @@
 <script lang="ts">
-	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { PlayIcon, ListRestartIcon } from '@hugeicons/core-free-icons';
-	import LogoMark from './LogoMark.svelte';
-	import VibratunesLoader from './VibratunesLoader.svelte';
-	import { ON_REPEAT_ID } from '$lib/api';
-	import type { BrowseItem } from '$lib/api';
-	import { thumb } from '$lib/thumb';
-	import { setDragItem } from '$lib/dnd';
-	import { openItem, playItem } from '$lib/browse';
-	import ItemMenu from './ItemMenu.svelte';
-	import ExplicitIcon from './ExplicitIcon.svelte';
-	import LiveBadge from './LiveBadge.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+	import { PlayIcon, ListRestartIcon } from "@hugeicons/core-free-icons";
+	import LogoMark from "./LogoMark.svelte";
+	import VibratunesLoader from "./VibratunesLoader.svelte";
+	import { ON_REPEAT_ID } from "$lib/api";
+	import type { BrowseItem } from "$lib/api";
+	import { thumb } from "$lib/thumb";
+	import { setDragItem } from "$lib/dnd";
+	import { openItem, playItem } from "$lib/browse";
+	import ItemMenu from "./ItemMenu.svelte";
+	import ExplicitIcon from "./ExplicitIcon.svelte";
+	import LiveBadge from "./LiveBadge.svelte";
+	import { t } from "$lib/i18n.svelte";
 
-	let { item, compact = false }: { item: BrowseItem; compact?: boolean } = $props();
+	let { item, compact = false }: { item: BrowseItem; compact?: boolean } =
+		$props();
 
-	const round = $derived(item.kind === 'artist');
+	const round = $derived(item.kind === "artist");
 	// On Repeat has no artwork by nature, so its cover is the icon rather than the neutral
 	// placeholder every failed thumbnail lands on.
 	const onRepeat = $derived(item.id === ON_REPEAT_ID);
 
-	// Google's CDN doesn't serve every rewritten size — asking for one it doesn't have 404s, and the
+	// Google's CDN doesn't serve every rewritten size - asking for one it doesn't have 404s, and the
 	// browser then paints its broken-image glyph. So: try the sized URL, retry the original once, and
 	// only then fall back to a neutral icon tile.
 	let attempt = $state(0);
@@ -38,11 +39,14 @@
 	// Undefined when `thumb` left the URL alone (not a Google CDN URL, or a local file), where two
 	// candidates would be the same image twice, and on the retry, which is deliberately unsized.
 	const srcset = $derived(
-		attempt === 0 && small && sized && small !== sized ? `${small} 1x, ${sized} 2x` : undefined
+		attempt === 0 && small && sized && small !== sized
+			? `${small} 1x, ${sized} 2x`
+			: undefined,
 	);
 	const src = $derived(attempt === 0 ? sized : item.thumbnail);
-	// Skip the retry when `thumb` left the URL untouched — it would refetch the same dead URL.
-	const imgFailed = () => (attempt = attempt === 0 && sized !== item.thumbnail ? 1 : 2);
+	// Skip the retry when `thumb` left the URL untouched - it would refetch the same dead URL.
+	const imgFailed = () =>
+		(attempt = attempt === 0 && sized !== item.thumbnail ? 1 : 2);
 
 	let playing = $state(false); // in-flight guard for the fetch-then-play path
 
@@ -71,12 +75,12 @@
 		onclick={() => openItem(item)}
 		onkeydown={(e) => {
 			if (e.target !== e.currentTarget) return;
-			if (e.key === 'Enter' || e.key === ' ') {
+			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
 				openItem(item);
 			}
 		}}
-		title={item.subtitle ? `${item.title} — ${item.subtitle}` : item.title}
+		title={item.subtitle ? `${item.title} - ${item.subtitle}` : item.title}
 	>
 		<!-- The hover lift fades in a shadow that is already rasterized instead of transitioning
 		     box-shadow. Interpolating shadow-sm to shadow-xl makes WebKit compute a *different*
@@ -102,13 +106,20 @@
 					: 'rounded-lg'}"
 			>
 				{#if onRepeat}
-					<div class="flex h-full w-full items-center justify-center bg-primary/10 text-primary">
-						<HugeiconsIcon icon={ListRestartIcon} class={compact ? 'h-7 w-7' : 'h-10 w-10'} />
+					<div
+						class="flex h-full w-full items-center justify-center bg-primary/10 text-primary"
+					>
+						<HugeiconsIcon
+							icon={ListRestartIcon}
+							class={compact ? "h-7 w-7" : "h-10 w-10"}
+						/>
 					</div>
 				{:else}
 					<!-- The logo sits under the cover: it shows while the cover loads, and stays when
 					     there is none. ponytail: a cover with transparency shows it through. -->
-					<LogoMark class="absolute inset-0 m-auto size-3/4 text-muted-foreground/20" />
+					<LogoMark
+						class="absolute inset-0 m-auto size-3/4 text-muted-foreground/20"
+					/>
 					{#if item.thumbnail && attempt < 2}
 						<!-- No hover zoom (#341). On Chromium (WebView2) a transform transition is a
 						     composited animation, and each one starting or ending re-layerizes the whole
@@ -130,31 +141,42 @@
 				{#if item.live}
 					<div class="absolute left-2 top-2"><LiveBadge onArt /></div>
 				{/if}
-				{#if item.kind !== 'artist'}
+				{#if item.kind !== "artist"}
 					<!-- A fade only: the slide it used to have is a transform transition (see above). -->
 					<button
 						data-card-play
 						class="absolute flex cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-lg transition-opacity duration-200 ease-out group-hover:shown focus-visible:shown {compact
 							? 'bottom-1.5 right-1.5 h-7 w-7'
-							: 'bottom-2 right-2 h-9 w-9'} {playing ? 'shown!' : ''}"
+							: 'bottom-2 right-2 h-9 w-9'} {playing
+							? 'shown!'
+							: ''}"
 						disabled={playing}
-						aria-label={t('player.play')}
+						aria-label={t("player.play")}
 						onclick={(e) => {
 							e.stopPropagation();
 							playNow();
 						}}
 					>
 						{#if playing}
-							<VibratunesLoader class="{compact ? 'size-5' : 'size-6'} text-primary-foreground" />
+							<VibratunesLoader
+								class="{compact
+									? 'size-5'
+									: 'size-6'} text-primary-foreground"
+							/>
 						{:else}
-							<HugeiconsIcon icon={PlayIcon} class={compact ? 'h-3 w-3' : 'h-4 w-4'} />
+							<HugeiconsIcon
+								icon={PlayIcon}
+								class={compact ? "h-3 w-3" : "h-4 w-4"}
+							/>
 						{/if}
 					</button>
 				{/if}
 			</div>
 		</div>
 		<div class="min-w-0 {round ? 'text-center' : ''}">
-			<div class="truncate font-medium {compact ? 'text-xs' : 'text-sm'}">{item.title}</div>
+			<div class="truncate font-medium {compact ? 'text-xs' : 'text-sm'}">
+				{item.title}
+			</div>
 			{#if item.subtitle || item.explicit}
 				<div
 					class="flex items-center gap-1 text-muted-foreground {round

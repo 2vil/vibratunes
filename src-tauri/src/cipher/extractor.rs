@@ -1,4 +1,4 @@
-//! `FunctionNameExtractor` (context/05 §2) — find, inside a fetched `player.js`, the
+//! `FunctionNameExtractor` (context/05 §2) - find, inside a fetched `player.js`, the
 //! signature-timestamp and the *names* of the signature-decipher and `n`-transform functions.
 //!
 //! Because the cipher webview runs YouTube's OWN `player.js`, we only need to NAME the entry
@@ -10,7 +10,7 @@
 
 use regex::Regex;
 
-/// The marker that closes player.js's IIFE — our export-injection point (verified present in the
+/// The marker that closes player.js's IIFE - our export-injection point (verified present in the
 /// live player.js). context/05 §CipherWebView injection.
 pub const IIFE_TAIL: &str = "})(_yt_player);";
 
@@ -33,8 +33,8 @@ pub fn extract_sts(player_js: &str) -> Option<i32> {
 ///   closes with `})(_yt_player);` and its IIFE takes `g`), which is why this must be spliced
 ///   inside the closure and not appended after it.
 ///
-/// The config's strings are validated in `config.rs` before they get here — `sig` must match
-/// `name(int,int,INPUT)` and `nClass` must be a bare identifier — so this only ever splices the
+/// The config's strings are validated in `config.rs` before they get here - `sig` must match
+/// `name(int,int,INPUT)` and `nClass` must be a bare identifier - so this only ever splices the
 /// shapes shown above.
 pub fn build_injection(player_js: &str, cfg: Option<&super::config::PlayerConfig>) -> String {
     let mut exports = String::from(";");
@@ -62,7 +62,7 @@ pub fn build_injection(player_js: &str, cfg: Option<&super::config::PlayerConfig
             out.push_str(&player_js[idx + IIFE_TAIL.len()..]);
             out
         }
-        // No known tail (unexpected player shape) — append exports and hope globals are reachable.
+        // No known tail (unexpected player shape) - append exports and hope globals are reachable.
         None => format!("{player_js}\n{exports}"),
     }
 }

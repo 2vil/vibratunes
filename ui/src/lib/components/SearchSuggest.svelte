@@ -6,43 +6,47 @@
 	// Must live inside a <form>: Enter with nothing highlighted, and the "All results" row, fall
 	// through to that form's onsubmit, which is where each caller decides what a full search means
 	// (run it in place, or navigate to /search).
-	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { Search01Icon, HistoryIcon } from '@hugeicons/core-free-icons';
-	import LogoMark from './LogoMark.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import { Skeleton } from '$lib/components/ui/skeleton';
-	import ExplicitIcon from './ExplicitIcon.svelte';
-	import ItemMenu from './ItemMenu.svelte';
-	import { searchSuggestions, type BrowseItem, type SearchSuggestions } from '$lib/api';
-	import { openItem, rowMeta } from '$lib/browse';
-	import { MOD } from '$lib/shortcuts';
-	import { thumb } from '$lib/thumb';
-	import { t } from '$lib/i18n.svelte';
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+	import { Search01Icon, HistoryIcon } from "@hugeicons/core-free-icons";
+	import LogoMark from "./LogoMark.svelte";
+	import { Input } from "$lib/components/ui/input";
+	import { Skeleton } from "$lib/components/ui/skeleton";
+	import ExplicitIcon from "./ExplicitIcon.svelte";
+	import ItemMenu from "./ItemMenu.svelte";
+	import {
+		searchSuggestions,
+		type BrowseItem,
+		type SearchSuggestions,
+	} from "$lib/api";
+	import { openItem, rowMeta } from "$lib/browse";
+	import { MOD } from "$lib/shortcuts";
+	import { thumb } from "$lib/thumb";
+	import { t } from "$lib/i18n.svelte";
 
 	let {
-		value = $bindable(''),
-		placeholder = 'Search',
-		inputClass = '',
+		value = $bindable(""),
+		placeholder = "Search",
+		inputClass = "",
 		/** Panel geometry. Default matches the field; a narrow field wants its own width. */
-		panelClass = 'left-0 right-0',
-		onpick
+		panelClass = "left-0 right-0",
+		onpick,
 	}: {
 		value?: string;
 		placeholder?: string;
 		inputClass?: string;
 		panelClass?: string;
-		/** Fired after a row is taken (played or navigated) — for callers that dismiss themselves. */
+		/** Fired after a row is taken (played or navigated) - for callers that dismiss themselves. */
 		onpick?: () => void;
 	} = $props();
 
 	let open = $state(false);
 	let items = $state<BrowseItem[]>([]);
-	let queries = $state<SearchSuggestions['queries']>([]);
+	let queries = $state<SearchSuggestions["queries"]>([]);
 	let loading = $state(false);
 	// Arrow-key row, items first and then queries. -1 = none, so Enter submits the form. The mouse
 	// never sets it.
 	let active = $state(-1);
-	let loadedFor = ''; // query `items` belongs to, so a stale response can't land
+	let loadedFor = ""; // query `items` belongs to, so a stale response can't land
 	// The row the right-click menu belongs to: whatever the pointer last entered. It lives outside
 	// the panel and outlives it, because taking a menu action moves focus and closes the panel, and
 	// a menu unmounted mid-click is a menu that does nothing.
@@ -104,14 +108,14 @@
 	function search(text: string) {
 		value = text;
 		close();
-		root.closest('form')?.requestSubmit();
+		root.closest("form")?.requestSubmit();
 	}
 
 	function onKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape' && open) {
+		if (e.key === "Escape" && open) {
 			e.preventDefault();
 			close();
-		} else if (e.key === 'Enter') {
+		} else if (e.key === "Enter") {
 			// Only a highlighted row is ours; a bare Enter is the caller's form submit.
 			if (active >= 0 && active < items.length + queries.length) {
 				e.preventDefault();
@@ -120,11 +124,17 @@
 			} else {
 				close();
 			}
-		} else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && items.length + queries.length) {
+		} else if (
+			(e.key === "ArrowDown" || e.key === "ArrowUp") &&
+			items.length + queries.length
+		) {
 			e.preventDefault();
 			open = true;
 			const n = items.length + queries.length;
-			active = e.key === 'ArrowDown' ? (active + 1) % n : (active <= 0 ? n : active) - 1;
+			active =
+				e.key === "ArrowDown"
+					? (active + 1) % n
+					: (active <= 0 ? n : active) - 1;
 		}
 	}
 </script>
@@ -166,7 +176,7 @@
 		<div
 			id="search-suggest"
 			role="listbox"
-			aria-label={t('a11y.search_preview')}
+			aria-label={t("a11y.search_preview")}
 			class="absolute top-full z-50 mt-2 overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-xl animate-in fade-in-0 zoom-in-95 duration-150 {panelClass}"
 		>
 			{#if loading && !items.length && !queries.length}
@@ -180,7 +190,9 @@
 					</div>
 				{/each}
 			{:else if !items.length && !queries.length}
-				<div class="px-4 py-3 text-sm text-muted-foreground">{t('common.nothing_quick')}</div>
+				<div class="px-4 py-3 text-sm text-muted-foreground">
+					{t("common.nothing_quick")}
+				</div>
 			{:else}
 				{#each items as item, i (item.id)}
 					<!-- A div, not a button: `ctxHost` treats a nested <button> as its own thing and would
@@ -211,7 +223,8 @@
 							<img
 								src={thumb(item.thumbnail, 400)}
 								alt=""
-								class="h-10 w-10 shrink-0 object-cover {item.kind === 'artist'
+								class="h-10 w-10 shrink-0 object-cover {item.kind ===
+								'artist'
 									? 'rounded-full'
 									: 'rounded-md'}"
 							/>
@@ -227,7 +240,9 @@
 						{/if}
 						<div class="min-w-0 flex-1">
 							<div class="truncate text-sm">{item.title}</div>
-							<div class="flex items-center gap-1 text-xs text-muted-foreground">
+							<div
+								class="flex items-center gap-1 text-xs text-muted-foreground"
+							>
 								{#if item.explicit}
 									<ExplicitIcon class="h-3 w-3 shrink-0" />
 								{/if}
@@ -248,7 +263,9 @@
 						class="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm transition-colors {row ===
 						active
 							? 'bg-accent/60'
-							: 'hover:bg-accent/40'} {i === 0 && items.length ? 'border-t' : ''}"
+							: 'hover:bg-accent/40'} {i === 0 && items.length
+							? 'border-t'
+							: ''}"
 						onmousedown={(e) => e.preventDefault()}
 						onmouseenter={() => (active = -1)}
 						onclick={() => search(q.text)}
@@ -278,7 +295,7 @@
 				}}
 			>
 				<HugeiconsIcon icon={Search01Icon} class="h-3.5 w-3.5" />
-				{t('common.all_results_for', { query: value.trim() })}
+				{t("common.all_results_for", { query: value.trim() })}
 			</button>
 		</div>
 	{/if}

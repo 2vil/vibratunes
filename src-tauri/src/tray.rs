@@ -5,11 +5,11 @@
 //! Two backends, because clicking the icon to restore the window is unreachable on Linux
 //! otherwise: Tauri's `tray-icon` talks to **libappindicator**, whose D-Bus item exposes no
 //! `Activate` method at all (only `SecondaryActivate`/`Scroll`), so a left-click has nothing to
-//! call and `TrayIconEvent` never fires — its GTK backend wires up zero signals. Electron apps
+//! call and `TrayIconEvent` never fires - its GTK backend wires up zero signals. Electron apps
 //! get click-to-restore by implementing StatusNotifierItem directly and advertising
 //! `ItemIsMenu=false`; [`ksni`] does the same for us on Linux. Windows/macOS keep `tray-icon`.
 //!
-//! Both backends expose the same two entry points — [`init`] and [`set_playing`] — so lib.rs
+//! Both backends expose the same two entry points - [`init`] and [`set_playing`] - so lib.rs
 //! never learns which one is live.
 
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -41,7 +41,7 @@ pub fn set_available(val: bool) {
 }
 
 /// Bring the main window back from close-to-tray, minimize, or the mini player. Every "come back"
-/// path — tray menu, tray click, second launch, the widget's restore button — goes through here so
+/// path - tray menu, tray click, second launch, the widget's restore button - goes through here so
 /// they can't drift apart.
 pub fn show_main(app: &AppHandle) {
     crate::mini::close(app);
@@ -114,7 +114,7 @@ mod imp {
 
     use super::{handle_menu, show_main};
 
-    /// `Handle` isn't `Clone`, so it lives here rather than in Tauri's managed state — that also
+    /// `Handle` isn't `Clone`, so it lives here rather than in Tauri's managed state - that also
     /// keeps [`set_playing`] callable without borrowing across an await.
     static HANDLE: OnceLock<Handle<VibratunesTray>> = OnceLock::new();
 

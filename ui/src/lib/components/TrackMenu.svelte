@@ -5,8 +5,8 @@
 	// The queue actions + like are universal; go-to-artist/album/playlist show when the song carries
 	// them. The popup is `fixed`, anchored at the trigger and moved to <body> (`toBody`), so no
 	// scroll container clips it and no contained ancestor becomes its containing block.
-	import { goto } from '$app/navigation';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { goto } from "$app/navigation";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		MoreHorizontalIcon,
 		MoreVerticalIcon,
@@ -28,12 +28,12 @@
 		PencilEdit02Icon,
 		Download04Icon,
 		Loading03Icon,
-		CheckmarkCircle02Icon
-	} from '@hugeicons/core-free-icons';
-	import * as api from '$lib/api';
-	import type { SongItem } from '$lib/api';
-	import { anchorMenu, ctxHost, fitMenu, NO_ANCHOR, toBody } from '$lib/menu';
-	import { removableFromPlaylist } from '$lib/queue';
+		CheckmarkCircle02Icon,
+	} from "@hugeicons/core-free-icons";
+	import * as api from "$lib/api";
+	import type { SongItem } from "$lib/api";
+	import { anchorMenu, ctxHost, fitMenu, NO_ANCHOR, toBody } from "$lib/menu";
+	import { removableFromPlaylist } from "$lib/queue";
 	import {
 		addPick,
 		blockArtist,
@@ -56,25 +56,25 @@
 		startRadio,
 		toggleRating,
 		toggleSongLibrary,
-		ui
-	} from '$lib/player.svelte';
-	import { lastfm } from '$lib/lastfm.svelte';
-	import { listenbrainz } from '$lib/listenbrainz.svelte';
-	import { lt } from '$lib/lt.svelte';
-	import { t } from '$lib/i18n.svelte';
-	import { invalidateCachedPrefix } from '$lib/pagecache';
-	import { getSongDownloadState, downloadSong } from '$lib/download.svelte';
+		ui,
+	} from "$lib/player.svelte";
+	import { lastfm } from "$lib/lastfm.svelte";
+	import { listenbrainz } from "$lib/listenbrainz.svelte";
+	import { lt } from "$lib/lt.svelte";
+	import { t } from "$lib/i18n.svelte";
+	import { invalidateCachedPrefix } from "$lib/pagecache";
+	import { getSongDownloadState, downloadSong } from "$lib/download.svelte";
 
 	let {
 		song,
-		triggerClass = '',
+		triggerClass = "",
 		onAdd,
 		onRemove,
-		removeLabel = t('player.remove_from_playlist'),
+		removeLabel = t("player.remove_from_playlist"),
 		playlistId,
 		queueIndex,
 		linksOnly = false,
-		inLibraryList = false
+		inLibraryList = false,
 	}: {
 		song: SongItem;
 		/** Classes for the ⋯ trigger button (positioning differs per host: inline vs overlay). */
@@ -116,7 +116,7 @@
 	function openMenu(e: MouseEvent) {
 		e.preventDefault(); // a right-click must not also raise WebKit's own menu
 		e.stopPropagation();
-		anchor = anchorMenu(e, { align: 'right' });
+		anchor = anchorMenu(e, { align: "right" });
 		menuOpen = true;
 		if (!inLibraryList) lookUpSongLibrary(song);
 		holdLibrary = songLibraryPending(song);
@@ -154,7 +154,9 @@
 	const dlState = $derived(getSongDownloadState(song?.video_id));
 	// "Remove from this playlist", for a row playing out of a playlist (issue #270). What the three
 	// conditions are and why is in `removableFromPlaylist` (queue.ts), where they are checkable.
-	const removable = $derived(removableFromPlaylist(song, playlistId, savedIn.map));
+	const removable = $derived(
+		removableFromPlaylist(song, playlistId, savedIn.map),
+	);
 
 	// "Play next" on a track that is already coming up in the queue moves it into the Play next block
 	// rather than queueing a second copy. A row the user queued, the backend moves by itself
@@ -167,7 +169,9 @@
 		// then shifts every row.
 		const row = queueIndex !== undefined ? q.items[queueIndex] : undefined;
 		const upcoming =
-			row?.video_id === song.video_id && queueIndex! > q.currentIndex && lt.role !== 'guest';
+			row?.video_id === song.video_id &&
+			queueIndex! > q.currentIndex &&
+			lt.role !== "guest";
 		if (upcoming && !row.queued && !row.queued_end) {
 			try {
 				await api.removeFromQueue(queueIndex!);
@@ -196,7 +200,7 @@
 		// Every order the page cached this playlist in, not just the bare key: a sort the user
 		// picked earlier still holds the row, and the playlist page serves that hit as it is.
 		invalidateCachedPrefix(`playlist:${playlistId}`);
-		toast.success(t('toasts.removed_from_playlist'));
+		toast.success(t("toasts.removed_from_playlist"));
 		// The song is out of the playlist, so it does not stay in the queue that playlist filled.
 		// The playing row can't just be dropped (`remove_from_queue` refuses the current index, and
 		// the user would keep listening to a track they just threw out), so skip past it first:
@@ -206,7 +210,9 @@
 		// Resolved again rather than reused: the index this menu opened on is a position, and a
 		// queue edit during the request above (a guest add, another removal) moves every row
 		// behind it. The setVideoId identifies the row itself.
-		const at = playback.queue.items.findIndex((r) => r.set_video_id === setVideoId);
+		const at = playback.queue.items.findIndex(
+			(r) => r.set_video_id === setVideoId,
+		);
 		if (at < 0) return; // already gone from the queue
 		if (at === playback.queue.currentIndex) await api.nextTrack();
 		await api.removeFromQueue(at);
@@ -219,10 +225,10 @@
 	type="button"
 	class="{triggerClass} {menuOpen ? 'shown!' : ''}"
 	onclick={openMenu}
-	aria-label={t('a11y.track_options')}
+	aria-label={t("a11y.track_options")}
 	{@attach ctxHost(openMenu)}
 >
-	<!-- icon swap via altIcon/showAlt — `icon` is frozen at mount -->
+	<!-- icon swap via altIcon/showAlt - `icon` is frozen at mount -->
 	<HugeiconsIcon
 		icon={MoreHorizontalIcon}
 		altIcon={MoreVerticalIcon}
@@ -242,7 +248,7 @@
 		class="pointer-events-auto fixed inset-0 z-[60] cursor-default"
 		onclick={close}
 		oncontextmenu={close}
-		aria-label={t('a11y.close_menu')}
+		aria-label={t("a11y.close_menu")}
 		{@attach toBody}
 	></button>
 	<div
@@ -257,13 +263,15 @@
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={(e) => run(e, playNext)}
 			>
-				<HugeiconsIcon icon={ArrowUpNarrowWideIcon} class="h-4 w-4" /> {t('player.play_next')}
+				<HugeiconsIcon icon={ArrowUpNarrowWideIcon} class="h-4 w-4" />
+				{t("player.play_next")}
 			</button>
 			<button
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={(e) => run(e, () => enqueue([song], false))}
 			>
-				<HugeiconsIcon icon={ArrowDownWideNarrowIcon} class="h-4 w-4" /> {t('player.add_to_queue')}
+				<HugeiconsIcon icon={ArrowDownWideNarrowIcon} class="h-4 w-4" />
+				{t("player.add_to_queue")}
 			</button>
 		{/if}
 		<!-- Radio is the one action worth having in the player bar too (`linksOnly`): it's how you
@@ -271,9 +279,11 @@
 		{#if !isLocal}
 			<button
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-				onclick={(e) => run(e, () => startRadio('song', song.video_id, song.title))}
+				onclick={(e) =>
+					run(e, () => startRadio("song", song.video_id, song.title))}
 			>
-				<HugeiconsIcon icon={Radio02Icon} class="h-4 w-4" /> {t('player.start_radio')}
+				<HugeiconsIcon icon={Radio02Icon} class="h-4 w-4" />
+				{t("player.start_radio")}
 			</button>
 		{/if}
 		<!-- In the player bar (`linksOnly`) like has its own button, which drops below lg to leave the
@@ -284,23 +294,31 @@
 				class="w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10 {linksOnly
 					? 'flex lg:hidden'
 					: 'flex'}"
-				onclick={(e) => run(e, () => toggleRating(song, 'like'))}
+				onclick={(e) => run(e, () => toggleRating(song, "like"))}
 			>
 				<HugeiconsIcon
 					icon={ThumbsUpIcon}
-					class="h-4 w-4 {rated === 'like' ? 'fill-current text-primary' : ''}"
+					class="h-4 w-4 {rated === 'like'
+						? 'fill-current text-primary'
+						: ''}"
 				/>
-				{rated === 'like' ? t('player.remove_from_liked') : t('player.save_to_liked')}
+				{rated === "like"
+					? t("player.remove_from_liked")
+					: t("player.save_to_liked")}
 			</button>
 			<button
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-				onclick={(e) => run(e, () => toggleRating(song, 'dislike'))}
+				onclick={(e) => run(e, () => toggleRating(song, "dislike"))}
 			>
 				<HugeiconsIcon
 					icon={ThumbsDownIcon}
-					class="h-4 w-4 {rated === 'dislike' ? 'fill-current text-foreground' : ''}"
+					class="h-4 w-4 {rated === 'dislike'
+						? 'fill-current text-foreground'
+						: ''}"
 				/>
-				{rated === 'dislike' ? t('player.remove_dislike') : t('common.dislike')}
+				{rated === "dislike"
+					? t("player.remove_dislike")
+					: t("common.dislike")}
 			</button>
 		{/if}
 		{#if (libraryToken || holdLibrary) && !inLibraryList}
@@ -316,15 +334,21 @@
 					showAlt={inLib}
 					class="h-4 w-4"
 				/>
-				{inLib ? t('library.remove_from_library') : t('library.save_to_library')}
+				{inLib
+					? t("library.remove_from_library")
+					: t("library.save_to_library")}
 			</button>
 		{/if}
 		{#if song.artist_id}
 			<button
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-				onclick={(e) => run(e, () => goto(`/artist/${encodeURIComponent(song.artist_id!)}`))}
+				onclick={(e) =>
+					run(e, () =>
+						goto(`/artist/${encodeURIComponent(song.artist_id!)}`),
+					)}
 			>
-				<HugeiconsIcon icon={UserListIcon} class="h-4 w-4" /> {t('player.go_to_artist')}
+				<HugeiconsIcon icon={UserListIcon} class="h-4 w-4" />
+				{t("player.go_to_artist")}
 			</button>
 		{/if}
 		<!-- Not gated on `artist_id`: a row whose byline links nothing is exactly the case this
@@ -342,7 +366,8 @@
 							: blockArtist(song.artist_id, song.artists);
 					})}
 			>
-				<HugeiconsIcon icon={UserBlock01Icon} class="h-4 w-4" /> {t('player.block_artist')}
+				<HugeiconsIcon icon={UserBlock01Icon} class="h-4 w-4" />
+				{t("player.block_artist")}
 			</button>
 		{/if}
 		<!-- Local files carry no album_id (local.rs). Checked here too: a queue restored from before
@@ -350,9 +375,13 @@
 		{#if song.album_id && !isLocal}
 			<button
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-				onclick={(e) => run(e, () => goto(`/album/${encodeURIComponent(song.album_id!)}`))}
+				onclick={(e) =>
+					run(e, () =>
+						goto(`/album/${encodeURIComponent(song.album_id!)}`),
+					)}
 			>
-				<HugeiconsIcon icon={Vynil02Icon} class="h-4 w-4" /> {t('player.go_to_album')}
+				<HugeiconsIcon icon={Vynil02Icon} class="h-4 w-4" />
+				{t("player.go_to_album")}
 			</button>
 		{/if}
 		<button
@@ -362,16 +391,16 @@
 					isPick
 						? removePick(song.video_id)
 						: addPick({
-								kind: 'song',
+								kind: "song",
 								id: song.video_id,
 								title: song.title,
 								subtitle: song.artists,
-								thumbnail: song.thumbnail
-							})
+								thumbnail: song.thumbnail,
+							}),
 				)}
 		>
 			<HugeiconsIcon icon={DashboardSquare02Icon} class="h-4 w-4" />
-			{isPick ? t('home.remove_shortcut') : t('home.add_shortcut')}
+			{isPick ? t("home.remove_shortcut") : t("home.add_shortcut")}
 		</button>
 		{#if !isLocal}
 			<button
@@ -379,25 +408,36 @@
 				onclick={(e) =>
 					run(e, () =>
 						openShare({
-							kind: 'song',
+							kind: "song",
 							id: song.video_id,
 							title: song.title,
 							subtitle: song.artists,
-							thumbnail: song.thumbnail
-						})
+							thumbnail: song.thumbnail,
+						}),
 					)}
 			>
-				<HugeiconsIcon icon={Share08Icon} class="h-4 w-4" /> {t('player.share')}
+				<HugeiconsIcon icon={Share08Icon} class="h-4 w-4" />
+				{t("player.share")}
 			</button>
-			{#if dlState === 'downloading'}
-				<div class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-primary">
-					<HugeiconsIcon icon={Loading03Icon} class="h-4 w-4 animate-spin" />
-					<span>{t('download.downloading')}</span>
+			{#if dlState === "downloading"}
+				<div
+					class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-primary"
+				>
+					<HugeiconsIcon
+						icon={Loading03Icon}
+						class="h-4 w-4 animate-spin"
+					/>
+					<span>{t("download.downloading")}</span>
 				</div>
-			{:else if dlState === 'downloaded'}
-				<div class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-emerald-500">
-					<HugeiconsIcon icon={CheckmarkCircle02Icon} class="h-4 w-4" />
-					<span>{t('download.downloaded')}</span>
+			{:else if dlState === "downloaded"}
+				<div
+					class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-emerald-500"
+				>
+					<HugeiconsIcon
+						icon={CheckmarkCircle02Icon}
+						class="h-4 w-4"
+					/>
+					<span>{t("download.downloaded")}</span>
 				</div>
 			{:else}
 				<button
@@ -405,7 +445,7 @@
 					onclick={(e) => run(e, () => downloadSong(song))}
 				>
 					<HugeiconsIcon icon={Download04Icon} class="h-4 w-4" />
-					{t('download.download_track')}
+					{t("download.download_track")}
 				</button>
 			{/if}
 		{/if}
@@ -418,11 +458,12 @@
 				onclick={(e) =>
 					run(e, () => {
 						ui.scrobbleTrack = song;
-						ui.settingsFocus = 'scrobbling';
+						ui.settingsFocus = "scrobbling";
 						ui.settingsOpen = true;
 					})}
 			>
-				<HugeiconsIcon icon={PencilEdit02Icon} class="h-4 w-4" /> {t('player.edit_scrobble')}
+				<HugeiconsIcon icon={PencilEdit02Icon} class="h-4 w-4" />
+				{t("player.edit_scrobble")}
 			</button>
 		{/if}
 		{#if linksOnly}
@@ -430,7 +471,8 @@
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={(e) => run(e, () => (ui.tempoPitchOpen = true))}
 			>
-				<HugeiconsIcon icon={PreferenceVerticalIcon} class="h-4 w-4" /> {t('dialogs.tempo_pitch.title')}
+				<HugeiconsIcon icon={PreferenceVerticalIcon} class="h-4 w-4" />
+				{t("dialogs.tempo_pitch.title")}
 			</button>
 		{/if}
 		<!-- Always here, including the player bar at full width where the + button is right there:
@@ -440,7 +482,8 @@
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={(e) => run(e, onAdd)}
 			>
-				<HugeiconsIcon icon={PlayListAddIcon} class="h-4 w-4" /> {t('player.save_to_playlist')}
+				<HugeiconsIcon icon={PlayListAddIcon} class="h-4 w-4" />
+				{t("player.save_to_playlist")}
 			</button>
 		{/if}
 		{#if onRemove}
@@ -448,7 +491,8 @@
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-destructive hover:bg-destructive/10"
 				onclick={(e) => run(e, onRemove)}
 			>
-				<HugeiconsIcon icon={PlayListRemoveIcon} class="h-4 w-4" /> {removeLabel}
+				<HugeiconsIcon icon={PlayListRemoveIcon} class="h-4 w-4" />
+				{removeLabel}
 			</button>
 		{/if}
 		{#if removable}
@@ -457,7 +501,7 @@
 				onclick={(e) => run(e, removeFromPlaylist)}
 			>
 				<HugeiconsIcon icon={PlayListRemoveIcon} class="h-4 w-4" />
-				{t('player.remove_from_this_playlist')}
+				{t("player.remove_from_this_playlist")}
 			</button>
 		{/if}
 	</div>

@@ -7,20 +7,24 @@
 	// boxes of different widths (#319). Now it is six posters in rank order, the same frame the feed
 	// uses for an artist (PortraitCard), with the rank and the count set on the photograph: the order
 	// carries the ranking, the count carries the "yours".
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { UserLove02Icon, UserIcon, UserStar01Icon } from '@hugeicons/core-free-icons';
-	import SectionHeading from './SectionHeading.svelte';
-	import { Skeleton } from '$lib/components/ui/skeleton';
-	import PlaylistMenu from './PlaylistMenu.svelte';
-	import * as api from '$lib/api';
-	import type { ArtistPage, BrowseItem } from '$lib/api';
-	import { thumb } from '$lib/thumb';
-	import { putCached } from '$lib/pagecache';
-	import { artistPage } from '$lib/browse';
-	import { toast } from '$lib/player.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+	import {
+		UserLove02Icon,
+		UserIcon,
+		UserStar01Icon,
+	} from "@hugeicons/core-free-icons";
+	import SectionHeading from "./SectionHeading.svelte";
+	import { Skeleton } from "$lib/components/ui/skeleton";
+	import PlaylistMenu from "./PlaylistMenu.svelte";
+	import * as api from "$lib/api";
+	import type { ArtistPage, BrowseItem } from "$lib/api";
+	import { thumb } from "$lib/thumb";
+	import { putCached } from "$lib/pagecache";
+	import { artistPage } from "$lib/browse";
+	import { toast } from "$lib/player.svelte";
+	import { t } from "$lib/i18n.svelte";
 
 	// ponytail: one browse call per artist, because the subscriber count and the subscribe state
 	// only exist on the artist page. Six of them, shared with the artist route's cache (same key),
@@ -50,7 +54,7 @@
 	let loading = $state(true);
 	/** Channel ids by plays, most first; empty until the history has been read. */
 	let ids = $state<string[]>([]);
-	/** Subscribe state per channel, optimistic — seeded from each artist page as it lands. */
+	/** Subscribe state per channel, optimistic - seeded from each artist page as it lands. */
 	let subs = $state<Record<string, boolean>>({});
 	let subBusy = $state<string | null>(null);
 	/** 0 = sized thumb, 1 = the original URL, 2 = give up and draw the icon. Same ladder as MediaCard. */
@@ -59,16 +63,23 @@
 	// A channel YouTube Music doesn't treat as an artist has a wide banner as `thumbnail` and its
 	// round avatar apart; the avatar is the one that crops to a poster.
 	const art = (a: ArtistPage) => a.avatar ?? a.thumbnail;
-	const src = (a: ArtistPage) => ((attempt[a.channelId] ?? 0) === 0 ? thumb(art(a), 400) : art(a));
-	const hasArt = (a: ArtistPage) => !!art(a) && (attempt[a.channelId] ?? 0) < 2;
+	const src = (a: ArtistPage) =>
+		(attempt[a.channelId] ?? 0) === 0 ? thumb(art(a), 400) : art(a);
+	const hasArt = (a: ArtistPage) =>
+		!!art(a) && (attempt[a.channelId] ?? 0) < 2;
 	const imgFailed = (a: ArtistPage) => {
 		const n = attempt[a.channelId] ?? 0;
-		attempt = { ...attempt, [a.channelId]: n === 0 && thumb(art(a), 400) !== art(a) ? 1 : 2 };
+		attempt = {
+			...attempt,
+			[a.channelId]: n === 0 && thumb(art(a), 400) !== art(a) ? 1 : 2,
+		};
 	};
 
 	onMount(async () => {
 		const top = (await api.topArtists(TOP).catch(() => []))
-			.flatMap(({ id, plays }) => (id?.startsWith('UC') ? [{ id, plays }] : []))
+			.flatMap(({ id, plays }) =>
+				id?.startsWith("UC") ? [{ id, plays }] : [],
+			)
 			.slice(0, COUNT + SLACK);
 		ids = top.map((a) => a.id);
 		if (ids.length < MIN) {
@@ -83,7 +94,7 @@
 				top.map(async ({ id, plays }) => {
 					const page = await artistPage(id); // null: one dead channel doesn't cost the section
 					return page?.name ? { ...page, browseId: id, plays } : null;
-				})
+				}),
 			)
 		)
 			.filter((p): p is Familiar => !!p)
@@ -91,20 +102,23 @@
 		// Set once, in play-count order: filling the list artist by artist would reflow the feed
 		// under the reader as each request lands.
 		artists = pages;
-		subs = Object.fromEntries(pages.map((p) => [p.channelId, p.subscribed]));
+		subs = Object.fromEntries(
+			pages.map((p) => [p.channelId, p.subscribed]),
+		);
 		loading = false;
 	});
 
 	const asItem = (a: Familiar): BrowseItem => ({
-		kind: 'artist',
+		kind: "artist",
 		id: a.browseId,
-		title: a.name ?? t('common.artist_singular'),
+		title: a.name ?? t("common.artist_singular"),
 		subtitle: a.subscribers,
-		thumbnail: art(a)
+		thumbnail: art(a),
 	});
 
-	const open = (a: Familiar) => goto(`/artist/${encodeURIComponent(a.browseId)}`);
-	const rank = (i: number) => String(i + 1).padStart(2, '0');
+	const open = (a: Familiar) =>
+		goto(`/artist/${encodeURIComponent(a.browseId)}`);
+	const rank = (i: number) => String(i + 1).padStart(2, "0");
 
 	async function toggleSub(a: Familiar) {
 		if (subBusy) return;
@@ -114,7 +128,9 @@
 		try {
 			await api.subscribe(a.channelId, next);
 			putCached(`artist:${a.browseId}`, { ...a, subscribed: next }); // keep the cache truthful
-			toast.success(next ? t('artist.subscribed') : t('artist.subscribe'));
+			toast.success(
+				next ? t("artist.subscribed") : t("artist.subscribe"),
+			);
 		} catch (e) {
 			subs = { ...subs, [a.channelId]: !next };
 			toast.error(String(e));
@@ -133,8 +149,8 @@
 			: 'text-white/70 hover:text-white'}"
 		class:animate-pulse={subBusy === a.channelId}
 		aria-label={subs[a.channelId]
-			? t('artist.unsubscribe_from', { name: a.name ?? '' })
-			: t('artist.subscribe_to', { name: a.name ?? '' })}
+			? t("artist.unsubscribe_from", { name: a.name ?? "" })
+			: t("artist.subscribe_to", { name: a.name ?? "" })}
 		onclick={(e) => {
 			e.stopPropagation();
 			toggleSub(a);
@@ -155,7 +171,9 @@
 			onerror={() => imgFailed(a)}
 		/>
 	{:else}
-		<div class="flex h-full w-full items-center justify-center text-muted-foreground/40">
+		<div
+			class="flex h-full w-full items-center justify-center text-muted-foreground/40"
+		>
 			<HugeiconsIcon icon={UserIcon} class={iconClass} />
 		</div>
 	{/if}
@@ -163,7 +181,10 @@
 
 {#if loading ? ids.length >= MIN : artists.length >= MIN}
 	<section>
-		<SectionHeading title={t('home.familiar_artists')} icon={UserStar01Icon} />
+		<SectionHeading
+			title={t("home.familiar_artists")}
+			icon={UserStar01Icon}
+		/>
 		<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
 			{#if loading}
 				{#each Array(Math.min(ids.length, COUNT)) as _, i (i)}
@@ -179,32 +200,38 @@
 							onclick={() => open(a)}
 							onkeydown={(e) => {
 								if (e.target !== e.currentTarget) return;
-								if (e.key === 'Enter' || e.key === ' ') {
+								if (e.key === "Enter" || e.key === " ") {
 									e.preventDefault();
 									open(a);
 								}
 							}}
-							title={a.name ?? t('common.artist_singular')}
+							title={a.name ?? t("common.artist_singular")}
 						>
-							<div
-								class="h-full w-full"
-							>
-								{@render avatar(a, 'h-10 w-10')}
+							<div class="h-full w-full">
+								{@render avatar(a, "h-10 w-10")}
 							</div>
 							<div
 								class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"
 							></div>
-							<div class="pointer-events-none absolute inset-x-0 bottom-0 p-3.5">
-								<div class="font-heading text-xs font-semibold tracking-widest text-primary">
+							<div
+								class="pointer-events-none absolute inset-x-0 bottom-0 p-3.5"
+							>
+								<div
+									class="font-heading text-xs font-semibold tracking-widest text-primary"
+								>
 									{rank(i)}
 								</div>
 								<div
 									class="mt-0.5 line-clamp-2 font-heading text-base font-bold leading-tight text-white"
 								>
-									{a.name ?? t('common.unknown_artist')}
+									{a.name ?? t("common.unknown_artist")}
 								</div>
-								<div class="mt-0.5 truncate text-xs text-white/65">
-									{t('library.play_count', { count: a.plays })}
+								<div
+									class="mt-0.5 truncate text-xs text-white/65"
+								>
+									{t("library.play_count", {
+										count: a.plays,
+									})}
 								</div>
 							</div>
 						</div>

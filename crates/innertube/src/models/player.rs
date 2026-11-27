@@ -20,7 +20,7 @@ fn deserialize_i64_lenient<'de, D: Deserializer<'de>>(deserializer: D) -> Result
     }
 }
 
-/// Option variant — `expiresInSeconds` comes back as the string `"21540"` on every client.
+/// Option variant - `expiresInSeconds` comes back as the string `"21540"` on every client.
 fn deserialize_opt_i64_lenient<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Option<i64>, D::Error> {
@@ -30,7 +30,7 @@ fn deserialize_opt_i64_lenient<'de, D: Deserializer<'de>>(
 /// `/player` request body. context/03.
 ///
 /// Phase 1 never sends `playbackContext` (needs STS/cipher) or `serviceIntegrityDimensions`
-/// (needs PoToken) — both are Phase 2 seams, kept as `None`-able fields so the shape is ready.
+/// (needs PoToken) - both are Phase 2 seams, kept as `None`-able fields so the shape is ready.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PlayerBody {
@@ -117,7 +117,7 @@ impl PlayabilityStatus {
     pub fn is_ok(&self) -> bool {
         self.status == "OK"
     }
-    /// Age/login gate — Phase 2 retries with WEB_CREATOR / embedded. context/03.
+    /// Age/login gate - Phase 2 retries with WEB_CREATOR / embedded. context/03.
     pub fn is_age_gated(&self) -> bool {
         matches!(
             self.status.as_str(),
@@ -165,7 +165,7 @@ pub struct StreamingData {
 #[serde(rename_all = "camelCase")]
 pub struct Format {
     pub itag: i32,
-    /// Direct URL, or `None` when `signature_cipher` is used (needs decipher — Phase 2).
+    /// Direct URL, or `None` when `signature_cipher` is used (needs decipher - Phase 2).
     #[serde(default)]
     pub url: Option<String>,
     pub mime_type: String,

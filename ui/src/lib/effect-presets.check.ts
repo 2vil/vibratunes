@@ -52,4 +52,4 @@ ok(!sameSound(ORIGINAL, { ...ORIGINAL, reverb: withRoom(ORIGINAL.reverb, 2) }), 
 ok(withRoom(preset.reverb, 5).decay === 3.2 && withRoom(preset.reverb, 5).wet === 40,
 	'A room brings its own length and keeps the amount');
 
-console.log('ok — effect presets');
+console.log('ok - effect presets');

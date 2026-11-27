@@ -2,7 +2,7 @@
 	// The ⋯ menu on a sidebar library row, a card, or an artist row. Positioned `fixed` and moved to
 	// <body> like TrackMenu: the playlist list is a scroll container, so an absolute popup would be
 	// clipped by it. Right-clicking the surrounding `[data-ctx]` element opens it at the pointer.
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		MoreHorizontalIcon,
 		MoreVerticalIcon,
@@ -20,14 +20,17 @@
 		PlayListAddIcon,
 		Share08Icon,
 		Download04Icon,
-		UserBlock01Icon
-	} from '@hugeicons/core-free-icons';
-	import * as api from '$lib/api';
-	import type { BrowseItem } from '$lib/api';
-	import { addItemToPlaylist, enqueueItem, playItem } from '$lib/browse';
-	import { anchorMenu, ctxHost, fitMenu, NO_ANCHOR, toBody } from '$lib/menu';
-	import { t } from '$lib/i18n.svelte';
-	import { downloadPlaylistById, downloadAlbumById } from '$lib/download.svelte';
+		UserBlock01Icon,
+	} from "@hugeicons/core-free-icons";
+	import * as api from "$lib/api";
+	import type { BrowseItem } from "$lib/api";
+	import { addItemToPlaylist, enqueueItem, playItem } from "$lib/browse";
+	import { anchorMenu, ctxHost, fitMenu, NO_ANCHOR, toBody } from "$lib/menu";
+	import { t } from "$lib/i18n.svelte";
+	import {
+		downloadPlaylistById,
+		downloadAlbumById,
+	} from "$lib/download.svelte";
 	import {
 		addPick,
 		addToLibrary,
@@ -45,17 +48,17 @@
 		startRadio,
 		toast,
 		togglePin,
-		toggleSaved
-	} from '$lib/player.svelte';
+		toggleSaved,
+	} from "$lib/player.svelte";
 
 	let {
 		item,
 		showPin = true,
 		vertical = false,
-		iconClass = 'h-4 w-4',
+		iconClass = "h-4 w-4",
 		// Visibility lives here too: most triggers only appear on hover, but a row that has nothing
 		// else to reveal on hover shows its ⋯ all the time.
-		triggerClass = 'absolute right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-muted-foreground opacity-0 transition hover:bg-sidebar-accent hover:text-foreground focus-visible:shown focus-visible:ring-2 focus-visible:ring-ring group-hover/row:shown'
+		triggerClass = "absolute right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-muted-foreground opacity-0 transition hover:bg-sidebar-accent hover:text-foreground focus-visible:shown focus-visible:ring-2 focus-visible:ring-ring group-hover/row:shown",
 	}: {
 		item: BrowseItem;
 		showPin?: boolean;
@@ -70,7 +73,7 @@
 	// A synced row is on the account too, and dropping only the local copy would leave the card on
 	// screen with a "removed" toast under it. Signed out, the local copy is the whole library again.
 	const savedHere = $derived(
-		isSaved(item.id) && !(auth.account?.signedIn && isSynced(item.id))
+		isSaved(item.id) && !(auth.account?.signedIn && isSynced(item.id)),
 	);
 	// Saved here or on the account. `savedHere` is the narrower one: only a local row can be taken
 	// back out from a menu, since undoing YouTube's own copy belongs on the item's page.
@@ -81,10 +84,16 @@
 
 	// Radio and Share both need a YouTube item behind them: local folders and the locally-built
 	// On Repeat have none.
-	const onYouTube = $derived(!api.isLocalId(item.id) && item.id !== api.ON_REPEAT_ID);
-	// An artist isn't a track list — there's nothing unambiguous to queue. Songs, albums and
+	const onYouTube = $derived(
+		!api.isLocalId(item.id) && item.id !== api.ON_REPEAT_ID,
+	);
+	// An artist isn't a track list - there's nothing unambiguous to queue. Songs, albums and
 	// playlists (local ones included) all are.
-	const canQueue = $derived(item.kind === 'song' || item.kind === 'album' || item.kind === 'playlist');
+	const canQueue = $derived(
+		item.kind === "song" ||
+			item.kind === "album" ||
+			item.kind === "playlist",
+	);
 
 	// The tracks have to be fetched before anything can be queued, so the menu stays open and the
 	// row shows it's working. Guards a second click from queueing the album twice.
@@ -129,7 +138,9 @@
 		try {
 			const result = await addToLibrary(item);
 			toast.success(
-				result === 'already' ? t('toasts.already_in_library') : t('library.saved_to_library')
+				result === "already"
+					? t("toasts.already_in_library")
+					: t("library.saved_to_library"),
 			);
 			menuOpen = false;
 		} catch (e) {
@@ -144,7 +155,7 @@
 		saving = true;
 		try {
 			await removeFromLibrary(item);
-			toast.success(t('toasts.removed_from_library'));
+			toast.success(t("toasts.removed_from_library"));
 			menuOpen = false;
 		} catch (e) {
 			toast.error(String(e));
@@ -163,9 +174,12 @@
 		// Saved albums and artists load with the library at startup and on sign-in, and without them
 		// every card would offer "Save to library" for something the account already holds. Once
 		// they're in, this is a no-op: it only retries a load that failed.
-		if (auth.account?.signedIn && (item.kind === 'album' || item.kind === 'artist'))
+		if (
+			auth.account?.signedIn &&
+			(item.kind === "album" || item.kind === "artist")
+		)
 			loadLibraryExtras();
-		anchor = anchorMenu(e, { align: 'right' });
+		anchor = anchorMenu(e, { align: "right" });
 		menuOpen = true;
 	}
 	// stopPropagation everywhere: the trigger sits over a clickable host (a card's whole surface is a
@@ -190,10 +204,10 @@
 	type="button"
 	class="{triggerClass} {menuOpen ? 'shown!' : ''}"
 	onclick={openMenu}
-	aria-label={t('a11y.playlist_options')}
+	aria-label={t("a11y.playlist_options")}
 	{@attach ctxHost(openMenu)}
 >
-	<!-- icon swap via altIcon/showAlt — `icon` is frozen at mount -->
+	<!-- icon swap via altIcon/showAlt - `icon` is frozen at mount -->
 	<HugeiconsIcon
 		icon={MoreHorizontalIcon}
 		altIcon={MoreVerticalIcon}
@@ -213,7 +227,7 @@
 		class="pointer-events-auto fixed inset-0 z-[60] cursor-default"
 		onclick={close}
 		oncontextmenu={close}
-		aria-label={t('a11y.close_menu')}
+		aria-label={t("a11y.close_menu")}
 		{@attach toBody}
 	></button>
 	<div
@@ -226,18 +240,19 @@
 		<!-- One row, two targets: the row plays, the small button on its right shuffles. Two
 		     siblings in a flex wrapper rather than a nested button (invalid HTML), with the hover
 		     tint on the wrapper so it still reads as a single item. -->
-		{#if item.kind === 'album' || item.kind === 'playlist'}
+		{#if item.kind === "album" || item.kind === "playlist"}
 			<div class="flex items-center rounded-md hover:bg-accent/10">
 				<button
 					class="flex flex-1 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-primary"
 					onclick={(e) => play(e, false)}
 				>
-					<HugeiconsIcon icon={PlayIcon} class="h-4 w-4" /> {t('player.play')}
+					<HugeiconsIcon icon={PlayIcon} class="h-4 w-4" />
+					{t("player.play")}
 				</button>
 				<button
 					class="mr-1 flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-md hover:bg-accent/20"
-					title={t('player.shuffle_play')}
-					aria-label={t('player.shuffle_play')}
+					title={t("player.shuffle_play")}
+					aria-label={t("player.shuffle_play")}
 					onclick={(e) => play(e, true)}
 				>
 					<HugeiconsIcon icon={ShuffleIcon} class="h-4 w-4" />
@@ -249,7 +264,10 @@
 				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={(e) => run(e, () => togglePin(item.id))}
 			>
-				<HugeiconsIcon icon={pinned ? PinOffIcon : PinIcon} class="h-4 w-4" />
+				<HugeiconsIcon
+					icon={pinned ? PinOffIcon : PinIcon}
+					class="h-4 w-4"
+				/>
 				{pinned ? t("player.unpin") : t("player.pin_to_top")}
 			</button>
 		{/if}
@@ -262,7 +280,8 @@
 					queue(true);
 				}}
 			>
-				<HugeiconsIcon icon={ArrowUpNarrowWideIcon} class="h-4 w-4" /> {t('player.play_next')}
+				<HugeiconsIcon icon={ArrowUpNarrowWideIcon} class="h-4 w-4" />
+				{t("player.play_next")}
 			</button>
 			<button
 				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10 disabled:opacity-50"
@@ -272,20 +291,29 @@
 					queue(false);
 				}}
 			>
-				<HugeiconsIcon icon={ArrowDownWideNarrowIcon} class="h-4 w-4" /> {t("player.add_to_queue")}
+				<HugeiconsIcon icon={ArrowDownWideNarrowIcon} class="h-4 w-4" />
+				{t("player.add_to_queue")}
 			</button>
 		{/if}
 		{#if onYouTube}
 			<button
 				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-				onclick={(e) => run(e, () => startRadio(item.kind as 'artist' | 'album' | 'playlist', item.id, item.title))}
+				onclick={(e) =>
+					run(e, () =>
+						startRadio(
+							item.kind as "artist" | "album" | "playlist",
+							item.id,
+							item.title,
+						),
+					)}
 			>
-				<HugeiconsIcon icon={Radio02Icon} class="h-4 w-4" /> {t('player.start_radio')}
+				<HugeiconsIcon icon={Radio02Icon} class="h-4 w-4" />
+				{t("player.start_radio")}
 			</button>
 		{/if}
 		<!-- Copies the tracks into one of your playlists. An artist has no track list to copy. Local
 		     albums and playlists on this machine count: the picker offers what can take them. -->
-		{#if item.id !== api.ON_REPEAT_ID && (item.kind === 'album' || item.kind === 'playlist')}
+		{#if item.id !== api.ON_REPEAT_ID && (item.kind === "album" || item.kind === "playlist")}
 			<button
 				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10 disabled:opacity-50"
 				disabled={adding}
@@ -294,37 +322,44 @@
 					addAll();
 				}}
 			>
-				<HugeiconsIcon icon={PlayListAddIcon} class="h-4 w-4" /> {t('player.save_to_playlist')}
+				<HugeiconsIcon icon={PlayListAddIcon} class="h-4 w-4" />
+				{t("player.save_to_playlist")}
 			</button>
 		{/if}
 		<button
 			class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-			onclick={(e) => run(e, () => (isPick ? removePick(item.id) : addPick(item)))}
+			onclick={(e) =>
+				run(e, () => (isPick ? removePick(item.id) : addPick(item)))}
 		>
 			<HugeiconsIcon icon={DashboardSquare02Icon} class="h-4 w-4" />
-			{isPick ? t('home.remove_shortcut') : t('player.add_to_shortcuts')}
+			{isPick ? t("home.remove_shortcut") : t("player.add_to_shortcuts")}
 		</button>
 		{#if onYouTube}
 			<button
 				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={(e) => run(e, () => openShare(item))}
 			>
-				<HugeiconsIcon icon={Share08Icon} class="h-4 w-4" /> {t("player.share")}
+				<HugeiconsIcon icon={Share08Icon} class="h-4 w-4" />
+				{t("player.share")}
 			</button>
 		{/if}
-		{#if item.kind === 'playlist' && item.id !== api.ON_REPEAT_ID}
+		{#if item.kind === "playlist" && item.id !== api.ON_REPEAT_ID}
 			<button
 				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-				onclick={(e) => run(e, () => downloadPlaylistById(item.id, item.title))}
+				onclick={(e) =>
+					run(e, () => downloadPlaylistById(item.id, item.title))}
 			>
-				<HugeiconsIcon icon={Download04Icon} class="h-4 w-4" /> {t("download.download_playlist")}
+				<HugeiconsIcon icon={Download04Icon} class="h-4 w-4" />
+				{t("download.download_playlist")}
 			</button>
-		{:else if item.kind === 'album' && !api.isLocalId(item.id)}
+		{:else if item.kind === "album" && !api.isLocalId(item.id)}
 			<button
 				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-				onclick={(e) => run(e, () => downloadAlbumById(item.id, item.title))}
+				onclick={(e) =>
+					run(e, () => downloadAlbumById(item.id, item.title))}
 			>
-				<HugeiconsIcon icon={Download04Icon} class="h-4 w-4" /> {t("download.download_album")}
+				<HugeiconsIcon icon={Download04Icon} class="h-4 w-4" />
+				{t("download.download_album")}
 			</button>
 		{/if}
 		<!-- One row for library membership: put it in, take the local copy back out, or just say it
@@ -339,7 +374,8 @@
 					save();
 				}}
 			>
-				<HugeiconsIcon icon={BookPlusIcon} class="h-4 w-4" /> {t('library.save_to_library')}
+				<HugeiconsIcon icon={BookPlusIcon} class="h-4 w-4" />
+				{t("library.save_to_library")}
 			</button>
 		{:else if onYouTube && !savedHere && !owned}
 			<button
@@ -351,11 +387,14 @@
 				}}
 			>
 				<HugeiconsIcon icon={BookmarkMinus02Icon} class="h-4 w-4" />
-				{t('library.remove_from_library')}
+				{t("library.remove_from_library")}
 			</button>
 		{:else if onYouTube}
-			<div class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground">
-				<HugeiconsIcon icon={BookmarkCheck02Icon} class="h-4 w-4" /> {t('library.in_library')}
+			<div
+				class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground"
+			>
+				<HugeiconsIcon icon={BookmarkCheck02Icon} class="h-4 w-4" />
+				{t("library.in_library")}
 			</div>
 		{/if}
 		<!-- Only for cards saved on this machine: YouTube's own library rows are unsaved from their
@@ -366,20 +405,22 @@
 				onclick={(e) =>
 					run(e, () => {
 						toggleSaved(item);
-						toast.success(t('toasts.removed_from_library'));
+						toast.success(t("toasts.removed_from_library"));
 					})}
 			>
-				<HugeiconsIcon icon={BookmarkMinus02Icon} class="h-4 w-4" /> {t('library.remove_from_library')}
+				<HugeiconsIcon icon={BookmarkMinus02Icon} class="h-4 w-4" />
+				{t("library.remove_from_library")}
 			</button>
 		{/if}
 		<!-- Artist cards only. An album or playlist card's artist line is a composed subtitle, and
 		     there is no reliable identity in it to block by (plan 046). -->
-		{#if onYouTube && item.kind === 'artist'}
+		{#if onYouTube && item.kind === "artist"}
 			<button
 				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={(e) => run(e, () => blockArtist(item.id, item.title))}
 			>
-				<HugeiconsIcon icon={UserBlock01Icon} class="h-4 w-4" /> {t('player.block_artist')}
+				<HugeiconsIcon icon={UserBlock01Icon} class="h-4 w-4" />
+				{t("player.block_artist")}
 			</button>
 		{/if}
 	</div>

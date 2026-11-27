@@ -1,11 +1,11 @@
 //! Mini player: a small always-on-top widget that stands in for the main window.
 //!
-//! It loads the same SPA as the main window — the root layout branches on the window label — so
+//! It loads the same SPA as the main window - the root layout branches on the window label - so
 //! there is no second bundle and no second copy of the playback state: every event this app emits
 //! is global (`app.emit`, never `emit_to`), so both webviews are driven by the same stream.
 //!
 //! Opening it hides the main window; the app keeps running in the tray. Coming back is always
-//! [`crate::tray::show_main`] — the widget's restore button, a tray click, the tray menu and a
+//! [`crate::tray::show_main`] - the widget's restore button, a tray click, the tray menu and a
 //! second launch all land there, so they cannot drift apart.
 //!
 //! ponytail: a second webview costs a second WebKit web process. Resizing the main window in place
@@ -37,7 +37,7 @@ const POS_KEY: &str = "mini_position";
 
 /// Build (or re-show) the widget, and hide the main window behind it.
 ///
-/// **Main thread only** — GTK wants window creation there, same rule as the login and cipher
+/// **Main thread only** - GTK wants window creation there, same rule as the login and cipher
 /// webviews. `commands::open_mini` does the hop.
 // The floating mini player is a desktop window concept; the Android build compiles the command
 // but never opens a widget window.
@@ -280,7 +280,7 @@ mod tests {
         assert!(contains(primary.0, primary.1, PhysicalPosition::new(1300, 800)));
         assert!(!contains(primary.0, primary.1, PhysicalPosition::new(-500, 800)));
         assert!(contains(left.0, left.1, PhysicalPosition::new(-500, 800)));
-        // Right/bottom edges are exclusive — that pixel belongs to the next display.
+        // Right/bottom edges are exclusive - that pixel belongs to the next display.
         assert!(!contains(primary.0, primary.1, PhysicalPosition::new(1920, 500)));
         assert!(!contains(primary.0, primary.1, PhysicalPosition::new(500, 1080)));
     }

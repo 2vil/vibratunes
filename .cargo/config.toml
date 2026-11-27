@@ -20,6 +20,6 @@
 
 # Cap crate-level parallelism at 3: a full workspace compile saturating every core made the
 # desktop unusable while it ran. Override per run with `cargo build -j <n>` or
-# `CARGO_BUILD_JOBS=<n>` — this is a default, not a ceiling.
+# `CARGO_BUILD_JOBS=<n>` - this is a default, not a ceiling.
 [build]
-jobs = 10
+jobs = 6

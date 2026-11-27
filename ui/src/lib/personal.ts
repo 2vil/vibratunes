@@ -1,5 +1,5 @@
 // Local personalization: the home Shortcuts grid, sidebar pins, and the play-recency / top-artist
-// bookkeeping both of those need. Pure and rune-free on purpose — `personal.check.ts` runs it under
+// bookkeeping both of those need. Pure and rune-free on purpose - `personal.check.ts` runs it under
 // plain node (`node --experimental-strip-types`). The reactive wrapper and persistence live in
 // `player.svelte.ts`; nothing here touches storage, the network, or Svelte.
 import type { BrowseItem } from './api';
@@ -15,11 +15,11 @@ const MAX_RECENT = 100;
 export const MAX_SEARCHES = 10;
 
 /**
-  * A Shortcuts tile — always something the user added by hand. Array order in `picks` IS display
+  * A Shortcuts tile - always something the user added by hand. Array order in `picks` IS display
   * order: the user arranges the grid by dragging, so nothing else may reshuffle it.
   */
 export type Pick = BrowseItem & {
-	/** Bumped on every play/click — drives eviction only, never order. */
+	/** Bumped on every play/click - drives eviction only, never order. */
 	lastUsedAt: number;
 };
 
@@ -90,7 +90,7 @@ export function empty(): Personal {
 	};
 }
 
-/** Tolerant parse of a persisted blob — a corrupt or older shape degrades to empty, never throws. */
+/** Tolerant parse of a persisted blob - a corrupt or older shape degrades to empty, never throws. */
 export function hydrate(raw: unknown): Personal {
 	const base = empty();
 	if (!raw || typeof raw !== 'object') return base;
@@ -157,7 +157,7 @@ export function addPick(p: Personal, item: BrowseItem, now = Date.now()): boolea
 
 /**
  * Where a drag lands: put `item` immediately before `beforeId`, or at the end when it's null.
- * Handles both jobs the grid needs — moving a tile already on it, and taking one dropped in from a
+ * Handles both jobs the grid needs - moving a tile already on it, and taking one dropped in from a
  * shelf. Addressing the drop by neighbour rather than by index keeps a rightward move off by one.
  */
 export function placePick(
@@ -208,7 +208,7 @@ export function removePick(p: Personal, id: string): void {
 }
 
 /**
- * Drop everything that points at something which no longer exists — local files the user deleted
+ * Drop everything that points at something which no longer exists - local files the user deleted
  * off disk. Returns how many grid tiles went, so the caller can say so. Unlike `removePick` this
  * doesn't remember the id: nothing was refused, the thing just stopped existing.
  */
@@ -223,7 +223,7 @@ export function forgetIds(p: Personal, ids: string[]): number {
 }
 
 /**
- * Mark a tile as used (played or clicked). Returns whether anything changed — most calls come from
+ * Mark a tile as used (played or clicked). Returns whether anything changed - most calls come from
  * cards that aren't on the grid, and the caller uses this to skip a pointless write.
  */
 export function touchPick(p: Personal, id: string, now = Date.now()): boolean {

@@ -3,7 +3,7 @@
 //! feeds them through the **same** sign-in path as cookie-paste (`AppState::sign_in`).
 //!
 //! Persistent (non-incognito) on purpose: the webview keeps its own Google session, so a later
-//! re-login is one click with no password/paste — the real fix for KI-2 (cookie staleness), where
+//! re-login is one click with no password/paste - the real fix for KI-2 (cookie staleness), where
 //! Google's short-lived `__Secure-*SIDTS` cookies rotate and a pasted cookie eventually stops
 //! authenticating.
 
@@ -31,7 +31,7 @@ const REFRESH_COOLDOWN: Duration = Duration::from_secs(5 * 60);
 
 /// WebKitGTK and WKWebView are WebKit engines, so a macOS Safari UA is the most
 /// internally-consistent spoof and the least likely to trip Google's "this browser may not be
-/// secure" block. **Tune here** if Google rejects it — this is the fragile part (context/15 Path A).
+/// secure" block. **Tune here** if Google rejects it - this is the fragile part (context/15 Path A).
 #[cfg(not(target_os = "windows"))]
 const LOGIN_UA: Option<&str> = Some(
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 \
@@ -92,7 +92,7 @@ pub fn open_login(app: AppHandle, state: Arc<AppState>, add_account: bool) {
                     }
                     tokio::time::sleep(Duration::from_millis(500)).await;
                 }
-                // Landed on music.youtube.com but not authenticated yet — keep watching.
+                // Landed on music.youtube.com but not authenticated yet - keep watching.
             }
         });
     }

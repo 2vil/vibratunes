@@ -1,4 +1,4 @@
-// Self-check for local search (`localsearch.ts`). Same deal as `sort.check.ts` — no test runner in
+// Self-check for local search (`localsearch.ts`). Same deal as `sort.check.ts` - no test runner in
 // `ui/`, node 22 runs TypeScript directly:
 //
 //     node --experimental-strip-types ui/src/lib/localsearch.check.ts

@@ -1,7 +1,7 @@
 // Colour maths for the theme picker. Pure, no DOM, no dependency: the picker only needs hex <->
 // HSV and a "is this light?" decision, and that is all this file.
 //
-// HSV (not HSL) because the picker's square IS the HSV plane — x is saturation, y is value. Driving
+// HSV (not HSL) because the picker's square IS the HSV plane - x is saturation, y is value. Driving
 // it from HSL needs a fudge factor at the edges that washes the top-left corner out.
 
 export type Hsv = { h: number; s: number; v: number }; // h 0–360, s/v 0–1

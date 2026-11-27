@@ -1,7 +1,7 @@
 //! YouTube client identities (impersonation). context/02.
 //!
 //! Constants are copied verbatim from Metrolist's `YouTubeClient.kt` into the bundled
-//! `clients.json` (config, not hardcoded — see context/10 D-table). An optional override
+//! `clients.json` (config, not hardcoded - see context/10 D-table). An optional override
 //! file in the app data dir can replace it without a recompile when versions rotate.
 
 use std::collections::HashMap;
@@ -54,7 +54,7 @@ pub struct YouTubeClient {
 const BUNDLED: &str = include_str!("../clients.json");
 
 /// The client registry, loaded once at startup. Phase 1 ships four:
-/// `WEB_REMIX` (metadata endpoints only — search/next), and the three direct-URL stream
+/// `WEB_REMIX` (metadata endpoints only - search/next), and the three direct-URL stream
 /// clients `VISIONOS`, `ANDROID_VR_1_43_32`, `IOS`.
 #[derive(Debug, Clone)]
 pub struct Clients(HashMap<String, YouTubeClient>);
@@ -83,7 +83,7 @@ impl Clients {
 pub const MAIN_CLIENT: &str = "WEB_REMIX";
 
 /// Registry keys for the stream fallback order tried after MAIN_CLIENT (context/06
-/// §minimal-but-correct). Direct-URL clients — no cipher, no PoToken — so they always play even
+/// §minimal-but-correct). Direct-URL clients - no cipher, no PoToken - so they always play even
 /// when the cipher/PoToken webviews are unavailable (graceful degradation).
 ///
 /// IOS is deliberately absent. Its googlevideo URLs are served ONLY for bounded-Range requests:
@@ -164,7 +164,7 @@ mod tests {
         assert!(!c.login_supported, "it is the anonymous leg: sending the cookie is not its job");
     }
 
-    /// IOS only serves bounded-Range requests, which mpv never makes — it must never be a
+    /// IOS only serves bounded-Range requests, which mpv never makes - it must never be a
     /// stream client (see STREAM_FALLBACK_ORDER).
     #[test]
     fn ios_is_not_a_stream_client() {

@@ -192,7 +192,7 @@ impl Orchestrator {
 
     /// Re-point the InnerTube transport at a new proxy (`None` = direct). The embedded WARP
     /// tunnel ([`crate::warp`]) toggles this at runtime; the swap is shared, so it reaches every
-    /// clone of `it` — requests already in flight keep the client they were built on.
+    /// clone of `it` - requests already in flight keep the client they were built on.
     pub fn set_proxy(&self, proxy: Option<&str>) -> Result<(), innertube::Error> {
         self.it.set_proxy(proxy)
     }
@@ -264,7 +264,7 @@ impl Orchestrator {
         let sts = self.cipher.signature_timestamp().await;
 
         // 2. Session PoToken for the main web client's /player body (context/04). Cached in Rust
-        // with its TTL, so this is usually free; may be None (timeout / broken webview) —
+        // with its TTL, so this is usually free; may be None (timeout / broken webview) -
         // degrade gracefully.
         let main_client = self.clients.get(MAIN_CLIENT);
         // The token belongs to the *session*, not to WEB_REMIX. Gating the mint on the main
@@ -291,7 +291,7 @@ impl Orchestrator {
             _ => None,
         };
 
-        // Which client `main_resp` actually came from — WEB_CREATOR can replace it just below, and
+        // Which client `main_resp` actually came from - WEB_CREATOR can replace it just below, and
         // a tracking URL has to be pinged as the client that was issued it.
         let mut main_key = MAIN_CLIENT;
 
@@ -340,7 +340,7 @@ impl Orchestrator {
         // YouTube *Music* one. But `playbackTracking` is only present on an OK response, so when
         // main degraded (no PoToken, age gate, a stale cipher) it isn't there at all and the play
         // would go unregistered even though a fallback client streamed it fine. Take that client's
-        // block instead — it carries the same `docid`/`ei`/`of` for this videoId. Issue #83.
+        // block instead - it carries the same `docid`/`ei`/`of` for this videoId. Issue #83.
         let main_ping = main_resp.as_ref().and_then(|r| playback_ping(r, main_key));
 
         // 4. Fallback loop. idx == -1 reuses the main response; 0.. are the fallback clients.
@@ -641,7 +641,11 @@ impl Orchestrator {
                     blacklist_insert(&mut failed, &twin, Instant::now());
                 }
             }
-            match Box::pin(self.resolve_internal(&twin, false, quality, disabled, prefer_m4a, false)).await {
+            match Box::pin(
+                self.resolve_internal(&twin, false, quality, disabled, prefer_m4a, false),
+            )
+            .await
+            {
                 Ok(mut data) => {
                     data.video_id = video_id.to_owned();
                     return Ok(data);

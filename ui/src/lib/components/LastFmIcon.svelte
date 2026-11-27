@@ -1,6 +1,6 @@
 <script lang="ts">
-	// Last.fm brand mark — a user-supplied asset; brand logos aren't in HugeIcons' free set.
-	let { class: cls = '' }: { class?: string } = $props();
+	// Last.fm brand mark - a user-supplied asset; brand logos aren't in HugeIcons' free set.
+	let { class: cls = "" }: { class?: string } = $props();
 </script>
 
 <svg viewBox="0 0 512 512" fill="currentColor" class={cls} aria-hidden="true">

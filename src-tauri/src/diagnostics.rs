@@ -24,7 +24,7 @@ use crate::db::Db;
 const MAX_CHARS: usize = 60_000;
 
 /// A current log shorter than this is a fresh launch, so the run that actually broke is the
-/// previous one — include it too rather than handing back six lines of startup. Covers the common
+/// previous one - include it too rather than handing back six lines of startup. Covers the common
 /// "it broke, I restarted, then I reported it".
 const FRESH_LOG_BYTES: u64 = 4096;
 

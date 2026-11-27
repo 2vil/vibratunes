@@ -6,7 +6,7 @@ fn main() {
 
     // Android: libmpv is not a system library there. The playback engine (`libmpv2`) links with a
     // bare `-lmpv`, so the linker needs the prebuilt arm64 libmpv we ship with the app. The same
-    // directory is `jniLibs`, which Gradle packs into the APK — at load time the Android linker
+    // directory is `jniLibs`, which Gradle packs into the APK - at load time the Android linker
     // resolves libmpv and its bundled ffmpeg suite from the APK's own native lib dir.
     if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("android") {
         let jni_libs = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))

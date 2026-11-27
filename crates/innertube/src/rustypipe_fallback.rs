@@ -1,6 +1,6 @@
 //! The D3 safety-net extractor: rustypipe whole-videoId resolution. context/12 §rustypipe.
 //!
-//! Phase-0 audit (spikes/REPORT.md §3): rustypipe is all-or-nothing per videoId — it runs its
+//! Phase-0 audit (spikes/REPORT.md §3): rustypipe is all-or-nothing per videoId - it runs its
 //! own `/player` + cipher + PoToken internally. We cannot hand it a `signatureCipher` from our
 //! own response. So it slots in at the videoId level only: "our direct clients all failed →
 //! ask rustypipe to resolve the whole id." It must be able to carry the queue SOLO.
@@ -22,7 +22,7 @@ pub struct StreamCandidate {
     pub size: u64,
     pub bitrate: u32,
     pub expires_in_seconds: u32,
-    /// rustypipe's loudness (inverse ReplayGain — see AudioStream docs). Feeds context/14 gain.
+    /// rustypipe's loudness (inverse ReplayGain - see AudioStream docs). Feeds context/14 gain.
     pub loudness_db: Option<f32>,
     pub title: Option<String>,
     pub duration_secs: Option<u32>,

@@ -12,7 +12,7 @@
 #      at the AppDir's own module directories.
 #
 #   2. libjack.so.0 is on linuxdeploy's excludelist (it normally must match the host's JACK), but
-#      libmpv.so.2 and libavdevice.so.60 DT_NEED it — so on a host with no JACK at all the app
+#      libmpv.so.2 and libavdevice.so.60 DT_NEED it - so on a host with no JACK at all the app
 #      cannot even start: "error while loading shared libraries: libjack.so.0". Fixed by bundling
 #      it. That also makes the host's pipewire-jack shim unreachable, which is what killed v0.2.10:
 #      the shim came from the host, wanted pw_log_topic_register from pipewire 1.6, and resolved
@@ -25,13 +25,13 @@
 #      The AppDir is first on LD_LIBRARY_PATH, so when the WebKit web process dlopens the host's
 #      libEGL_mesa.so.0 it resolves against our 1.22 and fails on those three symbols. libglvnd then
 #      has no vendor, eglGetDisplay returns EGL_NO_DISPLAY, and WebKit kills the process:
-#      "Could not create default EGL display: EGL_BAD_PARAMETER. Aborting..." — once per webview,
+#      "Could not create default EGL display: EGL_BAD_PARAMETER. Aborting..." - once per webview,
 #      so the window and both hidden webviews are dead and the app does nothing at all. Invisible on
 #      NVIDIA, whose EGL vendor library does not use those symbols, which is why it survived every
 #      test on the maintainer's desktop.
 #
 #   4. GLib scans its compiled-in module directory in addition to GIO_EXTRA_MODULES, and for an
-#      Ubuntu build that is /usr/lib/x86_64-linux-gnu/gio/modules — a path that also exists on the
+#      Ubuntu build that is /usr/lib/x86_64-linux-gnu/gio/modules - a path that also exists on the
 #      user's Debian or Ubuntu host, holding modules built against their much newer GLib. It loads
 #      them into our 2.80 and they fail. Fixed by also setting GIO_MODULE_DIR, which replaces the
 #      compiled-in path rather than adding to it.
@@ -82,7 +82,7 @@
 #      distro. Same soname everywhere, versioned additive ABI, and GTK 3 itself depends on it.
 #
 # ON PRUNING. v0.2.11 pruned eight libraries and broke worse than what it fixed, so the bar is high,
-# but "never prune" is the wrong rule — defect 3 above is only fixable by pruning. What made v0.2.11
+# but "never prune" is the wrong rule - defect 3 above is only fixable by pruning. What made v0.2.11
 # wrong, and what a prune has to clear:
 #
 #   - Sonames must be portable. v0.2.11 dropped nettle when Arch was on libnettle.so.9 and the
@@ -108,7 +108,7 @@ cd "$(dirname "$0")/.."
 BUNDLE="${1:-target/release/bundle/appimage}"
 APPDIR="$(readlink -f "$BUNDLE/vibratunes.AppDir" 2>/dev/null || true)"
 [ -n "$APPDIR" ] && [ -d "$APPDIR" ] || {
-  echo "no AppDir at $BUNDLE/vibratunes.AppDir — run \`cargo tauri build --bundles appimage\` first"; exit 1; }
+  echo "no AppDir at $BUNDLE/vibratunes.AppDir - run \`cargo tauri build --bundles appimage\` first"; exit 1; }
 APPIMAGE="$(ls "$BUNDLE"/vibratunes_*.AppImage 2>/dev/null | head -1 || true)"
 [ -n "$APPIMAGE" ] || { echo "no vibratunes_*.AppImage in $BUNDLE"; exit 1; }
 APPIMAGE="$(readlink -f "$APPIMAGE")"
@@ -152,13 +152,13 @@ else
   for cand in /usr/lib/x86_64-linux-gnu/libjack.so.0 /usr/lib64/libjack.so.0 /usr/lib/libjack.so.0; do
     [ -e "$cand" ] && { JACK="$cand"; break; }
   done
-  # Fallback for hosts that keep it off the default path — Fedora's pipewire-jack lives in
+  # Fallback for hosts that keep it off the default path - Fedora's pipewire-jack lives in
   # /usr/lib64/pipewire-0.3/jack/. CI hits the standard path above and gets jackd2's real libjack;
   # this only matters for local test builds, where the shim pairs with that host's own libpipewire.
   # `|| true`: head closing the pipe early makes ldconfig die of SIGPIPE, which pipefail would
   # otherwise turn into a silent fatal exit 141.
   [ -n "$JACK" ] || JACK="$(ldconfig -p 2>/dev/null | awk '/libjack\.so\.0 /{print $NF}' | head -1 || true)"
-  [ -n "$JACK" ] || { echo "libjack.so.0 not found on the build host — install libjack-jackd2-0"; exit 1; }
+  [ -n "$JACK" ] || { echo "libjack.so.0 not found on the build host - install libjack-jackd2-0"; exit 1; }
   cp -L "$JACK" "$APPDIR/usr/lib/libjack.so.0"
   echo "==> bundled libjack.so.0 from $JACK"
   bundle_deps_of "$JACK"
@@ -176,7 +176,7 @@ for m in "$APPDIR"/usr/lib/gio/modules/*.so "$APPDIR"/usr/lib64/gio/modules/*.so
   [ -e "$m" ] || continue
   elf64 "$m" && continue
   rm -f "$m"
-  echo "==> removed ${m#$APPDIR/} — not x86-64"
+  echo "==> removed ${m#$APPDIR/} - not x86-64"
 done
 
 # 1b. The gio TLS module. linuxdeploy's GTK plugin bundles it on Fedora but not on Ubuntu, so copy
@@ -191,7 +191,7 @@ else
              /usr/lib/x86_64-linux-gnu/gio/modules /usr/lib64/gio/modules /usr/lib/gio/modules; do
     [ -n "$dir" ] && [ -e "$dir/libgiognutls.so" ] && { TLSMOD="$dir/libgiognutls.so"; break; }
   done
-  [ -n "$TLSMOD" ] || { echo "libgiognutls.so not found — install glib-networking on the build host"; exit 1; }
+  [ -n "$TLSMOD" ] || { echo "libgiognutls.so not found - install glib-networking on the build host"; exit 1; }
   mkdir -p "$APPDIR/usr/lib/gio/modules"
   cp -L "$TLSMOD" "$APPDIR/usr/lib/gio/modules/libgiognutls.so"
   echo "==> bundled the gio TLS module from $TLSMOD"
@@ -288,7 +288,7 @@ fi
 
 # 1e. Move the gnutls stack off the library path. It has to be the host's, because Ubuntu's gnutls
 #     hardcodes /etc/ssl/certs/ca-certificates.crt as its trust store and openSUSE has no such file
-#     — see defect 6 in the header. LAST of the bundling steps on purpose: everything above calls
+#     - see defect 6 in the header. LAST of the bundling steps on purpose: everything above calls
 #     bundle_deps_of, and although HOST_BASELINE now stops it copying these back, moving them after
 #     the fact is what makes that true no matter which order the steps end up in.
 #
@@ -332,25 +332,25 @@ cp -a "$FALLBACK"/libnettle.so.8* "$FALLBACK"/libhogweed.so.6* "$FALLBACK/nettle
 # p11-kit's module directory goes with it: nothing can load those without libp11-kit.so.0 anyway.
 rm -rf "$APPDIR/usr/lib/pkcs11" "$APPDIR/usr/lib64/pkcs11"
 [ -e "$FALLBACK/libgnutls.so.30" ] || {
-  echo "no libgnutls.so.30 in the AppDir at all — did linuxdeploy stop bundling it?"; exit 1; }
+  echo "no libgnutls.so.30 in the AppDir at all - did linuxdeploy stop bundling it?"; exit 1; }
 
-# 2. Point GIO_EXTRA_MODULES at the AppDir's own module directories — never the host's, see the
+# 2. Point GIO_EXTRA_MODULES at the AppDir's own module directories - never the host's, see the
 #    header. Appended rather than edited in place: AppRun *sources* the hook, so the last assignment
 #    wins, and appending can't be broken by linuxdeploy reshaping the lines above it.
 HOOK="$APPDIR/apprun-hooks/linuxdeploy-plugin-gtk.sh"
-[ -f "$HOOK" ] || { echo "no GTK apprun hook at $HOOK — did linuxdeploy's plugin layout change?"; exit 1; }
+[ -f "$HOOK" ] || { echo "no GTK apprun hook at $HOOK - did linuxdeploy's plugin layout change?"; exit 1; }
 echo "==> Overriding GIO_EXTRA_MODULES with the bundled module dirs…"
 # The sentinel is the newest thing this block writes, not the first: grepping for the comment would
 # make the script decide it had already run over an AppDir fixed by an older copy of itself, and
 # silently leave half the fix out.
 grep -q 'GIO_MODULE_DIR' "$HOOK" || cat >> "$HOOK" <<'EOF'
 
-# Limusic: the value written above is unusable — it contains a literal newline and an absolute path
+# Limusic: the value written above is unusable - it contains a literal newline and an absolute path
 # into the build machine's target/ dir. Bundled dirs only: host modules are built against the host's
 # GLib and fail to load into ours (gvfs wants g_variant_builder_init_static, GLib >= 2.84).
 export GIO_EXTRA_MODULES="$APPDIR/usr/lib/gio/modules:$APPDIR/usr/lib64/gio/modules"
 # GIO_EXTRA_MODULES only *adds* a directory. GLib still scans the one compiled into it, which for an
-# Ubuntu build is /usr/lib/x86_64-linux-gnu/gio/modules — the same path the user's Debian or Ubuntu
+# Ubuntu build is /usr/lib/x86_64-linux-gnu/gio/modules - the same path the user's Debian or Ubuntu
 # host keeps its own gvfs modules in, built against a GLib far newer than the one we ship. GLib
 # loads them, they fail, two lines of "undefined symbol: g_variant_builder_init_static" per process.
 # GIO_MODULE_DIR replaces that compiled-in path instead of adding to it.
@@ -368,7 +368,7 @@ for d in "$APPDIR/usr/lib/gio/modules" "$APPDIR/usr/lib64/gio/modules"; do
   for f in "$d"/libgio*.so; do [ -e "$f" ] && MODS=$((MODS + 1)); done
 done
 [ "$MODS" -gt 0 ] || {
-  echo "no gio modules bundled — install glib-networking on the build host, or the webview gets no TLS backend"
+  echo "no gio modules bundled - install glib-networking on the build host, or the webview gets no TLS backend"
   exit 1; }
 echo "==> bundled gio modules: $MODS"
 
@@ -455,7 +455,7 @@ fi
 # Globbed, not hardcoded: the exact filename is Tauri's business and CI runs a different CLI version.
 PACKER="$(ls "$HOME"/.cache/tauri/linuxdeploy-plugin-appimage*.AppImage 2>/dev/null | head -1 || true)"
 [ -n "$PACKER" ] && [ -x "$PACKER" ] || {
-  echo "no linuxdeploy appimage plugin in $HOME/.cache/tauri — did \`tauri build --bundles appimage\` run?"; exit 1; }
+  echo "no linuxdeploy appimage plugin in $HOME/.cache/tauri - did \`tauri build --bundles appimage\` run?"; exit 1; }
 echo "==> Repacking $(basename "$APPIMAGE")…"
 rm -f "$APPIMAGE"
 # NO_STRIP: linuxdeploy ships an ancient `strip` that chokes on modern ELF sections (DT_RELR).
@@ -466,7 +466,7 @@ ARCH=x86_64 NO_STRIP=true OUTPUT="$APPIMAGE" APPIMAGE_EXTRACT_AND_RUN=1 \
 chmod +x "$APPIMAGE"
 
 # 4. Re-sign: repacking invalidated the signature the bundler made, and latest.json is generated
-#    from the .sig — a stale one silently breaks every self-update.
+#    from the .sig - a stale one silently breaks every self-update.
 if [ -n "${TAURI_SIGNING_PRIVATE_KEY:-}" ]; then
   export TAURI_SIGNING_PRIVATE_KEY_PASSWORD="${TAURI_SIGNING_PRIVATE_KEY_PASSWORD:-}"
   echo "==> Re-signing…"
@@ -476,7 +476,7 @@ if [ -n "${TAURI_SIGNING_PRIVATE_KEY:-}" ]; then
   echo "==> Signed: $APPIMAGE.sig"
 else
   # Local test runs don't need a valid signature. Every path that ships one checks for the key first.
-  echo "==> TAURI_SIGNING_PRIVATE_KEY not set — skipping the re-sign (unsignable AppImage, test only)"
+  echo "==> TAURI_SIGNING_PRIVATE_KEY not set - skipping the re-sign (unsignable AppImage, test only)"
   rm -f "$APPIMAGE.sig"
 fi
 

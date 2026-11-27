@@ -1,6 +1,6 @@
 // Drag payload for BrowseItems: any card is a drag source, the home Shortcuts grid is the drop
 // target. One custom MIME type so a drop zone can recognise our drags during `dragover`, where the
-// spec forbids reading the data itself — only the type list is visible until the drop lands.
+// spec forbids reading the data itself - only the type list is visible until the drop lands.
 import type { BrowseItem } from './api';
 
 export const ITEM_MIME = 'application/x-limusic-item';
@@ -28,7 +28,7 @@ export function getDragItem(e: DragEvent): BrowseItem | null {
 		const item = JSON.parse(raw) as BrowseItem;
 		return typeof item?.id === 'string' && typeof item?.title === 'string' ? item : null;
 	} catch {
-		return null; // not JSON — some other app's drag claiming our type
+		return null; // not JSON - some other app's drag claiming our type
 	}
 }
 
@@ -44,7 +44,7 @@ const MAX_STEP = 100;
 /**
  * Scroll speed in px/second for a pointer at `y` inside a box spanning `top`..`bottom`: 0 in the
  * middle, ramping to ±SPEED at each edge and staying there past it (the pointer can leave the box
- * entirely while the button is still down). Negative scrolls up. Pure — the loop below is the only
+ * entirely while the button is still down). Negative scrolls up. Pure - the loop below is the only
  * impure part.
  */
 export function edgeVelocity(y: number, top: number, bottom: number): number {
@@ -61,7 +61,7 @@ export function edgeVelocity(y: number, top: number, bottom: number): number {
  * the top of the page, so without this you can only ever drag something already on screen with it.
  * Per-mime, so a queue reorder doesn't also scroll the page behind the panel, and vice versa.
  *
- * Listens on the document, not the node — a drag over a *different* element still has to move this
+ * Listens on the document, not the node - a drag over a *different* element still has to move this
  * container, and `dragover` bubbles all the way up. The dragover events can't drive the scroll
  * themselves: they stop firing when the pointer holds still, which is exactly when someone parked at
  * the edge is waiting for it to happen. So they only record where the cursor is, and a timer does

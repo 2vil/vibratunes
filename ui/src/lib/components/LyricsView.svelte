@@ -3,10 +3,16 @@
 	// until it is turned off. Shared by every lyrics view and the lyric editor's hint (#676), and the
 	// `storage` event carries a change over to the mini player window. Translations start on, the
 	// way they always showed.
-	const KEYS = { romanized: 'lyrics_romanized', translated: 'lyrics_translated' } as const;
+	const KEYS = {
+		romanized: "lyrics_romanized",
+		translated: "lyrics_translated",
+	} as const;
 	type Pref = keyof typeof KEYS;
-	const DEFAULTS: Record<Pref, boolean> = { romanized: false, translated: true };
-	const SIZE_KEY = 'lyrics_size';
+	const DEFAULTS: Record<Pref, boolean> = {
+		romanized: false,
+		translated: true,
+	};
+	const SIZE_KEY = "lyrics_size";
 	const SIZES = [0.85, 1, 1.15, 1.3, 1.5];
 
 	function loadSize(): number {
@@ -34,22 +40,26 @@
 	function load(pref: Pref): boolean {
 		try {
 			const v = localStorage.getItem(KEYS[pref]);
-			return v === null ? DEFAULTS[pref] : v === '1';
+			return v === null ? DEFAULTS[pref] : v === "1";
 		} catch {
 			return DEFAULTS[pref];
 		}
 	}
 
-	export const prefs = $state({ romanized: load('romanized'), translated: load('translated') });
-	window.addEventListener('storage', (e) => {
-		for (const pref of Object.keys(KEYS) as Pref[]) if (e.key === KEYS[pref]) prefs[pref] = load(pref);
+	export const prefs = $state({
+		romanized: load("romanized"),
+		translated: load("translated"),
+	});
+	window.addEventListener("storage", (e) => {
+		for (const pref of Object.keys(KEYS) as Pref[])
+			if (e.key === KEYS[pref]) prefs[pref] = load(pref);
 		if (e.key === SIZE_KEY) size.value = loadSize();
 	});
 
 	export function toggle(pref: Pref) {
 		prefs[pref] = !prefs[pref];
 		try {
-			localStorage.setItem(KEYS[pref], prefs[pref] ? '1' : '0');
+			localStorage.setItem(KEYS[pref], prefs[pref] ? "1" : "0");
 		} catch {
 			// Private storage: the toggle still works for this session.
 		}
@@ -57,8 +67,8 @@
 </script>
 
 <script lang="ts">
-	import { MediaQuery } from 'svelte/reactivity';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { MediaQuery } from "svelte/reactivity";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		CharacterPhoneticIcon,
 		MinusSignIcon,
@@ -66,19 +76,29 @@
 		PlusSignIcon,
 		Search01Icon,
 		TextFontIcon,
-		TranslateIcon
-	} from '@hugeicons/core-free-icons';
-	import * as api from '$lib/api';
-	import { playback } from '$lib/player.svelte';
-	import { currentLocale, t } from '$lib/i18n.svelte';
-	import { appearance } from '$lib/theme.svelte';
-	import * as Popover from '$lib/components/ui/popover';
-	import LyricsSourcePicker from './LyricsSourcePicker.svelte';
-	import KaraokeButton from './KaraokeButton.svelte';
-	import { link } from '$lib/link.svelte';
-	import { voices } from '$lib/lyricvoices';
-	import { durationSecs, lyricsFor, setNowLyrics } from '$lib/nowlyrics.svelte';
-	import { SCROLL_EASE, glowing, letters, scrollMs, sweep as sweepStyle } from '$lib/lyricmotion';
+		TranslateIcon,
+	} from "@hugeicons/core-free-icons";
+	import * as api from "$lib/api";
+	import { playback } from "$lib/player.svelte";
+	import { currentLocale, t } from "$lib/i18n.svelte";
+	import { appearance } from "$lib/theme.svelte";
+	import * as Popover from "$lib/components/ui/popover";
+	import LyricsSourcePicker from "./LyricsSourcePicker.svelte";
+	import KaraokeButton from "./KaraokeButton.svelte";
+	import { link } from "$lib/link.svelte";
+	import { voices } from "$lib/lyricvoices";
+	import {
+		durationSecs,
+		lyricsFor,
+		setNowLyrics,
+	} from "$lib/nowlyrics.svelte";
+	import {
+		SCROLL_EASE,
+		glowing,
+		letters,
+		scrollMs,
+		sweep as sweepStyle,
+	} from "$lib/lyricmotion";
 
 	// `expanded` only sizes the type and centres the column. The owner of the extra room (the side
 	// panel, or the now-playing view) decides how much there is. Toggling it must not remount this
@@ -93,8 +113,13 @@
 		expanded = false,
 		compact = false,
 		missing = $bindable(false),
-		preview
-	}: { expanded?: boolean; compact?: boolean; missing?: boolean; preview?: api.Lyrics } = $props();
+		preview,
+	}: {
+		expanded?: boolean;
+		compact?: boolean;
+		missing?: boolean;
+		preview?: api.Lyrics;
+	} = $props();
 
 	let lyrics = $state<api.Lyrics | null>(null);
 	let loading = $state(true);
@@ -112,13 +137,17 @@
 	 *  edge, so the turns read at a glance. A side panel is too narrow to give any width away. */
 	const duet = $derived(!!voice?.some((v) => v.far));
 	const enhanced = $derived(appearance.enhancedLyrics);
-	const animateSynced = $derived(enhanced && appearance.enhancedLyricsLineSync);
-	const reducedMotion = new MediaQuery('prefers-reduced-motion: reduce');
+	const animateSynced = $derived(
+		enhanced && appearance.enhancedLyricsLineSync,
+	);
+	const reducedMotion = new MediaQuery("prefers-reduced-motion: reduce");
 	// Nothing to resize on an instrumental or a song with no lyrics at all.
 	const canResize = $derived(!!lyrics && !lyrics.instrumental);
 	/** "115%". Locale formatting, so no i18n key and no `%` to place. */
 	const sizeLabel = $derived(
-		new Intl.NumberFormat(currentLocale.id, { style: 'percent' }).format(size.value)
+		new Intl.NumberFormat(currentLocale.id, { style: "percent" }).format(
+			size.value,
+		),
 	);
 	const sizeChanged = $derived(size.value !== 1);
 	/** This song's timing nudge, from the source picker. Positive holds the lyrics back. */
@@ -135,7 +164,9 @@
 			title: now.title,
 			artists: now.artists,
 			album: now.album ?? undefined,
-			duration: durationSecs(now.duration) ?? (playback.duration > 0 ? playback.duration : undefined)
+			duration:
+				durationSecs(now.duration) ??
+				(playback.duration > 0 ? playback.duration : undefined),
 		};
 	});
 
@@ -147,8 +178,8 @@
 		setNowLyrics(videoId, l);
 	}
 
-	// videoId of the fetch whose result is (or will be) shown — guards stale responses.
-	let requested = '';
+	// videoId of the fetch whose result is (or will be) shown - guards stale responses.
+	let requested = "";
 
 	// Shared with the line under the now-playing cover, which writes and reads the same answer.
 	const ask = (now: NonNullable<typeof playback.now>) =>
@@ -174,14 +205,14 @@
 
 	$effect(() => {
 		if (preview) {
-			requested = '';
+			requested = "";
 			lyrics = preview;
 			loading = false;
 			return;
 		}
 		const now = playback.now;
 		if (!now) {
-			requested = '';
+			requested = "";
 			lyrics = null;
 			loading = false;
 			return;
@@ -271,19 +302,22 @@
 	 *  Scrolls the scroller itself, never `scrollIntoView`: that walks up and scrolls every
 	 *  scrollable ancestor too, including theater mode's `overflow-hidden` grid (issue #168). */
 	function glide(box: HTMLElement, i: number, smooth: boolean) {
-		const rows = box.querySelectorAll<HTMLElement>('[data-line]');
+		const rows = box.querySelectorAll<HTMLElement>("[data-line]");
 		const line = rows[i];
 		if (!line) return;
 		const h = box.clientHeight;
 		const from = box.scrollTop;
 		const to = Math.max(
 			0,
-			Math.min(box.scrollHeight - h, line.offsetTop + line.offsetHeight / 2 - h * 0.37)
+			Math.min(
+				box.scrollHeight - h,
+				line.offsetTop + line.offsetHeight / 2 - h * 0.37,
+			),
 		);
 		const delta = to - from;
 		if (Math.abs(delta) < 1) return;
-		box.scrollTo({ top: to, behavior: 'instant' });
-		gliding = gliding.filter((a) => a.playState === 'running');
+		box.scrollTo({ top: to, behavior: "instant" });
+		gliding = gliding.filter((a) => a.playState === "running");
 		if (!smooth) {
 			for (const a of gliding) a.cancel();
 			gliding = [];
@@ -297,24 +331,33 @@
 			.filter(Boolean)
 			.map((r) => Math.abs(r.offsetTop - line.offsetTop));
 		const step = near.length ? Math.min(...near) : line.offsetHeight;
-		const stagger = reducedMotion.current ? 0 : Math.min(1, step / Math.abs(delta));
+		const stagger = reducedMotion.current
+			? 0
+			: Math.min(1, step / Math.abs(delta));
 		const base = scrollMs(0, false);
 		// A row still gliding may be on screen only by its glide, so it takes the next one whatever
 		// its layout position says, or it would jump by the scroll.
-		const moving = new Set(gliding.map((a) => (a.effect as KeyframeEffect | null)?.target));
+		const moving = new Set(
+			gliding.map((a) => (a.effect as KeyframeEffect | null)?.target),
+		);
 		rows.forEach((row, j) => {
 			const top = row.offsetTop - to;
 			const off =
-				Math.max(top, top + shift) + row.offsetHeight < 0 || Math.min(top, top + shift) > h;
+				Math.max(top, top + shift) + row.offsetHeight < 0 ||
+				Math.min(top, top + shift) > h;
 			if (off && !moving.has(row)) return;
 			const rel = j - i;
 			const ahead = delta > 0 ? rel < 0 : rel > 0;
 			gliding.push(
-				row.animate([{ translate: `0 ${shift}px` }, { translate: '0 0' }], {
-					duration: base + (scrollMs(rel, ahead) - base) * stagger,
-					easing: SCROLL_EASE,
-					composite: 'add'
-				})
+				row.animate(
+					[{ translate: `0 ${shift}px` }, { translate: "0 0" }],
+					{
+						duration:
+							base + (scrollMs(rel, ahead) - base) * stagger,
+						easing: SCROLL_EASE,
+						composite: "add",
+					},
+				),
 			);
 		});
 	}
@@ -322,7 +365,7 @@
 	function seekTo(line: api.LyricLine) {
 		if (line.time_ms === undefined) return;
 		const secs = Math.max(0, (line.time_ms + offsetMs) / 1000);
-		playback.position = secs; // optimistic — the mpv tick confirms
+		playback.position = secs; // optimistic - the mpv tick confirms
 		userScrollUntil = 0; // jump the view along with the seek
 		api.seek(secs);
 	}
@@ -341,9 +384,9 @@
 			(lyrics.lines.some(
 				(l) =>
 					(l.words?.length ?? 0) > 0 ||
-					(showRomanized && (l.romanized_words?.length ?? 0) > 0)
+					(showRomanized && (l.romanized_words?.length ?? 0) > 0),
 			) ||
-				animateSynced)
+				animateSynced),
 	);
 
 	$effect(() => {
@@ -362,7 +405,8 @@
 		const speed = playback.speed;
 		interpolatedPosSecs = pos;
 		let frameId = requestAnimationFrame(function tick() {
-			interpolatedPosSecs = base + ((performance.now() - baseAt) / 1000) * speed;
+			interpolatedPosSecs =
+				base + ((performance.now() - baseAt) / 1000) * speed;
 			frameId = requestAnimationFrame(tick);
 		});
 		return () => cancelAnimationFrame(frameId);
@@ -379,23 +423,24 @@
 	}
 
 	function getWordTransform(word: api.LyricWord, currentMs: number): string {
-		if (reducedMotion.current) return 'translate3d(0,0,0)';
+		if (reducedMotion.current) return "translate3d(0,0,0)";
 		const anim = appearance.lyricsAnim;
 		const strength = appearance.lyricsAnimStrength / 100;
-		if (anim === 'none' || strength <= 0) return 'translate3d(0,0,0)';
+		if (anim === "none" || strength <= 0) return "translate3d(0,0,0)";
 		const elapsed = currentMs - word.start_ms;
-		if (anim === 'slide') {
-			if (elapsed <= 0) return `translate3d(${(4 * strength).toFixed(2)}px,0,0)`;
-			if (elapsed >= 280) return 'translate3d(0,0,0)';
+		if (anim === "slide") {
+			if (elapsed <= 0)
+				return `translate3d(${(4 * strength).toFixed(2)}px,0,0)`;
+			if (elapsed >= 280) return "translate3d(0,0,0)";
 			const t = elapsed / 280;
 			const ease = 1 - (1 - t) * (1 - t);
 			const x = 4 * strength * (1 - ease);
 			const y = -3 * strength * Math.sin(t * Math.PI);
 			return `translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0)`;
 		}
-		if (elapsed <= 0) return 'translate3d(0,0,0)';
+		if (elapsed <= 0) return "translate3d(0,0,0)";
 		let y = 0;
-		if (anim === 'bounce') {
+		if (anim === "bounce") {
 			if (elapsed < 140) {
 				const t = elapsed / 140;
 				y = -6 * Math.sin(t * (Math.PI / 2));
@@ -409,7 +454,7 @@
 				const t = (elapsed - 430) / 130;
 				y = -0.9 * Math.sin(t * Math.PI);
 			}
-		} else if (anim === 'float') {
+		} else if (anim === "float") {
 			const dur = Math.max(220, word.end_ms - word.start_ms);
 			if (elapsed < dur) {
 				const t = Math.min(1, elapsed / 180);
@@ -420,11 +465,11 @@
 			} else {
 				y = -1.2;
 			}
-		} else if (anim === 'wave') {
+		} else if (anim === "wave") {
 			if (elapsed < 700) {
 				y = -5.5 * Math.sin(elapsed / 75) * Math.exp(-elapsed / 380);
 			}
-		} else if (anim === 'pop') {
+		} else if (anim === "pop") {
 			if (elapsed < 320) {
 				const t = elapsed / 320;
 				y = -7 * Math.sin(t * Math.PI) * (1 - t * 0.35);
@@ -433,50 +478,67 @@
 		return `translate3d(0,${(y * strength).toFixed(2)}px,0)`;
 	}
 
-	function getEnhancedWordStyle(word: api.LyricWord, progress: number, currentMs: number): string {
+	function getEnhancedWordStyle(
+		word: api.LyricWord,
+		progress: number,
+		currentMs: number,
+	): string {
 		const pct = Math.round(Math.min(1, Math.max(0, progress)) * 100);
 		const isCurrent = progress > 0 && progress < 1;
 		const isSung = progress >= 1;
 		const style = appearance.lyricsStyle;
-		const dim = 'color-mix(in oklab, var(--muted-foreground) 45%, transparent)';
+		const dim =
+			"color-mix(in oklab, var(--muted-foreground) 45%, transparent)";
 		const lit =
-			style === 'accent'
-				? 'color-mix(in oklab, var(--primary) 78%, var(--foreground))'
-				: 'var(--foreground)';
+			style === "accent"
+				? "color-mix(in oklab, var(--primary) 78%, var(--foreground))"
+				: "var(--foreground)";
 		let bg: string;
 		if (isSung) {
 			bg = `linear-gradient(90deg, ${lit} 0%, ${lit} 100%)`;
 		} else if (progress <= 0) {
 			bg = `linear-gradient(90deg, ${dim} 0%, ${dim} 100%)`;
-		} else if (style === 'word') {
+		} else if (style === "word") {
 			const mix = `color-mix(in oklab, ${lit} ${pct}%, ${dim})`;
 			bg = `linear-gradient(90deg, ${mix} 0%, ${mix} 100%)`;
-		} else if (style === 'crisp') {
+		} else if (style === "crisp") {
 			bg = `linear-gradient(90deg, ${lit} ${pct}%, ${dim} ${pct}%)`;
-		} else if (style === 'accent') {
+		} else if (style === "accent") {
 			bg = `linear-gradient(90deg, ${lit} ${Math.max(0, pct - 12)}%, var(--primary) ${pct}%, ${dim} ${Math.min(100, pct + 12)}%)`;
 		} else {
 			bg = `linear-gradient(90deg, ${lit} ${Math.max(0, pct - 10)}%, ${dim} ${Math.min(100, pct + 10)}%)`;
 		}
 		const transform = getWordTransform(word, currentMs);
 		const glowPct = appearance.lyricsGlow;
-		let filter = 'none';
+		let filter = "none";
 		if (glowPct > 0 && progress > 0) {
 			const g = glowPct / 50;
-			const glowColor = style === 'accent' ? 'var(--primary)' : 'var(--foreground)';
-			const radius = Math.max(2, Math.round((isCurrent ? 8 : 6) * Math.max(0.5, g)));
-			const alpha = Math.min(85, Math.round((isCurrent ? 20 + progress * 25 : 34) * g));
+			const glowColor =
+				style === "accent" ? "var(--primary)" : "var(--foreground)";
+			const radius = Math.max(
+				2,
+				Math.round((isCurrent ? 8 : 6) * Math.max(0.5, g)),
+			);
+			const alpha = Math.min(
+				85,
+				Math.round((isCurrent ? 20 + progress * 25 : 34) * g),
+			);
 			filter = `drop-shadow(0 0 ${radius}px color-mix(in oklab, ${glowColor} ${alpha}%, transparent))`;
 		}
 		return `background-image:${bg};transform:${transform};filter:${filter}`;
 	}
 
-	function getLineWords(line: api.LyricLine, index: number, text?: string): api.LyricWord[] {
+	function getLineWords(
+		line: api.LyricLine,
+		index: number,
+		text?: string,
+	): api.LyricWord[] {
 		if (!text && line.words && line.words.length > 0) return line.words;
-		if (text && line.romanized_words && line.romanized_words.length > 0) return line.romanized_words;
+		if (text && line.romanized_words && line.romanized_words.length > 0)
+			return line.romanized_words;
 		if (!animateSynced || !lyrics || line.time_ms === undefined) return [];
 		const raw = (text ?? line.text).trim();
-		if (!raw || raw === '♪') return [];
+		if (!raw || raw === "♪") return [];
 		const tokens = raw.split(/\s+/).filter(Boolean);
 		if (!tokens.length) return [];
 		const startMs = line.time_ms;
@@ -498,7 +560,10 @@
 					? nextMs
 					: startMs + 3500;
 		const rawSpan = Math.max(100, cueEndMs - startMs);
-		const vocalSpan = Math.min(rawSpan, Math.min(rawSpan * 0.88, Math.max(1000, tokens.length * 400)));
+		const vocalSpan = Math.min(
+			rawSpan,
+			Math.min(rawSpan * 0.88, Math.max(1000, tokens.length * 400)),
+		);
 		const weights = tokens.map((w) => Math.max(2, w.length));
 		const totalWeight = weights.reduce((a, b) => a + b, 0);
 		let cursor = startMs;
@@ -509,7 +574,7 @@
 			return {
 				text: idx < tokens.length - 1 ? `${token} ` : token,
 				start_ms: wordStart,
-				end_ms: cursor
+				end_ms: cursor,
 			};
 		});
 	}
@@ -531,11 +596,16 @@
 	{#if loading}
 		<div class="space-y-3">
 			{#each { length: 8 } as _, i (i)}
-				<div class="h-5 animate-pulse rounded bg-muted" style="width:{55 + ((i * 17) % 40)}%"></div>
+				<div
+					class="h-5 animate-pulse rounded bg-muted"
+					style="width:{55 + ((i * 17) % 40)}%"
+				></div>
 			{/each}
 		</div>
 	{:else if lyrics?.instrumental}
-		<p class="py-8 text-center text-lg text-muted-foreground">{t('lyrics.instrumental')} ♪</p>
+		<p class="py-8 text-center text-lg text-muted-foreground">
+			{t("lyrics.instrumental")} ♪
+		</p>
 	{:else if lyrics && lyrics.synced}
 		<!-- Bottom padding only, so the last lines can still center-scroll. A matching top padding
 		     would put half a panel of void above line 1, which is all you see until the song has
@@ -551,7 +621,9 @@
 				{@const halo = isActive || i === activeIndex - 1}
 				{@const words = getLineWords(line, i)}
 				{@const romWords =
-					showRomanized && line.romanized ? getLineWords(line, i, line.romanized) : []}
+					showRomanized && line.romanized
+						? getLineWords(line, i, line.romanized)
+						: []}
 				{@const v = voice?.[i]}
 				<!-- Dimming is `opacity` on the line, never a translucent text colour. A colour with
 				     alpha is composited glyph by glyph, so wherever two glyphs overlap the coverage
@@ -570,7 +642,11 @@
 					class="block w-full cursor-pointer font-heading font-bold leading-snug transition-[color,opacity,scale] duration-500 ease-[cubic-bezier(0.2,0.7,0.3,1)] hover:text-foreground hover:opacity-100 dark:hover:opacity-100
 						{v?.far ? 'origin-right text-right' : 'origin-left text-left'}
 						{duet && expanded ? (v?.far ? 'pl-[14%]' : 'pr-[14%]') : ''}
-						{expanded ? 'py-3 text-[1.875em]' : compact ? 'py-1 text-[0.875em]' : 'py-2 text-[1.25em]'}
+						{expanded
+						? 'py-3 text-[1.875em]'
+						: compact
+							? 'py-1 text-[0.875em]'
+							: 'py-2 text-[1.25em]'}
 						{isActive
 						? 'text-foreground motion-safe:scale-100'
 						: isPast
@@ -583,11 +659,23 @@
 						     They sweep on their own timings, which overlap the lead's. -->
 						{#each v.runs as run, r (r)}
 							{#if run.bg}
-								<span class="block py-[0.1em] text-[0.72em] font-semibold opacity-65">
-									{@render sweep(run.words, isActive, halo, v.far)}
+								<span
+									class="block py-[0.1em] text-[0.72em] font-semibold opacity-65"
+								>
+									{@render sweep(
+										run.words,
+										isActive,
+										halo,
+										v.far,
+									)}
 								</span>
 							{:else}
-								{@render sweep(run.words, isActive, halo, v.far)}
+								{@render sweep(
+									run.words,
+									isActive,
+									halo,
+									v.far,
+								)}
 							{/if}
 						{/each}
 					{:else if words.length > 0}
@@ -604,15 +692,22 @@
 								? `motion-safe:animate-note-pulse ${playback.paused ? '[animation-play-state:paused]' : ''}`
 								: ''}"
 						/>
-						<span class="sr-only">{t('lyrics.instrumental')}</span>
+						<span class="sr-only">{t("lyrics.instrumental")}</span>
 					{/if}
 
 					{#if showRomanized && line.romanized}
 						<!-- Relative size, so it follows the line from the mini player to theater mode.
 						     A timed reading (Apple's, or ours on a word-synced line) sweeps with the line. -->
-						<span class="mt-0.5 block text-[length:max(0.62em,11px)] font-semibold">
+						<span
+							class="mt-0.5 block text-[length:max(0.62em,11px)] font-semibold"
+						>
 							{#if romWords.length > 0}
-								{@render sweep(romWords, isActive, halo, v?.far)}
+								{@render sweep(
+									romWords,
+									isActive,
+									halo,
+									v?.far,
+								)}
 							{:else}
 								{line.romanized}
 							{/if}
@@ -645,10 +740,15 @@
 					<div>
 						<p>{line.text}</p>
 						{#if showRomanized && line.romanized}
-							<p class="text-[0.85em] text-muted-foreground">{line.romanized}</p>
+							<p class="text-[0.85em] text-muted-foreground">
+								{line.romanized}
+							</p>
 						{/if}
 						{#if showTranslation && line.translation}
-							<p class="text-xs italic text-muted-foreground" style="font-size:{0.75 * size.value}rem">
+							<p
+								class="text-xs italic text-muted-foreground"
+								style="font-size:{0.75 * size.value}rem"
+							>
 								{line.translation}
 							</p>
 						{/if}
@@ -660,44 +760,55 @@
 		</div>
 	{:else}
 		<div class="flex flex-col items-center gap-1.5 py-8 text-center">
-			<p class="text-sm text-muted-foreground">{t('lyrics.none_found')}</p>
+			<p class="text-sm text-muted-foreground">
+				{t("lyrics.none_found")}
+			</p>
 			{#if !compact && track}
-				<p class="max-w-64 text-xs text-muted-foreground/80">{t('lyrics.none_found_hint')}</p>
+				<p class="max-w-64 text-xs text-muted-foreground/80">
+					{t("lyrics.none_found_hint")}
+				</p>
 				<button
 					onclick={() => (pickerOpen = true)}
 					class="mt-2 flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-foreground/5"
 				>
 					<HugeiconsIcon icon={Search01Icon} class="h-3.5 w-3.5" />
-					{t('lyrics.find')}
+					{t("lyrics.find")}
 				</button>
 			{/if}
 		</div>
 	{/if}
 </div>
 {#if track && !loading && !compact && !preview}
-	<div class="mt-3 flex items-center gap-1 border-t border-border/60 px-4 pt-2 pb-1.5 text-xs text-muted-foreground">
+	<div
+		class="mt-3 flex items-center gap-1 border-t border-border/60 px-4 pt-2 pb-1.5 text-xs text-muted-foreground"
+	>
 		<!-- The source is the switch (#23): a popover with every provider's answer for this song. -->
 		<div class="flex min-w-0 flex-1">
-			<LyricsSourcePicker {lyrics} {track} bind:open={pickerOpen} onchange={onPicked} />
+			<LyricsSourcePicker
+				{lyrics}
+				{track}
+				bind:open={pickerOpen}
+				onchange={onPicked}
+			/>
 		</div>
 		<!-- Each only on lyrics that have something for it, so neither sits there dead. The mini
 		     player has no footer and follows whatever was chosen here. -->
 		{#if canTranslate}
 			{@render prefToggle(
-				'translated',
+				"translated",
 				showTranslation,
 				TranslateIcon,
-				t('lyrics.translation'),
-				t('lyrics.translation_hint')
+				t("lyrics.translation"),
+				t("lyrics.translation_hint"),
 			)}
 		{/if}
 		{#if canRomanize}
 			{@render prefToggle(
-				'romanized',
+				"romanized",
 				showRomanized,
 				CharacterPhoneticIcon,
-				t('lyrics.romanize'),
-				t('lyrics.romanize_hint')
+				t("lyrics.romanize"),
+				t("lyrics.romanize_hint"),
 			)}
 		{/if}
 		<!-- Karaoke's switch lives here, not in the player bar (KaraokeButton.svelte). It works on
@@ -711,29 +822,46 @@
 					class="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 py-0.5 transition-colors hover:bg-foreground/10 hover:text-foreground data-[state=open]:bg-foreground/10 data-[state=open]:text-foreground {sizeChanged
 						? 'text-primary'
 						: ''}"
-					title={t('lyrics.text_size_hint')}
-					aria-label={t('lyrics.text_size')}
+					title={t("lyrics.text_size_hint")}
+					aria-label={t("lyrics.text_size")}
 				>
 					<HugeiconsIcon icon={TextFontIcon} class="h-3.5 w-3.5" />
 				</Popover.Trigger>
-				<Popover.Content side="top" align="end" sideOffset={8} class="w-auto gap-0 p-0">
+				<Popover.Content
+					side="top"
+					align="end"
+					sideOffset={8}
+					class="w-auto gap-0 p-0"
+				>
 					<div class="flex items-center gap-3 px-4 py-3">
-						<HugeiconsIcon icon={TextFontIcon} class="h-4 w-4 shrink-0 text-muted-foreground" />
+						<HugeiconsIcon
+							icon={TextFontIcon}
+							class="h-4 w-4 shrink-0 text-muted-foreground"
+						/>
 						<div class="min-w-0 flex-1">
-							<p class="text-sm font-medium">{t('lyrics.text_size')}</p>
-							<p class="text-xs leading-snug text-muted-foreground">
-								{t('lyrics.text_size_hint')}
+							<p class="text-sm font-medium">
+								{t("lyrics.text_size")}
+							</p>
+							<p
+								class="text-xs leading-snug text-muted-foreground"
+							>
+								{t("lyrics.text_size_hint")}
 							</p>
 						</div>
-						<div class="flex shrink-0 items-center rounded-full border bg-muted/40">
+						<div
+							class="flex shrink-0 items-center rounded-full border bg-muted/40"
+						>
 							<button
 								class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
 								disabled={size.value === SIZES[0]}
-								aria-label={t('lyrics.text_size_smaller')}
-								title={t('lyrics.text_size_smaller')}
+								aria-label={t("lyrics.text_size_smaller")}
+								title={t("lyrics.text_size_smaller")}
 								onclick={() => nudgeSize(-1)}
 							>
-								<HugeiconsIcon icon={MinusSignIcon} class="h-3.5 w-3.5" />
+								<HugeiconsIcon
+									icon={MinusSignIcon}
+									class="h-3.5 w-3.5"
+								/>
 							</button>
 							<span
 								class="w-14 text-center text-xs font-medium tabular-nums {sizeChanged
@@ -745,12 +873,16 @@
 							</span>
 							<button
 								class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
-								disabled={size.value === SIZES[SIZES.length - 1]}
-								aria-label={t('lyrics.text_size_larger')}
-								title={t('lyrics.text_size_larger')}
+								disabled={size.value ===
+									SIZES[SIZES.length - 1]}
+								aria-label={t("lyrics.text_size_larger")}
+								title={t("lyrics.text_size_larger")}
 								onclick={() => nudgeSize(1)}
 							>
-								<HugeiconsIcon icon={PlusSignIcon} class="h-3.5 w-3.5" />
+								<HugeiconsIcon
+									icon={PlusSignIcon}
+									class="h-3.5 w-3.5"
+								/>
 							</button>
 						</div>
 					</div>
@@ -760,7 +892,13 @@
 	</div>
 {/if}
 
-{#snippet prefToggle(pref: Pref, on: boolean, icon: typeof TranslateIcon, label: string, hint: string)}
+{#snippet prefToggle(
+	pref: Pref,
+	on: boolean,
+	icon: typeof TranslateIcon,
+	label: string,
+	hint: string,
+)}
 	<button
 		onclick={() => toggle(pref)}
 		class="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 py-0.5 transition-colors hover:bg-foreground/10 {on
@@ -780,18 +918,33 @@
      dimming come from the line; on it the sweep paints it, and a held note lights, crests and
      glows letter by letter (`lyricmotion.ts`). Enhanced lyrics draw their own style and motion
      per frame instead. -->
-{#snippet sweep(words: api.LyricWord[], active: boolean, halo: boolean, far = false)}
-	<span class="inline-flex flex-wrap items-baseline {far ? 'justify-end' : ''}">
+{#snippet sweep(
+	words: api.LyricWord[],
+	active: boolean,
+	halo: boolean,
+	far = false,
+)}
+	<span
+		class="inline-flex flex-wrap items-baseline {far ? 'justify-end' : ''}"
+	>
 		{#each words as word, wIdx (wIdx)}
 			<!-- No gap after the last word: on a far-side line it would hold the text off the edge. -->
-			{@const gap = word.text.endsWith(' ') && wIdx < words.length - 1 ? 'mr-[0.26em]' : ''}
+			{@const gap =
+				word.text.endsWith(" ") && wIdx < words.length - 1
+					? "mr-[0.26em]"
+					: ""}
 			{@const held = enhanced ? null : letters(word)}
 			{#if held}
-				<span class="relative isolate inline-block whitespace-nowrap {gap}"
-					>{#if halo}{@render glow(held, word, posMs)}{/if}{#each held as l, k (k)}{@render glyph(
+				<span
+					class="relative isolate inline-block whitespace-nowrap {gap}"
+					>{#if halo}{@render glow(
+							held,
+							word,
+							posMs,
+						)}{/if}{#each held as l, k (k)}{@render glyph(
 							l,
 							active,
-							'lyric-held'
+							"lyric-held",
 						)}{/each}</span
 				>
 			{:else}
@@ -805,7 +958,8 @@
 {#snippet glow(held: api.LyricWord[], note: api.LyricWord, ms: number)}<span
 		class="lyric-halo"
 		aria-hidden="true"
-		>{#each held as l, k (k)}<span class={glowing(l, note, ms) ? 'lit' : ''}>{l.text}</span
+		>{#each held as l, k (k)}<span class={glowing(l, note, ms) ? "lit" : ""}
+				>{l.text}</span
 			>{/each}</span
 	>{/snippet}
 
@@ -819,6 +973,10 @@
 		style={!active
 			? undefined
 			: enhanced
-				? getEnhancedWordStyle(word, getWordProgress(word, posMs), posMs)
+				? getEnhancedWordStyle(
+						word,
+						getWordProgress(word, posMs),
+						posMs,
+					)
 				: sweepStyle(word, posMs)}>{word.text.trimEnd()}</span
 	>{/snippet}

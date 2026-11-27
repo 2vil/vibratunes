@@ -42,12 +42,14 @@ function harness() {
 		get(target, key) {
 			return target[key] ?? ((callback) => {
 				callbacks[key] = callback;
-				return Promise.resolve(() => {});
+				return Promise.resolve(() => { });
 			});
 		}
 	});
-	const context = { api, playback, toast: { error: (e) => errors.push(e) },
-		forgetLocal() {}, applyLtState() {}, applyLinkState() {}, refreshKaraokeModels: async () => {}, performance };
+	const context = {
+		api, playback, toast: { error: (e) => errors.push(e) },
+		forgetLocal() { }, applyLtState() { }, applyLinkState() { }, refreshKaraokeModels: async () => { }, performance
+	};
 	const handlers = runInNewContext(code + '\n({ setTempoPitch, initApp })', context);
 	handlers.initApp(true);
 	return { ...handlers, playback, snapshot, requests, callbacks, errors };
@@ -103,4 +105,4 @@ await failed;
 ok(rejected.playback.speed === 1.2 && rejected.playback.reverb.wet === 25 &&
 	rejected.playback.reverb !== confirmedReverb && rejected.errors[0] === 'unavailable',
 	'Rejected effects retain confirmed values, reset slider drafts and surface the error');
-console.log('ok — backend-confirmed effects and startup snapshot');
+console.log('ok - backend-confirmed effects and startup snapshot');

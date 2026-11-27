@@ -1,5 +1,5 @@
 // What a BrowseItem does when you click it. One implementation for every surface that renders a
-// browse result — cards, the home recents rail, anything after them — so "open" and "play whole
+// browse result - cards, the home recents rail, anything after them - so "open" and "play whole
 // thing" can never drift apart between two components.
 import { goto } from '$app/navigation';
 import * as api from './api';
@@ -33,7 +33,7 @@ export const asSong = (i: BrowseItem): SongItem => ({
 	is_upload: i.isUpload
 });
 
-/** Where a non-song item lives. Songs have no page — they play. */
+/** Where a non-song item lives. Songs have no page - they play. */
 export const hrefFor = (i: BrowseItem): string =>
 	// A local artist is drawn as an artist (circle, no play button) but opens the album route:
 	// there is no channel behind files on disk, so the real artist page has nothing to show.
@@ -72,7 +72,7 @@ export function openItem(item: BrowseItem): void {
 /**
  * Play the whole thing without opening it. A song is immediate; a playlist/album has to be fetched
  * first, so callers own the in-flight state (the pulsing button). `shuffle` starts it shuffled
- * (the card menu's shuffle button). Never throws — a failure toasts and the user stays where they
+ * (the card menu's shuffle button). Never throws - a failure toasts and the user stays where they
  * were.
  */
 export async function playItem(item: BrowseItem, shuffle = false): Promise<void> {
@@ -107,7 +107,7 @@ export async function playItem(item: BrowseItem, shuffle = false): Promise<void>
 /**
  * Queue the whole thing without opening it: "Play next" (`next`) or "Add to queue". A song is one
  * track; an album/playlist is fetched first, so callers own the in-flight state (same contract as
- * `playItem`). Never throws — a failure toasts.
+ * `playItem`). Never throws - a failure toasts.
  *
  * The playlist's next-page token rides along: the backend walks the rest of a long playlist into
  * the queue in the background rather than the UI chaining pages before anything is queued.

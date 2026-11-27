@@ -6,11 +6,11 @@ name: Linux release binaries
 #
 # WHY THIS EXISTS: an AppImage bundles the *build host's* system libraries but cannot bundle glibc,
 # so it inherits the build host's glibc floor. Built on Fedora (glibc 2.43) the 0.2.9 AppImage
-# refused to start anywhere else — 78 of its 368 bundled libs demanded GLIBC_2.43, which only
+# refused to start anywhere else - 78 of its 368 bundled libs demanded GLIBC_2.43, which only
 # Fedora 44 / Arch / rawhide have. Building here on a pinned, deliberately older runner puts the
 # floor at glibc 2.39: Ubuntu 24.04+, Debian 13+, Fedora 40+, current Arch.
 #
-# `runs-on` is PINNED ON PURPOSE. Never change it to `ubuntu-latest` — that tracks the newest
+# `runs-on` is PINNED ON PURPOSE. Never change it to `ubuntu-latest` - that tracks the newest
 # Ubuntu and would silently reintroduce exactly the bug this workflow exists to fix. The
 # "Check the glibc floor" step below fails the build if someone does it anyway.
 #
@@ -27,17 +27,17 @@ name: Linux release binaries
 # missing GLIBC symbol. Built here it matches the AppImage's 2.39, which is what the hand-written
 # `libc6 (>= 2.39)` in tauri.conf.json claims.
 #
-# scripts/release.sh (run on Fedora) still builds and publishes the .rpm — an rpm links against the
+# scripts/release.sh (run on Fedora) still builds and publishes the .rpm - an rpm links against the
 # host's system libs, so Fedora is the correct place to build it.
 #
 # It can also be run by hand against an older tag to backfill:
 #   Actions ▸ Linux release binaries ▸ Run workflow ▸ tag = v0.2.9
 #
 # Requires repo secrets (same set as the Windows workflow):
-#   TAURI_SIGNING_PRIVATE_KEY / TAURI_SIGNING_PRIVATE_KEY_PASSWORD   (mandatory — no sig, no update)
-#   LASTFM_API_KEY / LASTFM_API_SECRET                               (optional — warn-only)
+#   TAURI_SIGNING_PRIVATE_KEY / TAURI_SIGNING_PRIVATE_KEY_PASSWORD   (mandatory - no sig, no update)
+#   LASTFM_API_KEY / LASTFM_API_SECRET                               (optional - warn-only)
 
-# DISPATCH ONLY, ON PURPOSE — do not add `release: published` back. Actions caches are ref-scoped:
+# DISPATCH ONLY, ON PURPOSE - do not add `release: published` back. Actions caches are ref-scoped:
 # a run can read caches from its own ref and from the default branch, nothing else. A run triggered
 # by a release executes on the *tag* ref, so every such build wrote a cache no later run could ever
 # read and then recompiled from scratch. Windows was paying 11m25s of cold Rust compile on every
@@ -68,7 +68,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04 # glibc 2.39 — see the header. NOT ubuntu-latest.
+    runs-on: ubuntu-24.04 # glibc 2.39 - see the header. NOT ubuntu-latest.
     # A healthy run is 9-12 min. The default is six hours, which is what a hung docker/Xvfb check or
     # a wedged package download would burn while the release sits half-published and unmarked.
     # The headroom over 12 is for the upload step: GitHub's asset endpoint had a bad afternoon
@@ -105,7 +105,7 @@ jobs:
 
       # The tag is the contract: the binaries must be built from the source that tag points at, and
       # the updater compares tauri.conf.json's version. If they disagree, the version bump never got
-      # committed — stop before shipping a mislabelled AppImage.
+      # committed - stop before shipping a mislabelled AppImage.
       #
       # A dry run is allowed to disagree, because that is the only way to test this workflow against
       # a branch instead of a published tag. Nothing is uploaded on a dry run, so a mislabelled
@@ -142,7 +142,7 @@ jobs:
 
       # Bake a snapshot of the community player-cipher registry into src-tauri/cipher_configs.json,
       # which is `include_str!`d into the binary. Nothing needing a deciphered stream URL plays
-      # without a config for the current player.js, and the tracked file is deliberately empty —
+      # without a config for the current player.js, and the tracked file is deliberately empty -
       # the table is refreshed from these same registries at runtime.
       #
       # So this only covers the case where that refresh can't happen: a first run on a network that
@@ -169,7 +169,7 @@ jobs:
             fi
             echo "::warning::player-cipher registry unusable: $url"
           done
-          echo "::warning::no player-cipher registry reachable — shipping the empty table; clients will fetch it at runtime"
+          echo "::warning::no player-cipher registry reachable - shipping the empty table; clients will fetch it at runtime"
 
       # webkit2gtk-4.1 + gtk3 + appindicator are Tauri's; libmpv-dev is ours (libmpv2-sys ships
       # pregenerated bindings and just emits `-lmpv`, so only the link-time lib is needed);
@@ -215,7 +215,7 @@ jobs:
           workspaces: . -> target
 
       - name: Tauri CLI
-        # The npm CLI ships a prebuilt binary — `cargo install tauri-cli` would compile it from
+        # The npm CLI ships a prebuilt binary - `cargo install tauri-cli` would compile it from
         # source on every cache miss (~5 min for nothing).
         #
         # PINNED, like the actions. `^2` took 2.12.0 the day it was published and broke two legs at
@@ -225,7 +225,7 @@ jobs:
         # on purpose, with the tauri crates, and dry-run all three legs before a release.
         run: npm install -g "@tauri-apps/cli@2.11.5"
 
-      # The gitignored src-tauri/lastfm.keys (read by build.rs) obviously isn't in the checkout —
+      # The gitignored src-tauri/lastfm.keys (read by build.rs) obviously isn't in the checkout -
       # recreate it from repo secrets. Missing secrets are a warning, not a failure: the app is
       # fully functional without Last.fm.
       - name: Last.fm API keys
@@ -238,28 +238,28 @@ jobs:
               "$LASTFM_API_KEY" "$LASTFM_API_SECRET" > src-tauri/lastfm.keys
             echo "lastfm.keys written"
           else
-            echo "::warning::LASTFM_API_KEY / LASTFM_API_SECRET secrets not set — this Linux build ships without Last.fm scrobbling"
+            echo "::warning::LASTFM_API_KEY / LASTFM_API_SECRET secrets not set - this Linux build ships without Last.fm scrobbling"
           fi
 
       - name: Build + sign the AppImage, build the deb
         env:
-          # Scoped to this step only — no other step (or third-party action) sees the signing key.
+          # Scoped to this step only - no other step (or third-party action) sees the signing key.
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           # linuxdeploy bundles an ancient `strip` that chokes on modern ELF sections (DT_RELR).
           NO_STRIP: "true"
-          # The bundler runs linuxdeploy/appimagetool, themselves AppImages — the runner has no
+          # The bundler runs linuxdeploy/appimagetool, themselves AppImages - the runner has no
           # FUSE, so make them self-extract instead.
           APPIMAGE_EXTRACT_AND_RUN: "1"
         run: |
           set -euo pipefail
           if [ -z "${TAURI_SIGNING_PRIVATE_KEY:-}" ]; then
-            echo "::error::TAURI_SIGNING_PRIVATE_KEY secret is not set — the build would produce an unsignable AppImage"
+            echo "::error::TAURI_SIGNING_PRIVATE_KEY secret is not set - the build would produce an unsignable AppImage"
             exit 1
           fi
           (cd ui && pnpm build)
           # beforeBuildCommand is emptied because we just ran it, deterministically. Left on, tauri
-          # runs `pnpm build` from the repo root — which has no package.json, so which of the two
+          # runs `pnpm build` from the repo root - which has no package.json, so which of the two
           # frontend packages (ui/, website/) pnpm picks is up to the filesystem: Windows resolved
           # it to ui, Linux to website, whose deps this job never installs. It only works locally
           # because you run it from ui/.
@@ -269,7 +269,7 @@ jobs:
           tauri build --bundles "$BUNDLES" --config '{"build":{"beforeBuildCommand":""}}'
           # Strip the bundled TLS trust stack + gio modules out of the AppDir and repack: they are
           # coupled to the build host's config and leave the webview with no TLS backend anywhere
-          # else. Repacking invalidates the bundler's signature, so the script re-signs — which is
+          # else. Repacking invalidates the bundler's signature, so the script re-signs - which is
           # why it runs inside this step, where the key is in scope.
           scripts/fix-appdir-tls.sh
 
@@ -277,7 +277,7 @@ jobs:
       # DT_NEEDs libjack.so.0 and linuxdeploy excludes it. Everything the bundle links must either be
       # inside the AppDir or be a library any Linux desktop is guaranteed to have. The allowlist
       # below is the calibrated set for this app; if a new name shows up, decide deliberately
-      # whether to bundle it or add it here — don't widen it to make a build pass.
+      # whether to bundle it or add it here - don't widen it to make a build pass.
       - name: Check nothing is missing from the bundle
         run: |
           set -euo pipefail
@@ -294,7 +294,7 @@ jobs:
             objdump -p "$f" 2>/dev/null | awk '/NEEDED/{print $2}'
           done | sort -u > /tmp/needed.txt
           # `find`, not `ls dirA dirB`: ls exits nonzero if either path is missing, and an Ubuntu
-          # AppDir has no usr/lib64 — under pipefail that fails the step for no reason.
+          # AppDir has no usr/lib64 - under pipefail that fails the step for no reason.
           # gnutls-fallback/ counts as bundled: fix-appdir-tls.sh keeps the gnutls stack there so
           # the loader only sees it on a host that cannot serve the whole chain itself (defect 6).
           find "$APPDIR/usr/lib" "$APPDIR/usr/lib64" "$APPDIR/usr/lib/gnutls-fallback" \
@@ -318,10 +318,10 @@ jobs:
       # Mesa) looked fine on Ubuntu and only appeared on someone else's distro. So run the app on
       # three of them: Debian sid for the newest GLib and Mesa, Arch because its sonames differ from
       # everyone else's, openSUSE Tumbleweed because it is the one mainstream family that does not
-      # keep its CA bundle at /etc/ssl/certs/ca-certificates.crt — which is what shipped 0.6.8 with
+      # keep its CA bundle at /etc/ssl/certs/ca-certificates.crt - which is what shipped 0.6.8 with
       # a webview that trusted no certificate at all (#164). The script resolves every symbol, counts
       # the trust anchors the bundled TLS stack can actually reach, checks that the AppDir doesn't
-      # break the host libraries the app dlopens, and then actually starts the thing under Xvfb —
+      # break the host libraries the app dlopens, and then actually starts the thing under Xvfb -
       # v0.2.14 passed both static checks and still could not open a single webview.
       #
       # All three containers run at once and their output is buffered to a file so the logs don't
@@ -355,21 +355,21 @@ jobs:
           [ "$fail" = 0 ] || { echo "::error::the AppDir failed a foreign-distro check"; exit 1; }
 
       # The regression test for this whole workflow. Nothing bundled may need a newer glibc than the
-      # runner's own, or the AppImage only runs on distros at least as new as the build host — the
+      # runner's own, or the AppImage only runs on distros at least as new as the build host - the
       # 0.2.9 failure. Runs against the AppDir the bundler just assembled.
       - name: Check the glibc floor
         run: |
           set -euo pipefail
           FLOOR=2.39   # keep in sync with `runs-on` above
           APPDIR=target/release/bundle/appimage/vibratunes.AppDir
-          [ -d "$APPDIR" ] || { echo "::error::no AppDir at $APPDIR — did the bundler change its layout?"; exit 1; }
+          [ -d "$APPDIR" ] || { echo "::error::no AppDir at $APPDIR - did the bundler change its layout?"; exit 1; }
           # `|| true`: objdump exits nonzero on the non-ELF files that live under usr/lib (module
           # caches, pkgconfig, …), which under pipefail would fail the step for no reason.
           WORST="$(find "$APPDIR/usr/lib" "$APPDIR/usr/bin" -type f -exec objdump -T {} + 2>/dev/null \
             | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1 || true)"
           echo "highest glibc symbol required by the bundle: ${WORST:-none}"
           if [ "$(printf '%s\nGLIBC_%s\n' "$WORST" "$FLOOR" | sort -V | tail -1)" != "GLIBC_$FLOOR" ]; then
-            echo "::error::bundle requires $WORST but the floor is GLIBC_$FLOOR — is runs-on still pinned to an old runner?"
+            echo "::error::bundle requires $WORST but the floor is GLIBC_$FLOOR - is runs-on still pinned to an old runner?"
             find "$APPDIR/usr/lib" -type f -exec sh -c 'objdump -T "$1" 2>/dev/null | grep -q "$2" && echo "  $1"' _ {} "$WORST" \; || true
             exit 1
           fi
@@ -445,7 +445,7 @@ jobs:
           pkgname=vibratunes
           pkgver=${PKGVER}
           pkgrel=1
-          pkgdesc="Vibratunes — YouTube Music client with offline downloads"
+          pkgdesc="Vibratunes - YouTube Music client with offline downloads"
           arch=('x86_64')
           license=('GPL-3.0-or-later')
           depends=('mpv' 'webkit2gtk-4.1' 'gtk3')
@@ -463,7 +463,7 @@ jobs:
             echo "Installed $(basename "$PKG") successfully in Arch Linux"
           '
 
-      - name: Dry run — built and verified, attaching nothing
+      - name: Dry run - built and verified, attaching nothing
         if: ${{ inputs.dry_run }}
         run: echo "dry_run - every build step and guard passed; release assets left untouched."
 
@@ -574,7 +574,7 @@ jobs:
             echo "::error::no AppImage for $VERSION"; find target/release/bundle -maxdepth 2; exit 1
           fi
           if [ ! -f "$SIG" ]; then
-            echo "::error::no .sig next to the AppImage — signing key missing, or createUpdaterArtifacts got turned off"; exit 1
+            echo "::error::no .sig next to the AppImage - signing key missing, or createUpdaterArtifacts got turned off"; exit 1
           fi
 
           retry 5 upload "$APPIMAGE" "$SIG"
@@ -587,9 +587,9 @@ jobs:
           if [ "$PRERELEASE" = true ]; then
             echo "release candidate: no deb"
           elif [ "${{ steps.deb_check.outcome }}" != "success" ]; then
-            echo "::warning::the deb failed its install check and was NOT attached — fix bundle.linux.deb.depends and re-dispatch"
+            echo "::warning::the deb failed its install check and was NOT attached - fix bundle.linux.deb.depends and re-dispatch"
           elif [ -z "$DEB" ]; then
-            echo "::warning::no deb for $VERSION in target/release/bundle/deb — nothing attached"
+            echo "::warning::no deb for $VERSION in target/release/bundle/deb - nothing attached"
           else
             retry 3 upload "$DEB"
           fi
@@ -609,7 +609,7 @@ jobs:
           # latest.json is the one thing both release workflows write, and they now run in parallel.
           # There is no compare-and-swap on release assets, so: merge, upload, read back, and retry
           # if the other job clobbered us in between. Whoever loses a round re-merges onto the
-          # winner's copy, so it converges — normally on the first attempt, worst case the second.
+          # winner's copy, so it converges - normally on the first attempt, worst case the second.
           URL="https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$(basename "$APPIMAGE")"
           for attempt in 1 2 3 4 5; do
             retry 3 fetch_manifest manifest

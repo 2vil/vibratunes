@@ -1,9 +1,9 @@
-//! `PlayerConfigStore` (context/05 §3) — the cipher resilience layer.
+//! `PlayerConfigStore` (context/05 §3) - the cipher resilience layer.
 //!
 //! A table of known-good per-player-hash configs. Static regex extraction of the sig/`n` functions
 //! is **dead** on the 2025+ VM-dispatch players: neither our patterns nor rustypipe's nor yt-dlp's
 //! match any generation YouTube currently serves (verified against 341562bc / 4753318d / 8d2a370b).
-//! So the table is not a "reliability layer" over regex any more — it is the only way in, exactly
+//! So the table is not a "reliability layer" over regex any more - it is the only way in, exactly
 //! as it is for Metrolist.
 //!
 //! An entry does not name a function. It carries a JS *expression* evaluated inside player.js's own
@@ -15,7 +15,7 @@
 //!
 //! `INPUT` is substituted with the argument at injection time (see [`super::extractor`]). Configs
 //! come from the two community registries Metrolist uses; both are polled and merged, so one going
-//! stale or offline is survivable. A fetch failure is non-fatal — the store keeps what it has.
+//! stale or offline is survivable. A fetch failure is non-fatal - the store keeps what it has.
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -27,7 +27,7 @@ use serde::Deserialize;
 use tokio::sync::Mutex as AsyncMutex;
 
 /// The registries Metrolist reads (`PlayerConfigStore.kt:30-33`). Community-maintained and updated
-/// within hours of a player rotation — which is the only cadence that works, since a rotation
+/// within hours of a player rotation - which is the only cadence that works, since a rotation
 /// invalidates every entry. Both are merged; Faraday wins ties by being applied last.
 const REGISTRY_URLS: [&str; 2] = [
     "https://raw.githubusercontent.com/ZemerTeam/zemer-cipher/master/library/src/main/assets/player_configs.json",
@@ -41,9 +41,9 @@ const REFRESH_COOLDOWN: Duration = Duration::from_secs(5 * 60);
 #[derive(Debug, Clone)]
 pub struct PlayerConfig {
     pub sts: Option<i32>,
-    /// e.g. `Ii(25,558,INPUT)` — evaluated in the IIFE closure with `INPUT` → the signature.
+    /// e.g. `Ii(25,558,INPUT)` - evaluated in the IIFE closure with `INPUT` → the signature.
     pub sig_expr: String,
-    /// e.g. `as` — the player's own URL class, used to run the `n` transform.
+    /// e.g. `as` - the player's own URL class, used to run the `n` transform.
     pub n_class: String,
 }
 
@@ -68,7 +68,7 @@ struct RawEntry {
 
 /// `sig` must be a single `name(int,int,INPUT)` call and `nClass` a bare identifier. These strings
 /// are spliced into JS that runs in a webview, so a malformed registry entry is a code-injection
-/// vector, not just a broken decipher — validate before it ever reaches [`super::extractor`].
+/// vector, not just a broken decipher - validate before it ever reaches [`super::extractor`].
 /// Mirrors Metrolist's `PlayerConfigParser.SIG_RE` / `NCLASS_RE`.
 fn valid_sig(s: &str) -> bool {
     let Some((name, rest)) = s.split_once('(') else { return false };
@@ -162,7 +162,7 @@ impl PlayerConfigStore {
         self.entries.read().unwrap().get(hash).cloned()
     }
 
-    /// Increments whenever the table changes — the cipher webview watches this to rebuild.
+    /// Increments whenever the table changes - the cipher webview watches this to rebuild.
     pub fn config_epoch(&self) -> u64 {
         self.epoch.load(Ordering::SeqCst)
     }
@@ -211,8 +211,8 @@ impl PlayerConfigStore {
             return false;
         }
         // Compare on the keys we actually decipher with: a rotation adds a hash (or changes an
-        // existing hash's expression), and either must rebuild the webview. Counting entries — the
-        // old signal — misses an in-place correction of the current player, which is precisely the
+        // existing hash's expression), and either must rebuild the webview. Counting entries - the
+        // old signal - misses an in-place correction of the current player, which is precisely the
         // case the self-heal path exists to recover from.
         let changed = {
             let mut entries = self.entries.write().unwrap();
@@ -250,7 +250,7 @@ mod tests {
         assert_eq!(c.sig_expr, "Ii(25,558,INPUT)");
         assert_eq!(c.n_class, "as");
         assert_eq!(c.sts, Some(20670));
-        // The alias must resolve to the same config — YouTube serves one player under several
+        // The alias must resolve to the same config - YouTube serves one player under several
         // hashes, and iframe_api can hand us either.
         assert_eq!(t.get("a3fe4c92").unwrap().sig_expr, "Ii(25,558,INPUT)");
     }
@@ -285,7 +285,7 @@ mod tests {
         let _ = parse_table(BUNDLED); // empty is fine; a parse panic would be a build bug
     }
 
-    /// These strings are spliced into JS in a webview — anything that isn't the exact expected
+    /// These strings are spliced into JS in a webview - anything that isn't the exact expected
     /// shape must be dropped rather than executed.
     #[test]
     fn rejects_injection_shaped_entries() {

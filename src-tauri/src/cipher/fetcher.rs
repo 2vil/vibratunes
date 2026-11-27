@@ -1,4 +1,4 @@
-//! `PlayerJsFetcher` (context/05 §1) — fetch and disk-cache YouTube's `player.js`.
+//! `PlayerJsFetcher` (context/05 §1) - fetch and disk-cache YouTube's `player.js`.
 //!
 //! `iframe_api` → player hash → `base.js`, cached under `cipher_cache/` with a 6-hour TTL. The
 //! hash pins the exact player we derive the STS from and decipher with (context/05 §3).
@@ -59,7 +59,7 @@ impl PlayerJsFetcher {
     }
 
     /// Delete cached `player_*.js` + `current_hash.txt` (NOT the shared config files). context/05.
-    /// Forces the next `fetch` to re-download — the self-heal path after a stale-signature 403.
+    /// Forces the next `fetch` to re-download - the self-heal path after a stale-signature 403.
     pub fn invalidate(&self) {
         if let Ok(entries) = std::fs::read_dir(&self.cache_dir) {
             for e in entries.flatten() {

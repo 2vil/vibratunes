@@ -8,7 +8,7 @@
 
 use serde::{Deserialize, Serialize};
 
-/// A track in the shared room. `id` is a raw YouTube videoId — the client resolves and plays it
+/// A track in the shared room. `id` is a raw YouTube videoId - the client resolves and plays it
 /// locally through the normal orchestrator; the server only relays it (context/19 Part B §6).
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Track {
@@ -77,7 +77,7 @@ pub struct Suggestion {
 }
 
 /// What kind of playback action this is. Flat struct (below) mirrors Metrolist's
-/// `PlaybackActionPayload` (context/19 §6.3) — one shape carries both the host command and the
+/// `PlaybackActionPayload` (context/19 §6.3) - one shape carries both the host command and the
 /// broadcast, with only the relevant fields populated per kind.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]

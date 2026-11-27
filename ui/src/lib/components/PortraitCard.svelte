@@ -6,13 +6,13 @@
 	//
 	// object-position sits above centre: press photos are shot with headroom, and a square-ish crop
 	// of the middle lands on a chest.
-	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { UserIcon } from '@hugeicons/core-free-icons';
-	import type { BrowseItem } from '$lib/api';
-	import { thumb } from '$lib/thumb';
-	import { setDragItem } from '$lib/dnd';
-	import { openItem } from '$lib/browse';
-	import PlaylistMenu from './PlaylistMenu.svelte';
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+	import { UserIcon } from "@hugeicons/core-free-icons";
+	import type { BrowseItem } from "$lib/api";
+	import { thumb } from "$lib/thumb";
+	import { setDragItem } from "$lib/dnd";
+	import { openItem } from "$lib/browse";
+	import PlaylistMenu from "./PlaylistMenu.svelte";
 
 	let { item }: { item: BrowseItem } = $props();
 
@@ -23,7 +23,8 @@
 	});
 	const sized = $derived(thumb(item.thumbnail, 400));
 	const src = $derived(attempt === 0 ? sized : item.thumbnail);
-	const imgFailed = () => (attempt = attempt === 0 && sized !== item.thumbnail ? 1 : 2);
+	const imgFailed = () =>
+		(attempt = attempt === 0 && sized !== item.thumbnail ? 1 : 2);
 	const hasArt = $derived(!!item.thumbnail && attempt < 2);
 </script>
 
@@ -37,12 +38,12 @@
 		onclick={() => openItem(item)}
 		onkeydown={(e) => {
 			if (e.target !== e.currentTarget) return;
-			if (e.key === 'Enter' || e.key === ' ') {
+			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
 				openItem(item);
 			}
 		}}
-		title={item.subtitle ? `${item.title} — ${item.subtitle}` : item.title}
+		title={item.subtitle ? `${item.title} - ${item.subtitle}` : item.title}
 	>
 		{#if hasArt}
 			<img
@@ -54,7 +55,9 @@
 				onerror={imgFailed}
 			/>
 		{:else}
-			<div class="flex h-full w-full items-center justify-center text-muted-foreground/40">
+			<div
+				class="flex h-full w-full items-center justify-center text-muted-foreground/40"
+			>
 				<HugeiconsIcon icon={UserIcon} class="h-10 w-10" />
 			</div>
 		{/if}
@@ -64,11 +67,15 @@
 			class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"
 		></div>
 		<div class="pointer-events-none absolute inset-x-0 bottom-0 p-3">
-			<div class="line-clamp-2 font-heading text-sm font-semibold leading-tight text-white">
+			<div
+				class="line-clamp-2 font-heading text-sm font-semibold leading-tight text-white"
+			>
 				{item.title}
 			</div>
 			{#if item.subtitle}
-				<div class="mt-0.5 truncate text-[0.6875rem] text-white/65">{item.subtitle}</div>
+				<div class="mt-0.5 truncate text-[0.6875rem] text-white/65">
+					{item.subtitle}
+				</div>
 			{/if}
 		</div>
 	</div>

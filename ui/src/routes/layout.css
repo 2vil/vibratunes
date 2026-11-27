@@ -18,7 +18,7 @@
    properties again and putting the transition back on <html>. */
 
 /* Desktop app on WebKitGTK: the webview can report no hover-capable pointer, so Tailwind v4's
-   default hover variant — gated behind @media (hover: hover) — never matches, silently killing
+   default hover variant - gated behind @media (hover: hover) - never matches, silently killing
    every hover: and group-hover: utility in the app. Redefine hover to fire on a real :hover
    regardless of the pointer heuristic. (This is a desktop app; hover always applies.) */
 @custom-variant hover (&:hover);
@@ -143,7 +143,7 @@
    mode-watcher `.dark` variant. Selected by toggling `.theme-<id>` on <html> (see theme.svelte.ts).
    --font-heading has no equivalent in the source themes, so it follows --font-sans to keep the
    theme's type coherent. ponytail: --tracking-normal/--spacing/--shadow-x..opacity from the source
-   themes are dropped — they're either Tailwind defaults or just the inputs the shadow values were
+   themes are dropped - they're either Tailwind defaults or just the inputs the shadow values were
    generated from. */
 
 .theme-catppuccin {
@@ -182,7 +182,7 @@
 	--font-sans: 'Montserrat Variable', sans-serif;
 	--font-heading: 'Montserrat Variable', sans-serif;
 	--font-serif: Georgia, serif;
-	/* ponytail: Fira Code isn't bundled — used if the system has it, else the stock mono stack.
+	/* ponytail: Fira Code isn't bundled - used if the system has it, else the stock mono stack.
 	   Install @fontsource-variable/fira-code if the four font-mono spots ever matter. */
 	--font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 	--shadow-2xs: 0px 4px 6px 0px hsl(240 30% 25% / 0.06);
@@ -1127,7 +1127,7 @@ html.art-tint.theme-amoled {
 	html,
 	body {
 		/* Chromium (WebView2, so Windows) rubber-bands the whole page when a wheel reaches the
-		   viewport with nothing left to scroll — and off Android it does that even along an axis
+		   viewport with nothing left to scroll - and off Android it does that even along an axis
 		   that never scrolls, picking the axis from whatever delta is left over. The titlebar has
 		   no scrollable ancestor at all, so every wheel over it lands there, and a hair of sideways
 		   delta slides the page left or right. The window is transparent and undecorated, so the
@@ -1161,7 +1161,7 @@ html.art-tint.theme-amoled {
 
 /* --- Motion & interaction polish --- */
 
-/* Loaded page content fades in over the skeleton/route swap it replaces. Opacity-only —
+/* Loaded page content fades in over the skeleton/route swap it replaces. Opacity-only -
    cheap to composite on WebKitGTK. */
 @keyframes content-in {
 	from { opacity: 0; }
@@ -1170,7 +1170,7 @@ html.art-tint.theme-amoled {
 
 /* The card grid behind Library, Local music, search results and "See all". Same reasoning as
    Shelf.svelte: WebKit keeps every card in style, layout and paint, and because it rasterizes in
-   tiles, one card's hover repaint re-rasterizes the images around it — so hovering gets slower the
+   tiles, one card's hover repaint re-rasterizes the images around it - so hovering gets slower the
    more cards there are, and a full library is hundreds. Skipping off-screen cards caps that at a
    screenful, and their thumbnails stop being fetched until you scroll near them.
    12.75rem is a card exactly (8px padding + 144px cover + 8px gap + title + subtitle + 8px); the
@@ -1181,7 +1181,7 @@ html.art-tint.theme-amoled {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, 10rem);
 	/* Pinned, not auto. An auto row is as tall as its tallest card, and a skipped card reports the
-	   contain-intrinsic-size below while a rendered one reports its real height — which is 1rem
+	   contain-intrinsic-size below while a rendered one reports its real height - which is 1rem
 	   shorter when the item has no subtitle. So any row straddling the skip boundary changed height
 	   as you scrolled, and since a hover is what forces the layout pass that reconciles it, hovering
 	   near that boundary reflowed the grid, moved the scroll position, and changed which cards were
@@ -1631,7 +1631,7 @@ input[type='range'].range:active::-webkit-slider-thumb {
 		padding-bottom: env(safe-area-inset-bottom, 0px);
 	}
 
-	/* Native feel: the webview is not a web page — text selection handles fight the touch
+	/* Native feel: the webview is not a web page - text selection handles fight the touch
 	   gestures and long-press context menus shadow the app's own menus. */
 	body,
 	button,

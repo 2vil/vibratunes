@@ -6,17 +6,17 @@
 	//
 	// The sheets are full-size siblings behind an opaque cover, scaled narrower and lifted, so only
 	// their top strips are ever visible. Transform-only, so the fan composites.
-	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { PlayIcon, ListRestartIcon } from '@hugeicons/core-free-icons';
-	import LogoMark from './LogoMark.svelte';
-	import VibratunesLoader from './VibratunesLoader.svelte';
-	import { ON_REPEAT_ID } from '$lib/api';
-	import type { BrowseItem } from '$lib/api';
-	import { thumb } from '$lib/thumb';
-	import { setDragItem } from '$lib/dnd';
-	import { openItem, playItem } from '$lib/browse';
-	import PlaylistMenu from './PlaylistMenu.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+	import { PlayIcon, ListRestartIcon } from "@hugeicons/core-free-icons";
+	import LogoMark from "./LogoMark.svelte";
+	import VibratunesLoader from "./VibratunesLoader.svelte";
+	import { ON_REPEAT_ID } from "$lib/api";
+	import type { BrowseItem } from "$lib/api";
+	import { thumb } from "$lib/thumb";
+	import { setDragItem } from "$lib/dnd";
+	import { openItem, playItem } from "$lib/browse";
+	import PlaylistMenu from "./PlaylistMenu.svelte";
+	import { t } from "$lib/i18n.svelte";
 
 	let { item }: { item: BrowseItem } = $props();
 
@@ -29,7 +29,8 @@
 	});
 	const sized = $derived(thumb(item.thumbnail, 400));
 	const src = $derived(attempt === 0 ? sized : item.thumbnail);
-	const imgFailed = () => (attempt = attempt === 0 && sized !== item.thumbnail ? 1 : 2);
+	const imgFailed = () =>
+		(attempt = attempt === 0 && sized !== item.thumbnail ? 1 : 2);
 	const hasArt = $derived(!!item.thumbnail && attempt < 2 && !onRepeat);
 
 	let busy = $state(false);
@@ -56,12 +57,12 @@
 		onclick={() => openItem(item)}
 		onkeydown={(e) => {
 			if (e.target !== e.currentTarget) return;
-			if (e.key === 'Enter' || e.key === ' ') {
+			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
 				openItem(item);
 			}
 		}}
-		title={item.subtitle ? `${item.title} — ${item.subtitle}` : item.title}
+		title={item.subtitle ? `${item.title} - ${item.subtitle}` : item.title}
 	>
 		<div class="relative aspect-square w-full">
 			<!-- The sheets don't lift on hover any more, for the same reason MediaCard's cover doesn't
@@ -74,7 +75,9 @@
 			></div>
 			<!-- No resting shadow: see MediaCard. The sheet edges above are what gives the card
 			     its depth, and they cost a transform instead of a gaussian blur per card. -->
-			<div class="relative h-full w-full overflow-hidden rounded-xl bg-muted">
+			<div
+				class="relative h-full w-full overflow-hidden rounded-xl bg-muted"
+			>
 				{#if hasArt}
 					<img
 						{src}
@@ -91,7 +94,10 @@
 							: 'text-muted-foreground/20'}"
 					>
 						{#if onRepeat}
-							<HugeiconsIcon icon={ListRestartIcon} class="h-10 w-10" />
+							<HugeiconsIcon
+								icon={ListRestartIcon}
+								class="h-10 w-10"
+							/>
 						{:else}
 							<LogoMark class="size-3/4" />
 						{/if}
@@ -99,16 +105,20 @@
 				{/if}
 				<button
 					data-card-play
-					class="absolute bottom-2 right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-lg transition-opacity duration-200 ease-out focus-visible:shown group-hover:shown {busy ? 'shown!' : ''}"
+					class="absolute bottom-2 right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-lg transition-opacity duration-200 ease-out focus-visible:shown group-hover:shown {busy
+						? 'shown!'
+						: ''}"
 					disabled={busy}
-					aria-label={t('a11y.play_item', { title: item.title })}
+					aria-label={t("a11y.play_item", { title: item.title })}
 					onclick={(e) => {
 						e.stopPropagation();
 						play();
 					}}
 				>
 					{#if busy}
-						<VibratunesLoader class="size-6 text-primary-foreground" />
+						<VibratunesLoader
+							class="size-6 text-primary-foreground"
+						/>
 					{:else}
 						<HugeiconsIcon icon={PlayIcon} class="h-4 w-4" />
 					{/if}
@@ -118,7 +128,9 @@
 		<div class="mt-2.5 min-w-0">
 			<div class="truncate text-sm font-medium">{item.title}</div>
 			{#if item.subtitle}
-				<div class="truncate text-xs text-muted-foreground">{item.subtitle}</div>
+				<div class="truncate text-xs text-muted-foreground">
+					{item.subtitle}
+				</div>
 			{/if}
 		</div>
 	</div>

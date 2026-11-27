@@ -4,7 +4,7 @@
 //! is `LOCAL:<absolute path>`, an album is a `BrowseItem` with id `LOCALALBUM:<key>`, and both are
 //! intercepted before anything YouTube-shaped runs: `AppState::resolve` for playback,
 //! `commands::get_album` for the album page. So queueing, gapless, shuffle, media keys, Shortcuts,
-//! and drag-and-drop work on local music without knowing it exists — and work offline, because
+//! and drag-and-drop work on local music without knowing it exists - and work offline, because
 //! nothing on this path touches the network.
 
 use std::collections::{HashMap, HashSet};
@@ -21,7 +21,7 @@ pub const SONG_PREFIX: &str = "LOCAL:";
 /// A local album's synthetic browseId: this prefix + `LocalTrack::album_key`.
 pub const ALBUM_PREFIX: &str = "LOCALALBUM:";
 /// A local artist's synthetic browseId: this prefix + the artist name exactly as tagged. No key or
-/// digest — the name is the id, so the page finds its tracks by matching it back.
+/// digest - the name is the id, so the page finds its tracks by matching it back.
 pub const ARTIST_PREFIX: &str = "LOCALARTIST:";
 /// Where the folder list lives (JSON array of absolute paths).
 const FOLDERS_SETTING: &str = "local_folders";
@@ -31,7 +31,7 @@ const FOLDERS_SETTING: &str = "local_folders";
 const SCAN_VERSION: &str = "7";
 const SCAN_VERSION_SETTING: &str = "local_scan_version";
 
-/// Extensions we pick up. Playback itself is mpv, which decodes far more than this — the list is
+/// Extensions we pick up. Playback itself is mpv, which decodes far more than this - the list is
 /// only about what a music folder plausibly holds, so a scan doesn't try to probe every stray file.
 const AUDIO_EXT: [&str; 15] = [
     "mp3", "flac", "m4a", "m4b", "aac", "ogg", "oga", "opus", "wav", "wma", "aiff", "aif", "ape",
@@ -58,7 +58,7 @@ pub fn song_path(video_id: &str) -> Option<&str> {
     video_id.strip_prefix(SONG_PREFIX)
 }
 
-/// What the Local tab renders. `removed` is what vanished from disk since the last scan — the UI
+/// What the Local tab renders. `removed` is what vanished from disk since the last scan - the UI
 /// prunes those ids out of Shortcuts and recents immediately instead of leaving dead tiles.
 #[derive(Debug, Default, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -86,7 +86,7 @@ fn set_folders(db: &Db, folders: &[String]) {
 }
 
 /// Add a folder (no-op if it's already watched, or nested inside one that is). Nesting is compared
-/// by path component, not by string prefix — `\` separators and a trailing slash both make the
+/// by path component, not by string prefix - `\` separators and a trailing slash both make the
 /// textual version wrong, and a missed nesting means every file in it is scanned twice.
 pub fn add_folder(db: &Db, path: String) {
     let mut list = folders(db);
@@ -111,7 +111,7 @@ pub fn remove_folder(db: &Db, path: &str) {
 /// Re-read the watched folders and return the whole library. Files whose mtime hasn't moved keep
 /// their stored tags, so a rescan of an unchanged collection is a stat() per file.
 ///
-/// Blocking (disk IO + tag parsing) — call it from `spawn_blocking`.
+/// Blocking (disk IO + tag parsing) - call it from `spawn_blocking`.
 pub fn scan(db: &Db, covers_dir: &Path) -> LocalLibrary {
     let before: HashSet<String> = card_ids_of(&db.local_tracks(None));
     let known = db.local_mtimes();
@@ -140,7 +140,7 @@ pub fn scan(db: &Db, covers_dir: &Path) -> LocalLibrary {
 
     let gone: Vec<String> = known.keys().filter(|p| !found.contains(*p)).cloned().collect();
     if !gone.is_empty() {
-        tracing::info!(count = gone.len(), "local files disappeared — dropped from the library");
+        tracing::info!(count = gone.len(), "local files disappeared - dropped from the library");
         db.delete_local_tracks(&gone);
     }
 
@@ -163,7 +163,7 @@ pub fn scan(db: &Db, covers_dir: &Path) -> LocalLibrary {
 /// Recurse into `dir`, calling `on_file` for every audio file. Errors (permissions, a folder that
 /// was unplugged) are skipped rather than failing the scan.
 ///
-/// Symlinks are followed — a music folder full of links to an external drive is a normal setup, and
+/// Symlinks are followed - a music folder full of links to an external drive is a normal setup, and
 /// refusing to follow them means those users see an empty library. `seen` (canonical paths) is what
 /// keeps a link that points back up the tree from recursing forever; the depth cap is the backstop
 /// for paths that can't be canonicalized.
@@ -202,7 +202,7 @@ fn mtime_of(path: &Path) -> i64 {
 }
 
 /// Read one file's tags. Missing tags fall back to the filename and the parent folder, and a file
-/// lofty can't parse at all is still listed from its filename — mpv plays far more formats than
+/// lofty can't parse at all is still listed from its filename - mpv plays far more formats than
 /// any tag reader understands, and a track that silently never appears is worse than one with a
 /// thin label.
 fn read_track(file: &Path, path: &str, mtime: i64, covers_dir: &Path) -> LocalTrack {
@@ -327,7 +327,7 @@ fn tagged_album_key(album: &str, album_artist: Option<&str>, dir: Option<&Path>)
 }
 
 /// A stable, readable album id: `artist--album`, sanitized to a safe filename (it doubles as the
-/// extracted cover's name). Deliberately not a hash — this id is persisted in Shortcuts, so it has
+/// extracted cover's name). Deliberately not a hash - this id is persisted in Shortcuts, so it has
 /// to survive across releases.
 fn album_key(artist: &str, album: &str) -> String {
     let raw = format!("{artist}--{album}");
@@ -351,7 +351,7 @@ fn folder_key(dir: Option<&Path>, name: &str) -> String {
     format!("dir-{}-{}", short_digest(&path), sanitize(name))
 }
 
-/// Lowercase, keep letters and digits (any script — collapsing non-ASCII would make every Japanese
+/// Lowercase, keep letters and digits (any script - collapsing non-ASCII would make every Japanese
 /// album the same id), everything else becomes `-`. All the characters that survive are legal in a
 /// filename on every platform we ship to.
 fn sanitize(raw: &str) -> String {
@@ -364,7 +364,7 @@ fn sanitize(raw: &str) -> String {
 }
 
 /// Short, stable hash of a string (FNV-1a, hex). Only used to keep same-named folders apart, so
-/// it needs to be deterministic across releases — which `DefaultHasher` explicitly is not.
+/// it needs to be deterministic across releases - which `DefaultHasher` explicitly is not.
 fn short_digest(s: &str) -> String {
     let mut h: u64 = 0xcbf2_9ce4_8422_2325;
     for b in s.as_bytes() {
@@ -439,7 +439,7 @@ pub fn to_song(t: &LocalTrack) -> SongItem {
         album: Some(t.album.clone()),
         // No `album_id`: that field is what puts "Go to album" in a track's ⋯ menu, and a file on
         // this disk has no album page worth offering there. The Local tab's album grid is how you
-        // get to one. The album *name* stays — scrobbling and lyrics matching both use it.
+        // get to one. The album *name* stays - scrobbling and lyrics matching both use it.
         album_id: None,
         // 0 means "the tag reader couldn't say"; mpv fills the real length in once it plays.
         duration: (t.duration_secs > 0).then(|| fmt_duration(t.duration_secs)),
@@ -494,7 +494,7 @@ fn albums_of(tracks: &[LocalTrack]) -> Vec<BrowseItem> {
 /// Future") belongs to whoever it names first: a circle per guest list is one-song noise, and the
 /// track's row still shows the whole line.
 ///
-/// ponytail: splits on ";" and the feat. markers only. "," and "&" are left alone on purpose —
+/// ponytail: splits on ";" and the feat. markers only. "," and "&" are left alone on purpose -
 /// they sit inside real names ("Tyler, The Creator", "Earth, Wind & Fire") often enough that
 /// splitting on them invents worse artists than it merges.
 pub(crate) fn primary_artist(artist: &str) -> &str {
@@ -525,7 +525,7 @@ fn artists_of(tracks: &[LocalTrack]) -> Vec<BrowseItem> {
                 id: format!("{ARTIST_PREFIX}{name}"),
                 title: (*name).to_string(),
                 subtitle: Some(format!("{} song{}", n, if n == 1 { "" } else { "s" })),
-                // The face is the first track that has artwork — an artist has no portrait of
+                // The face is the first track that has artwork - an artist has no portrait of
                 // their own on disk, so a cover from their music is the closest thing.
                 thumbnail: ts.iter().find_map(|t| t.cover.clone()),
                 duration: None,
@@ -544,7 +544,7 @@ fn artists_of(tracks: &[LocalTrack]) -> Vec<BrowseItem> {
 
 /// Who an album is by. The AlbumArtist tag wins when the files carry one and agree on it: an album
 /// with guests on half its tracks is still that artist's, and calling it a compilation was issue
-/// #96. Failing that, the one artist on it, or "Various artists" — a folder of loose downloads is
+/// #96. Failing that, the one artist on it, or "Various artists" - a folder of loose downloads is
 /// grouped as one album (see `read_track`), and claiming it belongs to whichever track happened to
 /// be first would be wrong on most of its rows.
 fn album_artist(tracks: &[&LocalTrack]) -> String {
@@ -572,7 +572,7 @@ pub fn album_page(db: &Db, album_key: &str) -> AlbumPage {
 
 /// One local artist's page: everything of theirs on this disk, grouped by album (the query's own
 /// order). It renders through the *album* route, because a file on disk has no YouTube channel
-/// behind it — nothing the real artist page offers (subscribe, radio, related) applies.
+/// behind it - nothing the real artist page offers (subscribe, radio, related) applies.
 pub fn artist_page(db: &Db, name: &str) -> AlbumPage {
     let tracks: Vec<LocalTrack> =
         db.local_tracks(None).into_iter().filter(|t| primary_artist(&t.artist) == name).collect();
@@ -618,7 +618,7 @@ fn fmt_duration(secs: i64) -> String {
     }
 }
 
-/// Everything the player needs for a local file. The "stream url" is just the path — mpv opens it
+/// Everything the player needs for a local file. The "stream url" is just the path - mpv opens it
 /// directly, so playback works with no network at all. Errs when the file is gone (the user
 /// deleted it since the scan): the queue skips it like any other unplayable track.
 pub fn playback_data(video_id: &str, path: &str) -> Result<crate::orchestrator::PlaybackData, ()> {
@@ -652,7 +652,7 @@ pub fn playback_data(video_id: &str, path: &str) -> Result<crate::orchestrator::
 /// The asset protocol's static scope is empty on purpose: it can't name folders the user picks at
 /// runtime, and the usual `"**"` shortcut would put every file on the machine behind a URL the page
 /// could fetch. Both the stored path and its canonical form are allowed, because the scope check
-/// canonicalizes what it is asked about — without that, a music folder that is a symlink to an
+/// canonicalizes what it is asked about - without that, a music folder that is a symlink to an
 /// external drive gets its covers refused.
 pub fn allow_covers(app: &tauri::AppHandle, songs: &[SongItem]) {
     use tauri::Manager;
@@ -683,7 +683,7 @@ pub fn allow_music_paths(app: &tauri::AppHandle, db: &Db) {
     }
 }
 
-/// The covers directory, alongside the SQLite file (not inside the audio cache — "Clear caches"
+/// The covers directory, alongside the SQLite file (not inside the audio cache - "Clear caches"
 /// must not wipe artwork that only a full re-tag would regenerate).
 pub fn covers_dir(app: &tauri::AppHandle) -> PathBuf {
     use tauri::Manager;
@@ -807,7 +807,7 @@ mod tests {
             track("/m/e.mp3", "Tyler, The Creator", "Igor", "tyler--igor"),
         ];
         let artists = artists_of(&tracks);
-        assert_eq!(artists.len(), 2, "Drake and Tyler — no 21 Savage, no Future");
+        assert_eq!(artists.len(), 2, "Drake and Tyler - no 21 Savage, no Future");
         assert_eq!(artists[0].kind, "artist", "which is what draws it as a circle");
         assert_eq!(artists[0].title, "Drake");
         assert_eq!(artists[0].subtitle.as_deref(), Some("4 songs"));
@@ -828,7 +828,7 @@ mod tests {
             split_filename("PARTYNEXTDOOR, Drake - CN TOWER"),
             (Some("PARTYNEXTDOOR, Drake".into()), "CN TOWER".into())
         );
-        // Only the first separator splits — the rest belongs to the title.
+        // Only the first separator splits - the rest belongs to the title.
         assert_eq!(
             split_filename("Artist - Song - Live"),
             (Some("Artist".into()), "Song - Live".into())
@@ -849,7 +849,7 @@ mod tests {
 
         // A real album takes the picture sitting next to its tracks.
         assert!(cover_for("band--album", None, Some(dir.as_path()), &covers).is_some());
-        // A file with no album tag and no picture of its own gets nothing — not the folder's
+        // A file with no album tag and no picture of its own gets nothing - not the folder's
         // cover.jpg, and not whatever a neighbouring download extracted earlier.
         assert_eq!(embedded_cover("file-deadbeef", None, &covers), None);
         std::fs::remove_dir_all(&dir).ok();

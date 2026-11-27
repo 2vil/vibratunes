@@ -18,7 +18,7 @@ export function getCached<T>(key: string): T | null {
 
 export function putCached(key: string, data: unknown): void {
 	if (store.size >= MAX_ENTRIES && !store.has(key)) {
-		// Map iterates in insertion order — evict the oldest entry.
+		// Map iterates in insertion order - evict the oldest entry.
 		const oldest = store.keys().next().value;
 		if (oldest !== undefined) store.delete(oldest);
 	}
@@ -42,7 +42,7 @@ export function invalidateCachedPrefix(prefix: string): void {
 	}
 }
 
-/** Drop everything — browse data is per-account, so sign-in/out makes all of it stale. */
+/** Drop everything - browse data is per-account, so sign-in/out makes all of it stale. */
 export function clearCached(): void {
 	store.clear();
 }

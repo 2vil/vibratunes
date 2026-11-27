@@ -1,7 +1,7 @@
 // One job: turn the playing track's cover into an accent colour the rest of the theme can use.
 // Used only when "Adapt colors to artwork" is on (theme.svelte.ts).
 //
-// The picking is deliberately crude — 32x32, buckets, one winner. A cover has one or two colours
+// The picking is deliberately crude - 32x32, buckets, one winner. A cover has one or two colours
 // that read as "its" colour, and a 3-bit-per-channel histogram finds them; anything smarter
 // (k-means, palette libraries) is a dependency and a frame budget for a result nobody can tell
 // apart at accent size.

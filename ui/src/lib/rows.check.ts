@@ -1,4 +1,4 @@
-// Self-check for the row window (`rows.ts`). Same deal as `queue.check.ts` — no test runner in
+// Self-check for the row window (`rows.ts`). Same deal as `queue.check.ts` - no test runner in
 // `ui/`, node 22 runs TypeScript directly:
 //
 //     node --experimental-strip-types ui/src/lib/rows.check.ts

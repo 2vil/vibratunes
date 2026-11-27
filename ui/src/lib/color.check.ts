@@ -1,5 +1,5 @@
 // Self-check for the pure colour maths in `color.ts`. No test runner in `ui/` (see
-// personal.check.ts) — node 22 runs TypeScript directly:
+// personal.check.ts) - node 22 runs TypeScript directly:
 //
 //     node --experimental-strip-types ui/src/lib/color.check.ts
 //
@@ -24,7 +24,7 @@ eq(hsvToHex(hexToHsv('#F00')!), '#ff0000', 'shorthand + case');
 eq(hexToHsv('nope'), null, 'invalid');
 eq(hexToHsv('#12345'), null, 'wrong length');
 
-// Hue is preserved on greys only as a formality — saturation 0 means it can't matter.
+// Hue is preserved on greys only as a formality - saturation 0 means it can't matter.
 eq(hexToHsv('#808080')!.s, 0, 'grey has no saturation');
 
 // Out-of-range HSV clamps instead of wrapping to a wrong colour.

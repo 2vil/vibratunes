@@ -14,7 +14,7 @@ use tauri::{AppHandle, Emitter, Manager};
 
 const CHUNK_SIZE: u64 = 2 * 1024 * 1024; // 2 MiB chunks
 /// Transient-failure retries per 2 MiB chunk (tunnel blip, packet loss). With the growing pause
-/// this is ~50 s of patience per chunk — enough to outlive a watchdog rebuild.
+/// this is ~50 s of patience per chunk - enough to outlive a watchdog rebuild.
 const CHUNK_RETRIES: u32 = 4;
 const DEFAULT_MAX_CONCURRENT_DOWNLOADS: usize = 3;
 /// While the tunnel is up, this is the ceiling for parallel downloads: the smoltcp/WireGuard
@@ -191,7 +191,7 @@ impl DownloadManager {
         subfolder: Option<&str>,
     ) -> Option<PathBuf> {
         let base_name = sanitize_filename(title);
-        // Collision-disambiguated files are named "Title - Artist.ext" — try both stems.
+        // Collision-disambiguated files are named "Title - Artist.ext" - try both stems.
         let artist_stem = sanitize_filename(artist);
         let stems: Vec<String> = if artist_stem.is_empty() || artist_stem == base_name {
             vec![base_name]
@@ -222,7 +222,7 @@ impl DownloadManager {
         for dir in dirs_to_check {
             for stem in &stems {
                 for ext in &exts {
-                    // The naming standard is "Title.ext" — no id suffix. The comment tag carrying the
+                    // The naming standard is "Title.ext" - no id suffix. The comment tag carrying the
                     // video id is the strong match, but files written before the comment landed carry
                     // none: an exact-title file with an empty comment is accepted too (a different
                     // track sharing this exact title would collide only by coincidence).
@@ -388,7 +388,7 @@ impl DownloadManager {
     pub fn set_concurrency(&self, n: usize) {
         use std::sync::atomic::Ordering;
         // Persist the user's choice (base), and apply the tunnel-capped value to the semaphore
-        // only — the cap is transient, and the slider must survive it untouched.
+        // only - the cap is transient, and the slider must survive it untouched.
         let base = n.clamp(1, 5);
         let n = self.effective_concurrency(base);
         let old = self.current_concurrency.swap(n, Ordering::SeqCst);
@@ -712,8 +712,8 @@ impl DownloadManager {
     }
 
     /// Wraps [`run_download`] with automatic retries. Through the tunnel, network failures are
-    /// the norm rather than the exception — the WireGuard session dies under load and the
-    /// watchdog rebuilds it shortly after — so a failure is a reason to try again, not to give
+    /// the norm rather than the exception - the WireGuard session dies under load and the
+    /// watchdog rebuilds it shortly after - so a failure is a reason to try again, not to give
     /// up. The card shows queued-with-reason while backing off, and becomes Failed only after
     /// [`MAX_DOWNLOAD_ATTEMPTS`] misses.
     async fn run_download_with_retries(
@@ -853,7 +853,7 @@ impl DownloadManager {
 
         // 1. Resolve stream via orchestrator with respect to disabled stream clients
         // The manager registers `Arc<AppState>` (`app.manage(app_state.clone())`), so the type
-        // parameter must match — a plain `AppState` here never resolves and panics, killing the
+        // parameter must match - a plain `AppState` here never resolves and panics, killing the
         // download task with its card stuck on "Connecting…" forever.
         let app_state = self.app.state::<Arc<crate::state::AppState>>();
         let disabled_clients = app_state.disabled_clients();
@@ -871,7 +871,7 @@ impl DownloadManager {
         let base_name = sanitize_filename(&title);
         // The naming standard is "Title.ext". Two different videos may share a title ("Hello"),
         // and the second one must not overwrite the first's file: when the plain name is taken by
-        // another video, ours goes to "Title - Artist.ext" — and if even that is taken, the id
+        // another video, ours goes to "Title - Artist.ext" - and if even that is taken, the id
         // suffix is the last resort. The scanner and the existing-file match read them all back.
         let artist_stem = sanitize_filename(&artist);
         let stems = [
@@ -938,10 +938,10 @@ impl DownloadManager {
 
             // One chunk = one ranged request streamed into the part file. Transient failures
             // (tunnel blip, packet loss through the WireGuard stack) retry the SAME range with a
-            // growing pause — the watchdog rebuilds the interface within ~40 s, so a patient
+            // growing pause - the watchdog rebuilds the interface within ~40 s, so a patient
             // chunk outlives the outage. The file is truncated back to `pos` before each retry:
             // bytes of a failed attempt must not leak into the stream. Hard errors (HTTP status,
-            // server ignoring Range) fail the task — its own retry re-resolves the URL.
+            // server ignoring Range) fail the task - its own retry re-resolves the URL.
             let mut chunk_retries: u32 = 0;
             let chunk_bytes: u64 = loop {
                 if self.is_cancelled(&task_id) {
@@ -1558,7 +1558,7 @@ fn scan_download_dir(dir: &Path) -> Vec<crate::db::DownloadedTrack> {
                     let tag = tagged.primary_tag().or_else(|| tagged.first_tag());
                     let comment = tag.and_then(|t| t.comment()).map(|c| c.into_owned());
 
-                    // The id lives in the comment tag — every download writes it, and the naming
+                    // The id lives in the comment tag - every download writes it, and the naming
                     // standard ("Title.ext") carries none. An 11-character id is unmistakable.
                     let video_id = comment.filter(|c| c.len() == 11);
                     let Some(video_id) = video_id else { continue };

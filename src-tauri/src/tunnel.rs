@@ -3,25 +3,25 @@
 //! YT Music is not served in every country; users there need their traffic to come from an IP in
 //! a served one. The app already routes everything through the `proxy` setting (#241), so what is
 //! missing is a provider: the user imports any WireGuard `.conf` (Mullvad, Proton, a `wgcf`-made
-//! WARP profile — their pick), the app embeds a userspace WireGuard engine over it and points the
-//! proxy plumbing at that. Nothing is system-wide: no TUN device, no routes, no root — the two
+//! WARP profile - their pick), the app embeds a userspace WireGuard engine over it and points the
+//! proxy plumbing at that. Nothing is system-wide: no TUN device, no routes, no root - the two
 //! front ends listen on 127.0.0.1 and only this app's traffic is pointed at them. Desktop and
 //! Android alike.
 //!
 //! Three pieces, in dependency order:
 //! 1. **The imported config** ([`imported_conf`]): the `.conf` text lives in the database (it
 //!    holds the private key, so it must never cross into the webview and must not join
-//!    `UI_SETTINGS`). A `DNS` line and a `PersistentKeepalive` are injected when missing — the
+//!    `UI_SETTINGS`). A `DNS` line and a `PersistentKeepalive` are injected when missing - the
 //!    engine resolves domain targets through the tunnel, and a missing keepalive lets NAT boxes
 //!    on flaky networks drop the session silently.
-//! 2. **The engine** ([`start_tunnel`]): `wgproxyrs` — a userspace WireGuard engine (boringtun +
+//! 2. **The engine** ([`start_tunnel`]): `wgproxyrs` - a userspace WireGuard engine (boringtun +
 //!    smoltcp) that keeps the session alive, re-handshakes on its own and resolves domain targets
 //!    through the tunnel's own DNS. Chosen after the first engine this module carried
 //!    (`tokio-wireguard`) dropped its session mid-flight on CGNAT-flaky networks no matter how it
 //!    was wired; the same probe battery that killed it runs clean on `wgproxyrs` for as long as
 //!    it was run.
 //! 3. **The fronts**: `wgproxyrs` serves SOCKS5 (`run_socks5_listener`) and HTTP CONNECT
-//!    (`run_http_listener`) over one engine — mpv needs the latter, because libavformat only
+//!    (`run_http_listener`) over one engine - mpv needs the latter, because libavformat only
 //!    speaks `http://` proxies (see `player::set_http_proxy`).
 //!
 //! A watchdog ([`spawn_watchdog`]) probes the front every so often and rebuilds the interface on
@@ -228,7 +228,7 @@ pub(crate) fn http_url(port: u16) -> String {
 }
 
 /// One place knows how to re-point the whole app at the tunnel: the shared reqwest client pool
-/// (`http.rs`), mpv's own http proxy (HTTP CONNECT front — see [`http_url`]), and the InnerTube
+/// (`http.rs`), mpv's own http proxy (HTTP CONNECT front - see [`http_url`]), and the InnerTube
 /// transport behind the orchestrator.
 fn apply_tunnel_proxy(app: AppHandle, socks: u16, http: u16) {
     let socks_url = socks_url(socks);
@@ -262,7 +262,7 @@ fn apply_manual_proxy(app: AppHandle, proxy: Option<&str>) {
 }
 
 /// Watchdog interval and how the health probe talks to YouTube through the front. It probes the
-/// same way the app's own clients do — through the SOCKS5 front — so a dead front is a dead
+/// same way the app's own clients do - through the SOCKS5 front - so a dead front is a dead
 /// tunnel for the probe too.
 const WATCHDOG_INTERVAL: Duration = Duration::from_secs(20);
 const WATCHDOG_PROBE_URL: &str = "https://1.1.1.1/cdn-cgi/trace";
@@ -274,7 +274,7 @@ const WATCHDOG_STRIKES: u32 = 2;
 /// The WireGuard session is not bulletproof: handshakes on flaky networks (CGNAT, mobile data)
 /// sometimes die mid-session and do not always come back on their own. This loop probes the front
 /// every [`WATCHDOG_INTERVAL`] and, after [`WATCHDOG_STRIKES`] consecutive misses, tears the
-/// interface down and rebuilds it from the same imported config — the ports may change, so every
+/// interface down and rebuilds it from the same imported config - the ports may change, so every
 /// consumer is re-pointed (`apply_tunnel_proxy`). The user never sees more than a brief
 /// `connecting` blip.
 fn spawn_watchdog(app: AppHandle, conf: String, shutdown: watch::Receiver<bool>) {
@@ -466,7 +466,7 @@ mod tests {
 
     #[test]
     fn normalize_leaves_complete_configs_alone() {
-        // DNS belongs to [Interface]; the keepalive to [Peer] — same placement the injector uses.
+        // DNS belongs to [Interface]; the keepalive to [Peer] - same placement the injector uses.
         let conf = sample_conf()
             .replace("Address = 172.16.0.2/32", "Address = 172.16.0.2/32\nDNS = 9.9.9.9");
         let conf = format!("{conf}\nPersistentKeepalive = 15\n");

@@ -1,6 +1,6 @@
 // Self-check for the placement arithmetic behind `anchorMenu` / `fitMenu`. Run it:
 // `node src/lib/menu.check.ts` from ui/.
-// ponytail: a script over a test runner — the UI has no test setup and this is the only piece of
+// ponytail: a script over a test runner - the UI has no test setup and this is the only piece of
 // menu.ts that does arithmetic worth getting wrong. `layout` isn't exported, so these go through
 // `place`, the same call `fitMenu` makes with a measured popup.
 import { anchorMenu, ctxHost, place } from './menu.ts';

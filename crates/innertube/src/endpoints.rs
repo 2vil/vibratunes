@@ -42,9 +42,9 @@ pub const COMMENT_ACTION_PATH: &str = "comment/perform_comment_action";
 impl InnerTube {
     /// `/player` for one client. context/03, context/06.
     ///
-    /// `sts` — signature timestamp from the deciphering player.js (context/05); sent as
+    /// `sts` - signature timestamp from the deciphering player.js (context/05); sent as
     /// `playbackContext.contentPlaybackContext.signatureTimestamp` so ciphered clients return
-    /// usable formats. `po_token` — the session/streaming PoToken (context/04); sent as
+    /// usable formats. `po_token` - the session/streaming PoToken (context/04); sent as
     /// `serviceIntegrityDimensions.poToken` for web clients. Both `None` for the plain
     /// direct-URL clients that need neither.
     pub async fn player(
@@ -115,7 +115,7 @@ impl InnerTube {
     //
     // Gated at the fetch boundary rather than at each queue/search call site: every consumer
     // inherits it and there is no second policy to keep in sync. A row is a video when YouTube's
-    // own `musicVideoType` says so (see `metadata::is_video_row`) — never by matching the title.
+    // own `musicVideoType` says so (see `metadata::is_video_row`) - never by matching the title.
 
     fn drop_video_songs(&self, items: &mut Vec<SongItem>) {
         if self.hide_videos() {
@@ -682,7 +682,7 @@ impl InnerTube {
     }
 
     /// Home feed (`FEmusic_home`). `params` is a mood/genre chip token from a previous home
-    /// response — pass it to get that chip's filtered feed. context/08.
+    /// response - pass it to get that chip's filtered feed. context/08.
     pub async fn home(
         &self,
         client: &YouTubeClient,
@@ -757,7 +757,7 @@ impl InnerTube {
         self.library_grid(client, "FEmusic_library_privately_owned_releases").await
     }
 
-    /// Library artists (`FEmusic_library_corpus_track_artists`) — the artists behind the songs and
+    /// Library artists (`FEmusic_library_corpus_track_artists`) - the artists behind the songs and
     /// albums in your library, which is what YouTube Music's own Artists tab shows (subscriptions
     /// live under `FEmusic_library_corpus_artists`). context/08. Needs login.
     pub async fn library_artists(&self, client: &YouTubeClient) -> Result<Vec<BrowseItem>, Error> {
@@ -776,7 +776,7 @@ impl InnerTube {
 
     /// A playlist or album page by browseId (`VL…` / `MPRE…`). context/08.
     ///
-    /// `sort` asks YouTube to order the tracks — see `PlaylistSort::params`. Passing `None` gets
+    /// `sort` asks YouTube to order the tracks - see `PlaylistSort::params`. Passing `None` gets
     /// whatever order the account already has the list in, which is the one thing a fresh visit
     /// wants: it is what YouTube Music would show.
     pub async fn playlist(
@@ -813,7 +813,7 @@ impl InnerTube {
         if video.contains(&true) {
             if let Some(pl) = &page.playlist_id {
                 match self.playlist(client, &format!("VL{pl}"), None).await {
-                    // ponytail: positional match, guarded on equal track counts — the OLAK
+                    // ponytail: positional match, guarded on equal track counts - the OLAK
                     // playlist is the same album in the same order. Mismatch → keep the MV ids.
                     Ok(audio) if audio.items.len() == page.items.len() => {
                         for ((item, is_video), audio_item) in
@@ -1005,7 +1005,7 @@ impl InnerTube {
 
     // --- lyrics (context/08 §lyrics; browseId comes from `next`) -----------------------------
 
-    /// Line-synced lyrics. `client` must be a mobile identity (`LYRICS_TIMED_CLIENT`) — web
+    /// Line-synced lyrics. `client` must be a mobile identity (`LYRICS_TIMED_CLIENT`) - web
     /// clients never return `timedLyricsData`. Empty vec = track has no timed lyrics.
     pub async fn lyrics_timed(
         &self,
@@ -1107,7 +1107,7 @@ impl InnerTube {
             Ok(())
         } else {
             Err(Error::Other(
-                "YouTube turned down the library change — reopen the list and try again.".into(),
+                "YouTube turned down the library change - reopen the list and try again.".into(),
             ))
         }
     }

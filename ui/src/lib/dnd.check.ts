@@ -1,4 +1,4 @@
-// Self-check for the drag edge-scroll ramp in `dnd.ts`. Same deal as `personal.check.ts` — no test
+// Self-check for the drag edge-scroll ramp in `dnd.ts`. Same deal as `personal.check.ts` - no test
 // runner in `ui/`, node 22 runs TypeScript directly:
 //
 //     node --experimental-strip-types ui/src/lib/dnd.check.ts
@@ -26,7 +26,7 @@ ok(v(BOTTOM - 96) === 0, 'same at the bottom');
 ok(v(TOP + 10) < 0, 'near the top scrolls up');
 ok(v(BOTTOM - 10) > 0, 'near the bottom scrolls down');
 
-// Full speed at each edge, and it stays there past it — the pointer can leave the container while
+// Full speed at each edge, and it stays there past it - the pointer can leave the container while
 // the button is still down, and the scroll must not give up at that moment. px per *second*: the
 // loop moves by elapsed time, so a starved timer changes smoothness, never speed.
 ok(v(TOP) === -1800, 'full speed at the top edge');
@@ -39,7 +39,7 @@ ok(v(TOP + 48) === -900, 'half into the top zone is half speed');
 ok(v(BOTTOM - 48) === 900, 'half into the bottom zone is half speed');
 
 // A container shorter than two edge zones still resolves to one direction rather than NaN or a
-// fight between the two branches (the top wins — it's the one home's drop target lives at).
+// fight between the two branches (the top wins - it's the one home's drop target lives at).
 ok(edgeVelocity(150, 100, 200) < 0, 'a short container still picks a direction');
 
 console.log('ok');

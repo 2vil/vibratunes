@@ -45,7 +45,7 @@ const ACCEPTED_MAX_IT: usize = 64;
 /// misses about once in 25 launches; a miss keeps the last runtime and mints from it anyway.
 const MAX_BOOTSTRAPS: usize = 8;
 /// Identifier the class check mints against: plain ASCII, so its decoded byte length is its char
-/// length and the integrity-token arithmetic is exact. visitorData is not usable for this — it
+/// length and the integrity-token arithmetic is exact. visitorData is not usable for this - it
 /// carries percent escapes, and reading the class off it came out a byte adrift of the truth.
 const CLASS_PROBE: &str = "limusicprobe";
 
@@ -96,7 +96,7 @@ fn host() -> &'static mpsc::UnboundedSender<Cmd> {
     HOST.get_or_init(|| {
         let (tx, mut rx) = mpsc::unbounded_channel::<Cmd>();
         // If the thread cannot start, or tokio cannot be built on it, `rx` is dropped here and
-        // every send below fails as `Error::Fatal` — which is the permanent-degradation latch.
+        // every send below fails as `Error::Fatal` - which is the permanent-degradation latch.
         let _ = thread::Builder::new().name("botguard".into()).spawn(move || {
             let Ok(rt) = tokio::runtime::Builder::new_current_thread().enable_all().build() else {
                 return;
@@ -208,7 +208,7 @@ async fn bootstrap(
         // if two overlap, which kills the minter for the rest of the process.
         drop(last.take());
         let mut bg = Botguard::builder().user_agent(user_agent).init().await.map_err(classify)?;
-        // Session token first, on a fresh minter, before any other identifier — Metrolist enforces
+        // Session token first, on a fresh minter, before any other identifier - Metrolist enforces
         // that ordering under a mutex and there is no reason to find out the hard way why.
         let token = bg.mint_token(session_ident).await.map_err(classify)?;
         let it =

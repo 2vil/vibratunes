@@ -1,5 +1,5 @@
 // Self-check for the link parser in `ytlink.ts`. There is no test runner in `ui/` and this doesn't
-// warrant adding one — node 22 runs TypeScript directly:
+// warrant adding one - node 22 runs TypeScript directly:
 //
 //     node --experimental-strip-types ui/src/lib/ytlink.check.ts
 //

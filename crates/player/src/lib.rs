@@ -52,13 +52,13 @@ pub enum PlayerEvent {
     /// Together host has to broadcast: a track change is announced on its own, and a "stopped"
     /// from the gap between two tracks reaches the room after the next one has started.
     Paused(bool),
-    /// One track finished normally (EOF) — orchestrator advances the queue.
+    /// One track finished normally (EOF) - orchestrator advances the queue.
     TrackEnded,
     /// Repeat-one started the file over. `loop-file` sends no end-file, so this is the only sign
     /// a new pass began; the app counts it as a new play (#518).
     Looped,
     /// One track died (end-file with error, e.g. its URL 403'd). mpv may have auto-advanced
-    /// into the next playlist entry or gone idle — the orchestrator asks [`Player::is_idle`].
+    /// into the next playlist entry or gone idle - the orchestrator asks [`Player::is_idle`].
     TrackFailed(String),
     /// mpv could not open the audio device, so the file ended with an error that has nothing to do
     /// with the stream: the device went away under it (sleep/resume, unplugged, a driver restart).
@@ -81,7 +81,7 @@ pub enum PlayerEvent {
 /// mpv end-file reasons (from `mpv_end_file_reason`).
 const EOF: i32 = 0;
 
-/// User-facing message for a failed track — raw mpv codes ("Raw(-13)") mean nothing to users.
+/// User-facing message for a failed track - raw mpv codes ("Raw(-13)") mean nothing to users.
 fn friendly_error(e: &libmpv2::Error) -> String {
     use libmpv2::mpv_error;
     match e {
@@ -671,7 +671,7 @@ impl Player {
 
     /// True when mpv has nothing loaded (playlist exhausted or the last load failed). The
     /// orchestrator uses this after a track ends/fails to tell "gaplessly advanced into the
-    /// lookahead" apart from "stalled — load the next track explicitly".
+    /// lookahead" apart from "stalled - load the next track explicitly".
     pub fn is_idle(&self) -> bool {
         self.mpv().get_property::<bool>("idle-active").unwrap_or(true)
     }
@@ -705,7 +705,7 @@ impl Player {
     }
 
     /// Loop the current file seamlessly (repeat-one). mpv restarts the file at EOF *without*
-    /// emitting end-file, so the queue logic upstream never advances while this is on — by design.
+    /// emitting end-file, so the queue logic upstream never advances while this is on - by design.
     pub fn set_loop_file(&self, on: bool) -> Result<(), Error> {
         self.decks.loop_file.store(on, Ordering::Relaxed);
         self.mpv().set_property("loop-file", if on { "inf" } else { "no" })?;
@@ -1201,7 +1201,7 @@ fn event_loop(mut ev: EventContext, deck: usize, decks: Arc<Decks>) {
     let mut on_air = false;
     // Playback state is derived from two properties, never polled: mpv answers `mpv_get_property`
     // synchronously on its core lock, so asking it from the app's async event pump can stall that
-    // pump exactly when mpv is busiest (a gapless transition opening the next stream) — and a
+    // pump exactly when mpv is busiest (a gapless transition opening the next stream) - and a
     // stalled pump stops draining mpv's events, so track-end is never handled and playback wedges.
     // These arrive as events; nothing has to ask.
     //
@@ -1299,7 +1299,7 @@ fn event_loop(mut ev: EventContext, deck: usize, decks: Arc<Decks>) {
                     }
                     Event::EndFile(reason) => match reason as i32 {
                         EOF => Some(PlayerEvent::TrackEnded),
-                        // STOP/QUIT/REDIRECT are deliberate (loadfile replace, shutdown) — ignore.
+                        // STOP/QUIT/REDIRECT are deliberate (loadfile replace, shutdown) - ignore.
                         // ERROR never reaches this arm: libmpv2 surfaces end-file-with-error as
                         // Err from wait_event (see below).
                         _ => None,
@@ -1326,7 +1326,7 @@ fn event_loop(mut ev: EventContext, deck: usize, decks: Arc<Decks>) {
             }
             Some(Err(e)) => {
                 // libmpv2 routes MPV_EVENT_END_FILE with an error (dead URL, 403, bad format)
-                // through here instead of Event::EndFile — in our usage (no async get/set/command
+                // through here instead of Event::EndFile - in our usage (no async get/set/command
                 // replies) an Err from wait_event *is* a failed track.
                 if !live() {
                     // Not every silent deck is a preload: `start_crossfade` flips `active` to the
@@ -1572,7 +1572,7 @@ fn fade_volume(percent: i64, amp: f64) -> f64 {
 ///
 /// libmpv2's `command` builds one space-joined string and hands it to `mpv_command_string`, which
 /// splits it back apart on whitespace. So `loadfile /music/My music/a, b.mp3 replace` reaches mpv
-/// as six arguments and fails with INVALID_PARAMETER (-4) — which is every local file whose path
+/// as six arguments and fails with INVALID_PARAMETER (-4) - which is every local file whose path
 /// has a space in it. Inside double quotes mpv only treats `\` specially, so escaping those two
 /// characters is the whole job (verified against libmpv: quotes, commas, `$` and backslashes all
 /// round-trip byte for byte through `playlist/0/filename`).

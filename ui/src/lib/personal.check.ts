@@ -1,5 +1,5 @@
 // Self-check for the pure personalization logic in `personal.ts`. There is no test runner in `ui/`
-// and this doesn't warrant adding one — node 22 runs TypeScript directly:
+// and this doesn't warrant adding one - node 22 runs TypeScript directly:
 //
 //     node --experimental-strip-types ui/src/lib/personal.check.ts
 //
@@ -105,7 +105,7 @@ const range = (n: number, prefix: string) => Array.from({ length: n }, (_, i) =>
 	placePick(p, item('d3'), 'd1');
 	ok(ids(p.picks).join() === 'd0,d3,d1,d2', 'a tile moves in front of the drop target');
 
-	// Rightward move: also in front of the target — no off-by-one from the tile leaving its old slot.
+	// Rightward move: also in front of the target - no off-by-one from the tile leaving its old slot.
 	placePick(p, item('d0'), 'd2');
 	ok(ids(p.picks).join() === 'd3,d1,d0,d2', 'a rightward move lands in front of the target too');
 
@@ -284,7 +284,7 @@ const range = (n: number, prefix: string) => Array.from({ length: n }, (_, i) =>
 	ok(back.home.hidden.join() === '@forgotten', 'hidden survives persistence');
 	ok(
 		hydrate({ home: { order: ['Listen again'], hidden: [] } }).home.order.join() ===
-			'@shortcuts,Listen again,@familiar',
+		'@shortcuts,Listen again,@familiar',
 		'no @recent to sit under: the new section goes last'
 	);
 	ok(

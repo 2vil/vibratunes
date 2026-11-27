@@ -1,5 +1,5 @@
 // Self-check for the artwork accent picker (`artcolor.ts`). No test runner in `ui/` (see
-// color.check.ts) — node 22 runs TypeScript directly:
+// color.check.ts) - node 22 runs TypeScript directly:
 //
 //     node --experimental-strip-types ui/src/lib/artcolor.check.ts
 //

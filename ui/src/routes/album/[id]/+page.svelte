@@ -52,13 +52,18 @@
     import { thumb } from "$lib/thumb";
     import { anchorMenu, fitMenu, NO_ANCHOR, toBody } from "$lib/menu";
     import { t } from "$lib/i18n.svelte";
-    import { downloadAlbumById, getCollectionDownloadState } from "$lib/download.svelte";
+    import {
+        downloadAlbumById,
+        getCollectionDownloadState,
+    } from "$lib/download.svelte";
 
     let album = $state<AlbumPage | null>(null);
     let loading = $state(true);
     let error = $state<string | null>(null);
     let expanded = $state(false);
-    const albumDownloadState = $derived(getCollectionDownloadState(album?.items?.map((t) => t.video_id) ?? []));
+    const albumDownloadState = $derived(
+        getCollectionDownloadState(album?.items?.map((t) => t.video_id) ?? []),
+    );
     // ⋯ options menu, `fixed` and anchored under the button so the header can't clip it.
     let menuOpen = $state(false);
     let anchor = $state(NO_ANCHOR);
@@ -73,11 +78,20 @@
     const id = $derived(page.params.id ?? "");
     // The rows actually on screen. Identical to `album.items` with no query typed.
     const shown = $derived(filterTracks(album?.items ?? [], query));
-    const selection = trackSelection(() => album?.items ?? [], () => shown, () => `${auth.epoch}:${id}`);
+    const selection = trackSelection(
+        () => album?.items ?? [],
+        () => shown,
+        () => `${auth.epoch}:${id}`,
+    );
     // The optional columns (`TrackColumns`). Album is never one here: every row would repeat the title.
     const availCols = $derived(availableColumns(album?.items ?? [], true));
     let listPx = $state(0);
-    const cols = $derived(fitColumns(availCols.filter((c) => chosen.list.includes(c)), listPx));
+    const cols = $derived(
+        fitColumns(
+            availCols.filter((c) => chosen.list.includes(c)),
+            listPx,
+        ),
+    );
     // A local album has no YouTube playlist behind it: nothing to save or add to a playlist.
     // Playing, shuffling and Shortcuts all work exactly the same.
     const isLocal = $derived(api.isLocalId(id));
@@ -98,7 +112,7 @@
         query = "";
         try {
             const fresh = await api.getAlbum(aid);
-            if (aid !== id) return; // superseded by navigation — drop the stale response
+            if (aid !== id) return; // superseded by navigation - drop the stale response
             album = fresh;
             putCached(key, fresh);
         } catch (e) {
@@ -115,7 +129,7 @@
 
     // A local track deleted off disk vanishes from the open page too, header count included: the
     // page is rebuilt from SQLite (already pruned) rather than patched, so nothing can go stale.
-    // An album whose last file is gone has no page left to show — step back to the library.
+    // An album whose last file is gone has no page left to show - step back to the library.
     $effect(() => {
         const un = api.onLocalChanged(async (removed) => {
             const a = album;
@@ -132,7 +146,7 @@
 
     // This album as a card, for the sidebar's last-played sort and the Shortcuts grid.
     const asItem = (): BrowseItem => ({
-        // A local artist opens this route too — it stays an artist on the Shortcuts grid, so the
+        // A local artist opens this route too - it stays an artist on the Shortcuts grid, so the
         // tile keeps its circle (see browse.ts `hrefFor`).
         kind: id.startsWith(api.LOCAL_ARTIST_PREFIX) ? "artist" : "album",
         id,
@@ -150,7 +164,12 @@
     function playAll(start: number | null) {
         if (!album) return;
         const at = start === null ? null : album.items.indexOf(shown[start]);
-        playFrom(asItem(), album.items, at === -1 ? null : at, album.playlistId);
+        playFrom(
+            asItem(),
+            album.items,
+            at === -1 ? null : at,
+            album.playlistId,
+        );
     }
     function radio() {
         if (!album?.playlistId) return;
@@ -160,7 +179,7 @@
     function shuffle() {
         if (!album?.items.length) return;
         menuOpen = false;
-        // Real order + shuffle flag — the backend shuffles (fresh each time, restorable).
+        // Real order + shuffle flag - the backend shuffles (fresh each time, restorable).
         playFrom(asItem(), album.items, null, album.playlistId, true);
     }
     // Saved on YouTube (signed in) or on this machine (signed out, and anything saved before the
@@ -179,7 +198,11 @@
         const next = !inLibrary;
         if (!auth.account?.signedIn || !a.playlistId) {
             toggleSaved(asItem());
-            toast.success(next ? t('library.saved_to_library') : t('toasts.removed_from_library'));
+            toast.success(
+                next
+                    ? t("library.saved_to_library")
+                    : t("toasts.removed_from_library"),
+            );
             return;
         }
         // Signed in: YouTube owns it from here. The local row is kept in step rather than dropped,
@@ -187,7 +210,11 @@
         // offline); `noteLibrary` flags it synced, so nothing offers a local-only removal.
         if (a.inLibrary === next) {
             noteLibrary(asItem(), next);
-            toast.success(next ? t('library.saved_to_library') : t('toasts.removed_from_library'));
+            toast.success(
+                next
+                    ? t("library.saved_to_library")
+                    : t("toasts.removed_from_library"),
+            );
             return; // YouTube already agrees; only the local row had to move
         }
         a.inLibrary = next;
@@ -195,7 +222,11 @@
         try {
             await api.setAlbumSaved(a.playlistId, next);
             noteLibrary(asItem(), next);
-            toast.success(next ? t('library.saved_to_library') : t('toasts.removed_from_library'));
+            toast.success(
+                next
+                    ? t("library.saved_to_library")
+                    : t("toasts.removed_from_library"),
+            );
         } catch (e) {
             a.inLibrary = !next;
             toast.error(String(e));
@@ -217,7 +248,11 @@
     }
 
     // A shelf's "See all" opens the same grid route the artist page uses.
-    function showMore(s: { title: string; moreBrowseId?: string; moreParams?: string }) {
+    function showMore(s: {
+        title: string;
+        moreBrowseId?: string;
+        moreParams?: string;
+    }) {
         const q = new URLSearchParams({ id: s.moreBrowseId!, title: s.title });
         if (s.moreParams) q.set("params", s.moreParams);
         goto(`/list?${q.toString()}`);
@@ -225,9 +260,13 @@
 </script>
 
 {#if loading}
-    <div class="flex h-full items-center justify-center"><VibratunesLoader /></div>
+    <div class="flex h-full items-center justify-center">
+        <VibratunesLoader />
+    </div>
 {:else if error}
-    <div class="p-6"><ErrorState message={error} onRetry={() => load(id)} /></div>
+    <div class="p-6">
+        <ErrorState message={error} onRetry={() => load(id)} />
+    </div>
 {:else if album}
     <!-- Header with the blurred album cover as a hero backdrop -->
     <div class="content-in relative overflow-hidden">
@@ -248,7 +287,10 @@
         </div>
 
         <div class="absolute right-6 top-6 z-10">
-            <TrackFilter bind:value={query} placeholder={t("common.search_this_album")} />
+            <TrackFilter
+                bind:value={query}
+                placeholder={t("common.search_this_album")}
+            />
         </div>
 
         <div class="relative flex flex-col gap-5 p-6 pt-10">
@@ -335,14 +377,16 @@
                     onclick={() => playAll(null)}
                     disabled={!album.items.length}
                 >
-                    <HugeiconsIcon icon={PlayIcon} class="h-4 w-4" /> {t("player.play")}
+                    <HugeiconsIcon icon={PlayIcon} class="h-4 w-4" />
+                    {t("player.play")}
                 </button>
                 <button
                     class="flex cursor-pointer items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition hover:bg-accent/10 disabled:opacity-50"
                     onclick={shuffle}
                     disabled={!album.items.length}
                 >
-                    <HugeiconsIcon icon={ShuffleIcon} class="h-4 w-4" /> {t("common.shuffle")}
+                    <HugeiconsIcon icon={ShuffleIcon} class="h-4 w-4" />
+                    {t("common.shuffle")}
                 </button>
                 <!-- Local albums are already in the Local tab; everything else is savable, signed
                      in or not. -->
@@ -361,7 +405,9 @@
                             showAlt={inLibrary}
                             class="h-4 w-4"
                         />
-                        {inLibrary ? t("library.in_library") : t("library.save_to_library")}
+                        {inLibrary
+                            ? t("library.in_library")
+                            : t("library.save_to_library")}
                     </button>
                 {/if}
                 <TrackSelectButton
@@ -369,21 +415,27 @@
                     class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border transition hover:bg-accent/10 hover:text-foreground"
                 />
                 {#if !isLocal && album?.items?.length}
-                    {#if albumDownloadState === 'downloading'}
+                    {#if albumDownloadState === "downloading"}
                         <button
                             class="flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full border text-primary"
                             disabled
                             title={t("download.downloading")}
                         >
-                            <HugeiconsIcon icon={Loading03Icon} class="h-5 w-5 animate-spin" />
+                            <HugeiconsIcon
+                                icon={Loading03Icon}
+                                class="h-5 w-5 animate-spin"
+                            />
                         </button>
-                    {:else if albumDownloadState === 'downloaded'}
+                    {:else if albumDownloadState === "downloaded"}
                         <button
                             class="flex h-10 w-10 cursor-default items-center justify-center rounded-full border text-emerald-500"
                             disabled
                             title={t("download.downloaded")}
                         >
-                            <HugeiconsIcon icon={CheckmarkCircle02Icon} class="h-5 w-5" />
+                            <HugeiconsIcon
+                                icon={CheckmarkCircle02Icon}
+                                class="h-5 w-5"
+                            />
                         </button>
                     {:else}
                         <button
@@ -392,7 +444,10 @@
                             title={t("download.download_album")}
                             aria-label={t("download.download_album")}
                         >
-                            <HugeiconsIcon icon={Download04Icon} class="h-5 w-5" />
+                            <HugeiconsIcon
+                                icon={Download04Icon}
+                                class="h-5 w-5"
+                            />
                         </button>
                     {/if}
                 {/if}
@@ -430,7 +485,8 @@
                             <HugeiconsIcon
                                 icon={ArrowUpNarrowWideIcon}
                                 class="h-4 w-4"
-                            /> {t("player.play_next")}
+                            />
+                            {t("player.play_next")}
                         </button>
                         <button
                             class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
@@ -439,7 +495,8 @@
                             <HugeiconsIcon
                                 icon={ArrowDownWideNarrowIcon}
                                 class="h-4 w-4"
-                            /> {t("player.add_to_queue")}
+                            />
+                            {t("player.add_to_queue")}
                         </button>
                         <!-- The album's audio playlist is what a radio seeds from; an album page
                              without one (rare) has nothing to ask YouTube for. -->
@@ -451,7 +508,8 @@
                                 <HugeiconsIcon
                                     icon={Radio02Icon}
                                     class="h-4 w-4"
-                                /> {t("player.start_radio")}
+                                />
+                                {t("player.start_radio")}
                             </button>
                         {/if}
                         <!-- A local album too: files can go in a playlist on this machine. -->
@@ -462,7 +520,8 @@
                             <HugeiconsIcon
                                 icon={PlayListAddIcon}
                                 class="h-4 w-4"
-                            /> {t("player.save_to_playlist")}
+                            />
+                            {t("player.save_to_playlist")}
                         </button>
                         <button
                             class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
@@ -474,7 +533,8 @@
                             <HugeiconsIcon
                                 icon={DashboardSquare02Icon}
                                 class="h-4 w-4"
-                            /> {t("home.add_shortcut")}
+                            />
+                            {t("home.add_shortcut")}
                         </button>
                         {#if !isLocal}
                             <button
@@ -487,7 +547,8 @@
                                 <HugeiconsIcon
                                     icon={Share08Icon}
                                     class="h-4 w-4"
-                                /> {t("player.share")}
+                                />
+                                {t("player.share")}
                             </button>
                         {/if}
                     </div>
@@ -502,7 +563,11 @@
         {#if shown.length}
             <!-- Its width decides which columns fit (`fitColumns`). -->
             <div bind:clientWidth={listPx}>
-                <TrackColumns available={availCols} columns={cols} selecting={selection.active} />
+                <TrackColumns
+                    available={availCols}
+                    columns={cols}
+                    selecting={selection.active}
+                />
                 {#each shown as item, i (JSON.stringify([item.video_id, i]))}
                     <TrackRow
                         song={item}
@@ -529,7 +594,9 @@
     <!-- Other versions of this release, and what sits near it. Ruled off from the tracks so the
          page reads as the album first and its surroundings second. -->
     {#if album.sections?.length}
-        <div class="content-in mt-2 flex flex-col gap-8 border-t px-6 pb-8 pt-8">
+        <div
+            class="content-in mt-2 flex flex-col gap-8 border-t px-6 pb-8 pt-8"
+        >
             {#each album.sections as section, i (i + ":" + section.title)}
                 <Shelf
                     title={section.title}

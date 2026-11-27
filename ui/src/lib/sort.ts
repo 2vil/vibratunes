@@ -3,14 +3,14 @@
 // YouTube sorts a playlist itself, and remembers the choice, so wherever it offers a sort menu the
 // page asks it for an ordered list instead of ordering one here (see `PlaylistPage.sortMenu`). The
 // list then reads the same way in Vibratunes, in YouTube Music, and in any other client on the
-// account. `sortSongs` below is the fallback for the two things YouTube cannot do — rank by our own
-// play counts, and reverse a playlist's stored order — plus lists it offers no menu for at all.
+// account. `sortSongs` below is the fallback for the two things YouTube cannot do - rank by our own
+// play counts, and reverse a playlist's stored order - plus lists it offers no menu for at all.
 import type { ServerSort, SongItem } from './api';
 
 export type SortKey = ServerSort | 'plays';
 
 /** `top` is YouTube's "Top voted": a list can already be in it, so the key has to round-trip, but
- *  it is deliberately not offered here — there is no way to compute it for a list we sort locally. */
+ *  it is deliberately not offered here - there is no way to compute it for a list we sort locally. */
 export const SORTS: SortKey[] = ['default', 'newest', 'oldest', 'title', 'artist', 'album', 'plays'];
 
 /**
@@ -30,7 +30,7 @@ export function persistedSort(sort: SortKey, desc: boolean): ServerSort | null {
 }
 
 /**
- * Whether YouTube's stored order reproduces this choice exactly, direction included — i.e. whether
+ * Whether YouTube's stored order reproduces this choice exactly, direction included - i.e. whether
  * there is anything left for this machine to remember. Reversing a date sort just *is* the other
  * date sort, so those count; every other reverse, and "Most played", do not.
  */
@@ -47,7 +47,7 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
 
 /**
  * Sort a playlist's tracks. Returns the input array untouched when there is nothing to do, a new
- * array otherwise — the page compares identity to skip re-rendering.
+ * array otherwise - the page compares identity to skip re-rendering.
  *
  * `baseNewestFirst` says which end of the incoming order is the newest addition. Playlist rows
  * carry no timestamp, so newest/oldest is add order, i.e. the position YouTube hands them back in:

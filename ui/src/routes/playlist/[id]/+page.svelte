@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { untrack, tick } from 'svelte';
-	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
-	import { MediaQuery } from 'svelte/reactivity';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { untrack, tick } from "svelte";
+	import { page } from "$app/state";
+	import { goto } from "$app/navigation";
+	import { MediaQuery } from "svelte/reactivity";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		PlayIcon,
 		ShuffleIcon,
@@ -28,40 +28,53 @@
 		Search01Icon,
 		Download04Icon,
 		Loading03Icon,
-		CheckmarkCircle02Icon
-	} from '@hugeicons/core-free-icons';
-	import { Button } from '$lib/components/ui/button';
-	import { Switch } from '$lib/components/ui/switch';
-	import * as RadioGroup from '$lib/components/ui/radio-group';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import VibratunesLoader from '$lib/components/VibratunesLoader.svelte';
-	import TrackRow from '$lib/components/TrackRow.svelte';
-	import TrackColumns, { chosen, loadMyPlays, myPlays } from '$lib/components/TrackColumns.svelte';
-	import { availableColumns, fitColumns } from '$lib/trackcolumns';
-	import TrackSelectionBar from '$lib/components/TrackSelectionBar.svelte';
-	import TrackSelectButton from '$lib/components/TrackSelectButton.svelte';
-	import { trackSelection } from '$lib/selection.svelte';
-	import { subtitleCount, withSubtitleCount } from '$lib/trackcount';
-	import EditPlaylistDialog from '$lib/components/EditPlaylistDialog.svelte';
-	import TrackFilter, { filterTracks } from '$lib/components/TrackFilter.svelte';
-	import PlaylistSuggestions from '$lib/components/PlaylistSuggestions.svelte';
-	import ErrorState from '$lib/components/ErrorState.svelte';
-	import NowPlayingPill from '$lib/components/NowPlayingPill.svelte';
-	import * as api from '$lib/api';
-	import { ON_REPEAT_ID } from '$lib/api';
-	import type { BrowseItem, PlaylistPage, SongItem } from '$lib/api';
-	import { dragScroll, PLAYLIST_ROW_MIME } from '$lib/dnd';
-	import { canDropAt, reorder, successorId } from '$lib/reorder';
-	import { getCached, putCached, invalidateCachedPrefix } from '$lib/pagecache';
-	import { thumb } from '$lib/thumb';
-	import { appearance } from '$lib/theme.svelte';
-	import { anchorMenu, fitMenu, NO_ANCHOR } from '$lib/menu';
-	import { rowWindow } from '$lib/rows';
-	import { rowScroller } from '$lib/rows.svelte';
-	import { restoreTo } from '$lib/scrollrestore';
-	import { t } from '$lib/i18n.svelte';
-	import { imp, updateFromSpotify } from '$lib/import.svelte';
-	import { downloadPlaylistById, getCollectionDownloadState } from '$lib/download.svelte';
+		CheckmarkCircle02Icon,
+	} from "@hugeicons/core-free-icons";
+	import { Button } from "$lib/components/ui/button";
+	import { Switch } from "$lib/components/ui/switch";
+	import * as RadioGroup from "$lib/components/ui/radio-group";
+	import * as AlertDialog from "$lib/components/ui/alert-dialog";
+	import VibratunesLoader from "$lib/components/VibratunesLoader.svelte";
+	import TrackRow from "$lib/components/TrackRow.svelte";
+	import TrackColumns, {
+		chosen,
+		loadMyPlays,
+		myPlays,
+	} from "$lib/components/TrackColumns.svelte";
+	import { availableColumns, fitColumns } from "$lib/trackcolumns";
+	import TrackSelectionBar from "$lib/components/TrackSelectionBar.svelte";
+	import TrackSelectButton from "$lib/components/TrackSelectButton.svelte";
+	import { trackSelection } from "$lib/selection.svelte";
+	import { subtitleCount, withSubtitleCount } from "$lib/trackcount";
+	import EditPlaylistDialog from "$lib/components/EditPlaylistDialog.svelte";
+	import TrackFilter, {
+		filterTracks,
+	} from "$lib/components/TrackFilter.svelte";
+	import PlaylistSuggestions from "$lib/components/PlaylistSuggestions.svelte";
+	import ErrorState from "$lib/components/ErrorState.svelte";
+	import NowPlayingPill from "$lib/components/NowPlayingPill.svelte";
+	import * as api from "$lib/api";
+	import { ON_REPEAT_ID } from "$lib/api";
+	import type { BrowseItem, PlaylistPage, SongItem } from "$lib/api";
+	import { dragScroll, PLAYLIST_ROW_MIME } from "$lib/dnd";
+	import { canDropAt, reorder, successorId } from "$lib/reorder";
+	import {
+		getCached,
+		putCached,
+		invalidateCachedPrefix,
+	} from "$lib/pagecache";
+	import { thumb } from "$lib/thumb";
+	import { appearance } from "$lib/theme.svelte";
+	import { anchorMenu, fitMenu, NO_ANCHOR } from "$lib/menu";
+	import { rowWindow } from "$lib/rows";
+	import { rowScroller } from "$lib/rows.svelte";
+	import { restoreTo } from "$lib/scrollrestore";
+	import { t } from "$lib/i18n.svelte";
+	import { imp, updateFromSpotify } from "$lib/import.svelte";
+	import {
+		downloadPlaylistById,
+		getCollectionDownloadState,
+	} from "$lib/download.svelte";
 
 	import {
 		SORTS,
@@ -69,8 +82,8 @@
 		persistedSort,
 		sortSongs,
 		storedExactly,
-		type SortKey
-	} from '$lib/sort';
+		type SortKey,
+	} from "$lib/sort";
 	import {
 		addPick,
 		addToLibrary,
@@ -97,8 +110,8 @@
 		forgetPlaylist,
 		lastPlaylistAdd,
 		lastPlaylistRemove,
-		refreshLocalPlaylists
-	} from '$lib/player.svelte';
+		refreshLocalPlaylists,
+	} from "$lib/player.svelte";
 
 	// `$state.raw`, not `$state`: a deep proxy makes every read of a row go through a trap and
 	// create a signal, and this list runs to five figures. Measured at 5,000 rows, one filter pass
@@ -128,16 +141,21 @@
 		// A child's drag bubbles here too (the cover art is a native image drag), so check the row
 		// is reorderable at all, not just `draggable`: with a filter or a sort, `n` is not an index
 		// into `pl.items`.
-		if (!e.dataTransfer || !canReorder || moving || !shown[n]?.set_video_id) return;
+		if (!e.dataTransfer || !canReorder || moving || !shown[n]?.set_video_id)
+			return;
 		e.dataTransfer.setData(PLAYLIST_ROW_MIME, String(n));
-		e.dataTransfer.effectAllowed = 'move';
+		e.dataTransfer.effectAllowed = "move";
 		dragFrom = n;
 	}
 
 	function onDragOver(e: DragEvent, n: number) {
-		if (dragFrom === null || !e.dataTransfer?.types.includes(PLAYLIST_ROW_MIME)) return;
+		if (
+			dragFrom === null ||
+			!e.dataTransfer?.types.includes(PLAYLIST_ROW_MIME)
+		)
+			return;
 		e.preventDefault();
-		e.dataTransfer.dropEffect = 'move';
+		e.dataTransfer.dropEffect = "move";
 		const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
 		const target = e.clientY < r.top + r.height / 2 ? n : n + 1;
 		if (canDropAt(target, shown, !!pl?.continuation)) {
@@ -171,7 +189,7 @@
 		const withItems = (items: SongItem[]) => ({
 			...pl!,
 			items,
-			...(local && { thumbnail: items[0]?.thumbnail })
+			...(local && { thumbnail: items[0]?.thumbnail }),
 		});
 		// moves are serialized (`moving`) and a result that arrives after navigating
 		// to another playlist must not touch the current one.
@@ -226,8 +244,8 @@
 	// (five figures on Liked Music), and `loadAll()`, which is up to 50 sequential requests for
 	// the pages a filter has to cover. Typing "beat" should not start that walk at "b".
 	const FILTER_DEBOUNCE_MS = 300;
-	let query = $state('');
-	let applied = $state('');
+	let query = $state("");
+	let applied = $state("");
 	let filterTimer: ReturnType<typeof setTimeout> | undefined;
 	// Set when the box takes focus, so the walk below starts while the query is still being typed
 	// rather than after it: on a 4,000-track playlist that walk is 40 chained requests (#316).
@@ -238,16 +256,16 @@
 		// list that stays narrowed for a third of a second after you hit the ✕ reads as broken.
 		if (!q.trim()) {
 			clearTimeout(filterTimer);
-			applied = '';
+			applied = "";
 			return;
 		}
 		filterTimer = setTimeout(() => (applied = q), FILTER_DEBOUNCE_MS);
 		return () => clearTimeout(filterTimer);
 	});
 
-	const id = $derived(page.params.id ?? '');
+	const id = $derived(page.params.id ?? "");
 	const nowId = $derived(playback.now?.videoId);
-	// The liked-music auto-playlist isn't a user playlist — no rename/delete, but shuffle is fine.
+	// The liked-music auto-playlist isn't a user playlist - no rename/delete, but shuffle is fine.
 	const isLiked = $derived(id === api.LIKED_MUSIC_ID);
 	// On Repeat is built locally from play counts: no artwork, and no radio to seed autoplay from.
 	const isOnRepeat = $derived(id === ON_REPEAT_ID);
@@ -256,8 +274,14 @@
 	const isLocalList = $derived(api.isLocalPlaylist(id));
 	const plDownloadState = $derived(
 		pl?.continuation
-			? (getCollectionDownloadState(pl?.items?.map((t) => t.video_id) ?? []) === 'downloading' ? 'downloading' : 'idle')
-			: getCollectionDownloadState(pl?.items?.map((t) => t.video_id) ?? [])
+			? getCollectionDownloadState(
+					pl?.items?.map((t) => t.video_id) ?? [],
+				) === "downloading"
+				? "downloading"
+				: "idle"
+			: getCollectionDownloadState(
+					pl?.items?.map((t) => t.video_id) ?? [],
+				),
 	);
 	// Imported from a Spotify link (#375): the header offers to bring it up to date with Spotify,
 	// and the menu to keep it up to date on its own.
@@ -265,8 +289,7 @@
 	$effect(() => {
 		const pid = id;
 		spotify = null;
-		api
-			.importSource(pid)
+		api.importSource(pid)
 			.then((src) => {
 				if (pid === id) spotify = src;
 			})
@@ -295,7 +318,9 @@
 	const backdrop = $derived.by(() => {
 		const own =
 			pl?.cover ??
-			(pl?.thumbnail && !COLLAGE.test(pl.thumbnail) && !isLocalList ? pl.thumbnail : null);
+			(pl?.thumbnail && !COLLAGE.test(pl.thumbnail) && !isLocalList
+				? pl.thumbnail
+				: null);
 		if (appearance.blurPlaylistHeader) return thumb(own ?? bgImage, 96);
 		return thumb(own, 1200) ?? bgImage;
 	});
@@ -310,9 +335,12 @@
 	// On the account already (pushed from here, or saved on another device): the local copy is not
 	// what holds it in the library any more, so the menu says so instead of offering a second save.
 	const inAccount = $derived(
-		!!auth.account?.signedIn && (isSynced(id) || library.items.some((i) => i.id === id))
+		!!auth.account?.signedIn &&
+			(isSynced(id) || library.items.some((i) => i.id === id)),
 	);
-	const savable = $derived(!isOnRepeat && !isLiked && !editable && !inAccount);
+	const savable = $derived(
+		!isOnRepeat && !isLiked && !editable && !inAccount,
+	);
 	const savedHere = $derived(isSaved(id));
 	// YouTube's header count includes rows that never make it into the list (unavailable or
 	// region-blocked tracks), so it reads high. Once every page is in, we know the real number, so
@@ -321,14 +349,14 @@
 	const subtitle = $derived(
 		pl && isLocalList
 			? pl.items.length === 1
-				? t('library.songs_count_one')
-				: t('library.songs_count', { count: pl.items.length })
+				? t("library.songs_count_one")
+				: t("library.songs_count", { count: pl.items.length })
 			: pl && !pl.continuation && pl.items.length
-				? withSubtitleCount(pl.subtitle ?? '', pl.items.length)
-				: pl?.subtitle
+				? withSubtitleCount(pl.subtitle ?? "", pl.items.length)
+				: pl?.subtitle,
 	);
 	// --- sorting (`$lib/sort`) ---------------------------------------------------------------
-	let sort = $state<SortKey>('default');
+	let sort = $state<SortKey>("default");
 	let desc = $state(false);
 	let sortOpen = $state(false);
 	let sortAnchor = $state(NO_ANCHOR);
@@ -338,17 +366,17 @@
 	let resorting = $state(false);
 
 	const sortLabel = $derived(
-		sort === 'default' ? t('sort.label') : t(`sort.${sort}`)
+		sort === "default" ? t("sort.label") : t(`sort.${sort}`),
 	);
 	// "Most played" ranks by the local listening history, the same counts the Your plays column
 	// shows. Read when the sort is picked, and when a list opens already on it.
 	$effect(() => {
-		if (sort === 'plays') untrack(loadMyPlays);
+		if (sort === "plays") untrack(loadMyPlays);
 	});
 
-	// YouTube offers a sort menu for this list, so it does the ordering — all of it except "Most
+	// YouTube offers a sort menu for this list, so it does the ordering - all of it except "Most
 	// played", which is our own listening history and means nothing to YouTube.
-	const serverSorted = $derived(!!pl?.sortMenu && sort !== 'plays');
+	const serverSorted = $derived(!!pl?.sortMenu && sort !== "plays");
 	// …and on a playlist we own the choice is a write, so every other client follows it.
 	const storable = $derived(pl?.sortMenu?.editable ?? false);
 	// Liked Music has no editable menu, but YouTube remembers whichever order it was last asked
@@ -359,7 +387,8 @@
 		const items = pl?.items ?? [];
 		// The rows already arrived in order, reversed ones included. The single order YouTube has
 		// no params for is a reversed *manual* order, so that one reverse stays here.
-		if (serverSorted) return sort === 'default' && desc ? items.slice().reverse() : items;
+		if (serverSorted)
+			return sort === "default" && desc ? items.slice().reverse() : items;
 		// Liked Music is the one playlist YouTube hands back newest-addition-first.
 		return sortSongs(items, sort, isLiked, desc, myPlays.counts);
 	});
@@ -367,17 +396,28 @@
 	// The rows actually on screen: the sorted list, narrowed by the header's filter box. Identical
 	// to `sortedItems` with no query typed.
 	const shown = $derived(filterTracks(sortedItems, applied));
-	const selection = trackSelection(() => sortedItems, () => shown,
-		() => `${auth.epoch}:${id}`, () => !pl?.continuation,
+	const selection = trackSelection(
+		() => sortedItems,
+		() => shown,
+		() => `${auth.epoch}:${id}`,
+		() => !pl?.continuation,
 		// A filter's matches are only the loaded ones, and typing one walks the list anyway, so the
 		// header count would be the wrong number to offer there.
-		() => (filtering ? undefined : headerCount), loadAll);
+		() => (filtering ? undefined : headerCount),
+		loadAll,
+	);
 	const filtering = $derived(!!applied.trim());
 	// Requires default manual order, no reverse, no filter, and no selection active, otherwise
 	// the rendered row indexes would not match `pl.items`. Not gated on `moving`: the rows stay
 	// `select-none` while a move saves, or a press in that window starts a text selection.
 	const canReorder = $derived(
-		editable && !isOnRepeat && sort === 'default' && !desc && !filtering && !selection.active && !resorting
+		editable &&
+			!isOnRepeat &&
+			sort === "default" &&
+			!desc &&
+			!filtering &&
+			!selection.active &&
+			!resorting,
 	);
 	// YouTube's own count, which is what the subtitle under the title shows until every page is in.
 	// An upper bound, not a count: it includes rows that never arrive (unavailable, region-blocked).
@@ -388,10 +428,17 @@
 	// the user has chosen. Not Date added on a collaborative playlist: the value it reads is what
 	// "Top voted" sorts by, and it was only ever checked to be the add time where nobody votes.
 	const availCols = $derived(
-		availableColumns(pl?.items ?? []).filter((c) => c !== 'added' || !pl?.collaborative)
+		availableColumns(pl?.items ?? []).filter(
+			(c) => c !== "added" || !pl?.collaborative,
+		),
 	);
 	let listPx = $state(0);
-	const cols = $derived(fitColumns(availCols.filter((c) => chosen.list.includes(c)), listPx));
+	const cols = $derived(
+		fitColumns(
+			availCols.filter((c) => chosen.list.includes(c)),
+			listPx,
+		),
+	);
 
 	// A sort has to cover the whole playlist, not the pages scrolled so far, so pull the rest in.
 	// Stops on a failed page (`moreError`), on navigation, and on any pass that made no progress.
@@ -413,14 +460,14 @@
 	// whole list (and its continuation token pages on in that same order), so the walk is down to
 	// the two orders it cannot produce: our play counts, and a reversed manual order.
 	const sorting = $derived(
-		serverSorted ? sort === 'default' && desc : sort !== 'default' || desc
+		serverSorted ? sort === "default" && desc : sort !== "default" || desc,
 	);
 
 	// Everything that hands tracks to the queue goes through here first: a sorted queue is only
 	// honest once every page is in.
 	async function ready(): Promise<boolean> {
 		if (!sorting) return true;
-		if (sort === 'plays') await loadMyPlays(); // queueing before they land would sort by nothing
+		if (sort === "plays") await loadMyPlays(); // queueing before they land would sort by nothing
 		if (!pl?.continuation) return true;
 		preparing = true;
 		try {
@@ -431,30 +478,41 @@
 	}
 
 	// Sorted, but a page never arrived. The queue is a snapshot, so the tracks that did not load
-	// are gone from it for good — play them anyway and say so, rather than refusing to play at all
+	// are gone from it for good - play them anyway and say so, rather than refusing to play at all
 	// over one failed request. The list's own "Try again" sits at the bottom of the page.
-	function warnPartial(what: 'queued' | 'added') {
-		toast.error(t(what === 'queued' ? 'toasts.partial_playlist_queued' : 'toasts.partial_playlist_added'));
+	function warnPartial(what: "queued" | "added") {
+		toast.error(
+			t(
+				what === "queued"
+					? "toasts.partial_playlist_queued"
+					: "toasts.partial_playlist_added",
+			),
+		);
 	}
 
 	// One cache entry per order asked for. "No order asked for" keeps the bare key, because the
 	// artist page and the community cards cache a playlist under that one too.
 	const cacheKey = (pid: string, s: SortKey | null, d: boolean) =>
-		!s || (s === 'default' && !d) ? `playlist:${pid}` : `playlist:${pid}:${s}${d ? ':desc' : ''}`;
+		!s || (s === "default" && !d)
+			? `playlist:${pid}`
+			: `playlist:${pid}:${s}${d ? ":desc" : ""}`;
 	// The key the rows on screen came from, so an optimistic mutation writes back to the entry it
 	// actually read and never overwrites a different order's. Set by every load.
-	let loadedKey = '';
+	let loadedKey = "";
 
 	// Only what YouTube will not hold for us goes in here: "Most played", a reversed
 	// Title/Artist/Album, and any sort on a list it stores none for (someone else's playlist, a
 	// radio mix). Everything else is read back off the browse response instead, so a sort changed
 	// in YouTube Music turns up here too.
-	const SORT_STORE = 'playlist_sort';
+	const SORT_STORE = "playlist_sort";
 	type SavedSort = { sort: SortKey; desc: boolean };
 
 	function readSort(pid: string): SavedSort | null {
 		try {
-			return JSON.parse(localStorage.getItem(SORT_STORE) ?? '{}')[pid] ?? null;
+			return (
+				JSON.parse(localStorage.getItem(SORT_STORE) ?? "{}")[pid] ??
+				null
+			);
 		} catch {
 			return null;
 		}
@@ -462,7 +520,7 @@
 
 	function rememberSort(pid: string, keptByYouTube: boolean) {
 		try {
-			const all = JSON.parse(localStorage.getItem(SORT_STORE) ?? '{}');
+			const all = JSON.parse(localStorage.getItem(SORT_STORE) ?? "{}");
 			if (keptByYouTube) delete all[pid];
 			else all[pid] = { sort, desc } satisfies SavedSort;
 			localStorage.setItem(SORT_STORE, JSON.stringify(all));
@@ -501,7 +559,7 @@
 				await api.setPlaylistSort(pid, store);
 			} catch (e) {
 				// The order still applies here; only the carry-over to other clients is lost.
-				toast.error(t('toasts.sort_not_saved', { error: String(e) }));
+				toast.error(t("toasts.sort_not_saved", { error: String(e) }));
 			}
 			if (pid !== id) return;
 		}
@@ -529,7 +587,8 @@
 			loadedKey = key;
 			pl = fresh;
 		} catch (e) {
-			if (current()) toast.error(t('toasts.sort_failed', { error: String(e) }));
+			if (current())
+				toast.error(t("toasts.sort_failed", { error: String(e) }));
 		} finally {
 			// Only the newest pick clears it; an older one finishing late must not un-dim the list.
 			if (current()) resorting = false;
@@ -539,19 +598,20 @@
 	// Right-anchored, unlike the ⋯ menu: this button sits at the far end of the header, so a menu
 	// wider than it would run off the page opening leftwards from its left edge.
 	function openSort(e: MouseEvent) {
-		sortAnchor = anchorMenu(e, { align: 'right' });
+		sortAnchor = anchorMenu(e, { align: "right" });
 		sortOpen = true;
 	}
 
 	// Page 1 and the header agree, so the rows `a` walked in past page 1 are still the list's.
 	const sameRows = (a: PlaylistPage, b: PlaylistPage) =>
-		a.subtitle === b.subtitle && b.items.every((t, i) => a.items[i]?.video_id === t.video_id);
+		a.subtitle === b.subtitle &&
+		b.items.every((t, i) => a.items[i]?.video_id === t.video_id);
 
 	async function load(pid: string) {
 		// A sort YouTube keeps is read back off the response below; this store only holds the ones
 		// it cannot (see `rememberSort`), so an entry here means "ask for exactly this".
 		const saved = readSort(pid);
-		sort = saved?.sort ?? 'default';
+		sort = saved?.sort ?? "default";
 		desc = saved?.desc ?? false;
 		const key = cacheKey(pid, saved && sort, desc);
 		loadedKey = key;
@@ -560,8 +620,8 @@
 		editing = false;
 		expanded = false;
 		sortOpen = false;
-		query = '';
-		applied = '';
+		query = "";
+		applied = "";
 		searchOpened = false;
 		scrollingToEnd = false;
 		clearTimeout(filterTimer);
@@ -570,7 +630,7 @@
 		moreError = false;
 		if (hit) {
 			pl = hit;
-			if (!saved) sort = hit.sortMenu?.selected ?? 'default';
+			if (!saved) sort = hit.sortMenu?.selected ?? "default";
 			bgImage = pickCover(hit.items);
 			loading = false;
 		} else {
@@ -583,9 +643,13 @@
 		try {
 			// Nothing saved means asking for no order at all: what comes back is the order the
 			// account already has this list in, which is the one YouTube Music would show.
-			const fresh = await api.getPlaylist(pid, saved ? fetchSort(sort) : undefined, desc);
+			const fresh = await api.getPlaylist(
+				pid,
+				saved ? fetchSort(sort) : undefined,
+				desc,
+			);
 			// Superseded by navigation, or by a sort picked off the cached rows while this was in
-			// the air — either way `fetchSorted` owns the page now, so drop this response.
+			// the air - either way `fetchSorted` owns the page now, so drop this response.
 			if (pid !== id || sort !== askedSort || desc !== askedDesc) return;
 			// This re-reads page 1 only. When it and the header ("4,012 tracks") still match the rows
 			// on screen, keep the pages walked in behind them: dropping those is what made every
@@ -594,10 +658,14 @@
 			// swapped for another deep in the list) shows only once the cache entry expires.
 			const next =
 				pl && sameRows(pl, fresh)
-					? { ...fresh, items: pl.items, continuation: pl.continuation }
+					? {
+							...fresh,
+							items: pl.items,
+							continuation: pl.continuation,
+						}
 					: fresh;
 			pl = next;
-			if (!saved) sort = fresh.sortMenu?.selected ?? 'default';
+			if (!saved) sort = fresh.sortMenu?.selected ?? "default";
 			bgImage = pickCover(fresh.items);
 			putCached(key, next);
 		} catch (e) {
@@ -609,8 +677,8 @@
 	}
 
 	// Reload whenever the route param changes (playlist → playlist navigation), and *only* then.
-	// untrack: `load` both reads and writes `sort`/`desc` — it adopts the order YouTube has the list
-	// in — so tracking them would make every finished load re-run this effect and fetch the playlist
+	// untrack: `load` both reads and writes `sort`/`desc` - it adopts the order YouTube has the list
+	// in - so tracking them would make every finished load re-run this effect and fetch the playlist
 	// again, forever, on any list not sitting on Default.
 	$effect(() => {
 		const pid = id;
@@ -669,7 +737,7 @@
 				// Already in it (added elsewhere since the page loaded): the optimistic row would be
 				// a second copy, and the suggestion is spent either way.
 				drop();
-				toast(t('toasts.already_in', { playlist: pl?.title ?? '' }));
+				toast(t("toasts.already_in", { playlist: pl?.title ?? "" }));
 				return true;
 			}
 			bumpLibraryTrackCount(pid, 1);
@@ -679,8 +747,10 @@
 			drop();
 			toast.error(
 				e === api.PLAYLIST_NOT_EDITABLE
-					? t('toasts.playlist_not_editable', { playlist: pl?.title ?? '' })
-					: String(e)
+					? t("toasts.playlist_not_editable", {
+							playlist: pl?.title ?? "",
+						})
+					: String(e),
 			);
 			return false;
 		}
@@ -708,7 +778,7 @@
 	}
 
 	// Optimistic rows lack set_video_id, so "Remove from playlist" is hidden on them. Refetch and
-	// patch the real ids into place (merge, not replace — keeps loadMore pages and any row YouTube
+	// patch the real ids into place (merge, not replace - keeps loadMore pages and any row YouTube
 	// hasn't reflected yet). Retries because the add is eventually-consistent on YouTube's side.
 	async function fillPass() {
 		if (isLiked) return;
@@ -720,19 +790,24 @@
 				// Same order the rows on screen are in, so the two lists line up row for row.
 				const fresh = await api.getPlaylist(pid, fetchSort(sort), desc);
 				if (pid !== id || !pl) return;
-				const used = new Set(pl.items.map((t) => t.set_video_id).filter(Boolean));
+				const used = new Set(
+					pl.items.map((t) => t.set_video_id).filter(Boolean),
+				);
 				pl = {
 					...pl,
 					subtitle: fresh.subtitle, // header track count catches up too
 					items: pl.items.map((t) => {
 						if (t.set_video_id) return t;
 						const match = fresh.items.find(
-							(f) => f.video_id === t.video_id && f.set_video_id && !used.has(f.set_video_id)
+							(f) =>
+								f.video_id === t.video_id &&
+								f.set_video_id &&
+								!used.has(f.set_video_id),
 						);
 						if (!match) return t;
 						used.add(match.set_video_id);
 						return { ...t, set_video_id: match.set_video_id };
-					})
+					}),
 				};
 				cacheCurrent();
 				if (pl.items.every((t) => t.set_video_id)) return;
@@ -776,7 +851,7 @@
 				...pl,
 				items: [...pl.items, ...more.items],
 				// An empty page would leave the window at the end with nothing to show: that's the end.
-				continuation: more.items.length ? more.continuation : undefined
+				continuation: more.items.length ? more.continuation : undefined,
 			};
 			cacheCurrent();
 			// A page handing back the token it was fetched with made no progress. Treated as a failed
@@ -798,7 +873,12 @@
 	// The header scrolls away with the rows, so the window is measured from where row 0 sits
 	// rather than from the top of the scroller.
 	const win = $derived(
-		rowWindow(sc.scrollTop - sc.offsetPx, sc.viewportPx, shown.length, sc.rowPx)
+		rowWindow(
+			sc.scrollTop - sc.offsetPx,
+			sc.viewportPx,
+			shown.length,
+			sc.rowPx,
+		),
 	);
 
 	let scrollerEl = $state<HTMLElement | null>(null);
@@ -829,8 +909,8 @@
 	export const snapshot = {
 		capture: () => scrollerEl?.scrollTop,
 		restore: (y: unknown) => {
-			if (typeof y === 'number') restoreY = y;
-		}
+			if (typeof y === "number") restoreY = y;
+		},
 	};
 	$effect(() => {
 		if (!scrollerEl || restoreY === null) return;
@@ -841,14 +921,17 @@
 	// The playing track's row, and the queue's pill back to it while it is off screen (#366).
 	// Arithmetic on what the windowing already tracks, so it costs no layout read.
 	// ponytail: the first row holding the track, so a playlist with it twice jumps to the first.
-	const playingRow = $derived(nowId ? shown.findIndex((s) => s.video_id === nowId) : -1);
+	const playingRow = $derived(
+		nowId ? shown.findIndex((s) => s.video_id === nowId) : -1,
+	);
 	const playingY = $derived(sc.offsetPx + playingRow * sc.rowPx);
 	const away = $derived(
 		playingRow >= 0 &&
 			sc.viewportPx > 0 &&
-			(playingY + sc.rowPx <= sc.scrollTop || playingY >= sc.scrollTop + sc.viewportPx)
+			(playingY + sc.rowPx <= sc.scrollTop ||
+				playingY >= sc.scrollTop + sc.viewportPx),
 	);
-	const reducedMotion = new MediaQuery('(prefers-reduced-motion: reduce)');
+	const reducedMotion = new MediaQuery("(prefers-reduced-motion: reduce)");
 
 	// Centred, so the songs coming up show under it. Smooth across thousands of rows would mount
 	// every window on the way, so a long trip lands a screen short first, as the queue does.
@@ -861,8 +944,9 @@
 			return;
 		}
 		const gap = el.scrollTop - top;
-		if (Math.abs(gap) > 2 * el.clientHeight) el.scrollTop = top + Math.sign(gap) * el.clientHeight;
-		el.scrollTo({ top, behavior: 'smooth' });
+		if (Math.abs(gap) > 2 * el.clientHeight)
+			el.scrollTop = top + Math.sign(gap) * el.clientHeight;
+		el.scrollTo({ top, behavior: "smooth" });
 	}
 
 	// The next page once the window reaches the last rows that have arrived. The window already
@@ -873,7 +957,12 @@
 	// the scroller does. A failed page stays failed until the retry button: re-fetching on every
 	// scroll would spin.
 	$effect(() => {
-		if (pl?.continuation && !moreError && !inflight && win.end >= shown.length)
+		if (
+			pl?.continuation &&
+			!moreError &&
+			!inflight &&
+			win.end >= shown.length
+		)
 			untrack(() => loadMore());
 	});
 
@@ -901,7 +990,13 @@
 	let stalledAt: string | null = null;
 	$effect(() => {
 		// Recover selected occurrences in the new server order before enabling bulk actions.
-		if ((!filtering && !searchOpened && !selection.pending) || !pl?.continuation || walkingFor === id || moreError) return;
+		if (
+			(!filtering && !searchOpened && !selection.pending) ||
+			!pl?.continuation ||
+			walkingFor === id ||
+			moreError
+		)
+			return;
 		if (stalledAt === pl.continuation) return;
 		const pid = id;
 		walkingFor = pid;
@@ -918,13 +1013,15 @@
 	async function saveToLibrary() {
 		if (savedHere) {
 			toggleSaved(asItem());
-			toast.success(t('library.removed_from_library'));
+			toast.success(t("library.removed_from_library"));
 			return;
 		}
 		try {
 			const result = await addToLibrary(asItem());
 			toast.success(
-				result === 'already' ? t('toasts.already_in_library') : t('library.saved_to_library')
+				result === "already"
+					? t("toasts.already_in_library")
+					: t("library.saved_to_library"),
 			);
 		} catch (e) {
 			toast.error(String(e));
@@ -934,20 +1031,22 @@
 	async function unsaveFromLibrary() {
 		try {
 			await removeFromLibrary(asItem());
-			toast.success(t('library.removed_from_library'));
+			toast.success(t("library.removed_from_library"));
 		} catch (e) {
 			toast.error(String(e));
 		}
 	}
 
 	const asItem = (): BrowseItem => ({
-		kind: 'playlist',
+		kind: "playlist",
 		id,
-		title: pl?.title ?? t('common.playlist_singular'),
+		title: pl?.title ?? t("common.playlist_singular"),
 		subtitle,
 		// On Repeat stays artwork-free wherever it's rendered (shortcuts, recents) so it always
 		// draws its icon rather than one of its songs' covers.
-		thumbnail: isOnRepeat ? undefined : (pl?.cover ?? pl?.thumbnail ?? bgImage ?? undefined)
+		thumbnail: isOnRepeat
+			? undefined
+			: (pl?.cover ?? pl?.thumbnail ?? bgImage ?? undefined),
 	});
 
 	// `sourceId` points autoplay at that playlist's radio. On Repeat has no YouTube id, so pass
@@ -974,7 +1073,7 @@
 		const whole = await ready();
 		// Navigating while that walk ran would otherwise play the playlist you left for.
 		if (!pl || pid !== id) return;
-		if (!whole) warnPartial('queued');
+		if (!whole) warnPartial("queued");
 		const items = sortedItems;
 		const at = pick ? items.indexOf(pick) : -1;
 		playFrom(
@@ -983,7 +1082,7 @@
 			at >= 0 ? at : null,
 			isOnRepeat ? undefined : id,
 			undefined,
-			sorting ? undefined : pl.continuation
+			sorting ? undefined : pl.continuation,
 		);
 	}
 
@@ -992,14 +1091,17 @@
 	function pickCover(items: SongItem[]): string | null {
 		const withThumb = items.filter((t) => t.thumbnail);
 		if (!withThumb.length) return null;
-		const url = withThumb[Math.floor(Math.random() * withThumb.length)].thumbnail!;
+		const url =
+			withThumb[Math.floor(Math.random() * withThumb.length)].thumbnail!;
 		return hiRes(url);
 	}
 
 	// List thumbnails come at a small size; YouTube/Google encode the size in the URL, so bump it
 	// for a crisp full-width backdrop.
 	function hiRes(url: string): string {
-		return url.replace(/=w\d+-h\d+/, '=w1200-h1200').replace(/=s\d+/, '=s1200');
+		return url
+			.replace(/=w\d+-h\d+/, "=w1200-h1200")
+			.replace(/=s\d+/, "=s1200");
 	}
 
 	// Same deal as `playAll` for a long playlist: the loaded pages go in now and the token hands
@@ -1011,8 +1113,13 @@
 		const pid = id;
 		const whole = next || (await ready());
 		if (!pl || pid !== id) return;
-		if (!whole) warnPartial('added');
-		enqueue(sortedItems, next, pl.title, sorting ? undefined : pl.continuation);
+		if (!whole) warnPartial("added");
+		enqueue(
+			sortedItems,
+			next,
+			pl.title,
+			sorting ? undefined : pl.continuation,
+		);
 	}
 
 	// Copying a playlist means all of it, not the pages scrolled so far, and nothing walks the rest
@@ -1030,7 +1137,7 @@
 			copying = false;
 		}
 		if (!pl || pid !== id) return;
-		if (!whole) warnPartial('added');
+		if (!whole) warnPartial("added");
 		menuOpen = false;
 		openAddManyToPlaylist(sortedItems);
 	}
@@ -1039,11 +1146,18 @@
 	// so what order it was handed is irrelevant.
 	function shufflePlay() {
 		if (!pl?.items.length) return;
-		// Real order + shuffle flag — the backend owns shuffling, so the shuffle toggle can
+		// Real order + shuffle flag - the backend owns shuffling, so the shuffle toggle can
 		// restore the true playlist order and every re-shuffle is fresh. It also mixes each page
 		// it walks into the unplayed tail, so this stays a shuffle of the whole playlist rather
 		// than of the pages that happen to be loaded.
-		playFrom(asItem(), pl.items, null, isOnRepeat ? undefined : id, true, pl.continuation);
+		playFrom(
+			asItem(),
+			pl.items,
+			null,
+			isOnRepeat ? undefined : id,
+			true,
+			pl.continuation,
+		);
 	}
 
 	function openMenu(e: MouseEvent) {
@@ -1067,17 +1181,17 @@
 		if (!pl) return;
 		pl = { ...pl, ...patch };
 		cacheCurrent();
-		if ('title' in patch || 'cover' in patch || 'thumbnail' in patch) {
+		if ("title" in patch || "cover" in patch || "thumbnail" in patch) {
 			// A row has to keep a name: a page whose header never gave us a title would otherwise
 			// blank the sidebar entry on a cover change.
 			patchLibraryPlaylist(id, {
 				...(pl.title ? { title: pl.title } : {}),
-				thumbnail: pl.cover ?? pl.thumbnail
+				thumbnail: pl.cover ?? pl.thumbnail,
 			});
 		}
 	}
 
-	// The liked-music auto-playlist can't be edited like a normal one — removing = un-liking.
+	// The liked-music auto-playlist can't be edited like a normal one - removing = un-liking.
 	async function removeTrack(track: SongItem) {
 		if (!pl) return;
 		if (!isLiked && !track.set_video_id) return;
@@ -1085,7 +1199,9 @@
 		// Reassign `pl` (not mutate `pl.items`) so the list re-renders immediately. Match by the
 		// per-instance setVideoId on normal playlists (duplicates), by videoId on liked music.
 		const kept = pl.items.filter((t) =>
-			isLiked ? t.video_id !== track.video_id : t.set_video_id !== track.set_video_id
+			isLiked
+				? t.video_id !== track.video_id
+				: t.set_video_id !== track.set_video_id,
 		);
 		pl = { ...pl, items: kept };
 		try {
@@ -1093,13 +1209,17 @@
 				// Through the shared path, not `api.rate`: an unlike is a rating write wherever it
 				// is spelled as a removal, and the override, the player bar and the index all have
 				// to follow it.
-				await setRating(track, 'indifferent');
-				toast.success(t('toasts.removed_from_liked'));
+				await setRating(track, "indifferent");
+				toast.success(t("toasts.removed_from_liked"));
 			} else {
-				await api.removeFromPlaylist(id, track.video_id, track.set_video_id!);
+				await api.removeFromPlaylist(
+					id,
+					track.video_id,
+					track.set_video_id!,
+				);
 				bumpLibraryTrackCount(id, -1);
 				noteUnsavedFrom(id, track.video_id);
-				toast.success(t('toasts.removed_from_playlist'));
+				toast.success(t("toasts.removed_from_playlist"));
 			}
 			cacheAfterRemoval();
 		} catch (e) {
@@ -1116,7 +1236,8 @@
 		const targets = tracks.filter((t) => isLiked || t.set_video_id);
 		if (!targets.length) return;
 		const prev = pl.items;
-		const idOf = (row: SongItem) => (isLiked ? row.video_id : row.set_video_id) ?? '';
+		const idOf = (row: SongItem) =>
+			(isLiked ? row.video_id : row.set_video_id) ?? "";
 		const gone = new Set(targets.map(idOf));
 		const failed = new Set<string>();
 		let lastError: unknown;
@@ -1125,7 +1246,7 @@
 			if (isLiked) {
 				for (const row of targets) {
 					try {
-						await setRating(row, 'indifferent');
+						await setRating(row, "indifferent");
 					} catch (e) {
 						lastError = e;
 						failed.add(idOf(row));
@@ -1133,19 +1254,27 @@
 				}
 				if (failed.size === targets.length) throw lastError;
 				if (failed.size) toast.error(String(lastError));
-				else toast.success(t('toasts.removed_from_liked'));
+				else toast.success(t("toasts.removed_from_liked"));
 			} else {
 				await api.removeManyFromPlaylist(
 					id,
-					targets.map((s) => [s.video_id, s.set_video_id!] as [string, string])
+					targets.map(
+						(s) =>
+							[s.video_id, s.set_video_id!] as [string, string],
+					),
 				);
 				bumpLibraryTrackCount(id, -targets.length);
 				for (const s of targets) noteUnsavedFrom(id, s.video_id);
-				toast.success(t('toasts.removed_from_playlist'));
+				toast.success(t("toasts.removed_from_playlist"));
 			}
 			// A partial liked-music removal puts the rows that survived back where they were.
 			if (failed.size)
-				pl = { ...pl, items: prev.filter((row) => !gone.has(idOf(row)) || failed.has(idOf(row))) };
+				pl = {
+					...pl,
+					items: prev.filter(
+						(row) => !gone.has(idOf(row)) || failed.has(idOf(row)),
+					),
+				};
 			cacheAfterRemoval();
 			selection.clear();
 		} catch (e) {
@@ -1164,8 +1293,8 @@
 			await api.deletePlaylist(id);
 			invalidateCachedPrefix(`playlist:${id}`);
 			forgetPlaylist(id);
-			toast.success(t('toasts.playlist_deleted'));
-			goto('/library');
+			toast.success(t("toasts.playlist_deleted"));
+			goto("/library");
 		} catch (e) {
 			toast.error(String(e));
 		} finally {
@@ -1186,9 +1315,13 @@
 <!-- relative: the Now playing pill floats over the bottom of the scroller. -->
 <div class="relative flex h-full flex-col">
 	{#if loading}
-		<div class="flex flex-1 items-center justify-center"><VibratunesLoader /></div>
+		<div class="flex flex-1 items-center justify-center">
+			<VibratunesLoader />
+		</div>
 	{:else if error}
-		<div class="p-6"><ErrorState message={error} onRetry={() => load(id)} /></div>
+		<div class="p-6">
+			<ErrorState message={error} onRetry={() => load(id)} />
+		</div>
 	{:else if pl}
 		<!-- One scroller for the whole page: the header scrolls away above the rows, same as the
 		     album page. `pb-12` is the Now playing pill's height plus its offset, so at the end of
@@ -1199,16 +1332,22 @@
 			{@attach sc.attach}
 			{@attach (node) => dragScroll(node, PLAYLIST_ROW_MIME)}
 		>
-			<div class="relative flex min-h-[38vh] shrink-0 items-end gap-6 overflow-hidden p-6">
+			<div
+				class="relative flex min-h-[38vh] shrink-0 items-end gap-6 overflow-hidden p-6"
+			>
 				<!-- The backdrop and its fade share one layer (`art-wash` on the wrapper): see HomeHero. -->
-				<div class="art-wash pointer-events-none absolute inset-0 overflow-hidden">
+				<div
+					class="art-wash pointer-events-none absolute inset-0 overflow-hidden"
+				>
 					{#if backdrop}
 						<img
 							src={backdrop}
 							alt=""
 							class="absolute inset-0 h-full w-full object-cover object-center"
 							class:scale-110={appearance.blurPlaylistHeader}
-							style:filter={appearance.blurPlaylistHeader ? 'blur(24px)' : undefined}
+							style:filter={appearance.blurPlaylistHeader
+								? "blur(24px)"
+								: undefined}
 						/>
 					{/if}
 					<!-- Fade the cover into the page so the text stays readable: solid at the bottom and on the
@@ -1216,58 +1355,88 @@
 					<div
 						class="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20"
 					></div>
-					<div class="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent"></div>
+					<div
+						class="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent"
+					></div>
 				</div>
 				{#if isOnRepeat}
 					<div
 						class="relative flex h-40 w-40 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-lg"
 					>
-						<HugeiconsIcon icon={ListRestartIcon} class="h-20 w-20" />
+						<HugeiconsIcon
+							icon={ListRestartIcon}
+							class="h-20 w-20"
+						/>
 					</div>
 				{:else if art}
-					<img src={art} alt="" class="relative h-40 w-40 rounded-xl object-cover shadow-lg" />
+					<img
+						src={art}
+						alt=""
+						class="relative h-40 w-40 rounded-xl object-cover shadow-lg"
+					/>
 				{:else}
 					<div class="relative h-40 w-40 rounded-xl bg-muted"></div>
 				{/if}
 				<div class="relative min-w-0 flex-1">
-					<div class="flex items-center gap-2 text-xs font-medium uppercase text-muted-foreground">
-						{t('common.playlist_singular')}
+					<div
+						class="flex items-center gap-2 text-xs font-medium uppercase text-muted-foreground"
+					>
+						{t("common.playlist_singular")}
 						{#if isLocalList}
 							<span
 								class="flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-primary"
-								title={t('library.on_this_device_tooltip')}
+								title={t("library.on_this_device_tooltip")}
 							>
-								<HugeiconsIcon icon={ComputerIcon} class="h-3 w-3" />
-								{t('library.on_this_device')}
+								<HugeiconsIcon
+									icon={ComputerIcon}
+									class="h-3 w-3"
+								/>
+								{t("library.on_this_device")}
 							</span>
 						{/if}
 						{#if pl.collaborative}
 							<span
 								class="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-primary"
-								title={t('library.collab_tooltip')}>{t('library.collab')}</span
+								title={t("library.collab_tooltip")}
+								>{t("library.collab")}</span
 							>
 						{/if}
 						{#if spotify && (pl.owned || isLocalList)}
 							<button
 								class="flex cursor-pointer items-center gap-1.5 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-primary transition-colors hover:bg-primary/25 disabled:cursor-default disabled:opacity-60"
-								title={t('import.update_tooltip')}
+								title={t("import.update_tooltip")}
 								disabled={updatingFromSpotify}
 								onclick={() => updateFromSpotify(id)}
 							>
-								<HugeiconsIcon icon={SpotifyIcon} class="h-3 w-3" />
-								<span>{t('import.from_spotify')}</span>
-								<span class="opacity-70">{updatingFromSpotify ? t('import.updating') : t('import.update')}</span>
+								<HugeiconsIcon
+									icon={SpotifyIcon}
+									class="h-3 w-3"
+								/>
+								<span>{t("import.from_spotify")}</span>
+								<span class="opacity-70"
+									>{updatingFromSpotify
+										? t("import.updating")
+										: t("import.update")}</span
+								>
 							</button>
 						{/if}
 					</div>
-					<h1 class="mt-1 font-heading text-4xl font-bold tracking-tight drop-shadow-lg">
-						{pl.title ?? t('common.playlist_singular')}
+					<h1
+						class="mt-1 font-heading text-4xl font-bold tracking-tight drop-shadow-lg"
+					>
+						{pl.title ?? t("common.playlist_singular")}
 					</h1>
-					{#if subtitle}<p class="mt-2 text-sm text-muted-foreground">{subtitle}</p>{/if}
+					{#if subtitle}<p class="mt-2 text-sm text-muted-foreground">
+							{subtitle}
+						</p>{/if}
 					{#if pl.description}
 						<!-- Two lines, then More/Less, same as the album page. -->
 						<div class="mt-2 max-w-2xl">
-							<p class="whitespace-pre-line text-sm text-foreground/80 {expanded ? '' : 'line-clamp-2'}">
+							<p
+								class="whitespace-pre-line text-sm text-foreground/80 {expanded
+									? ''
+									: 'line-clamp-2'}"
+							>
 								{pl.description}
 							</p>
 							{#if longDescription}
@@ -1275,7 +1444,9 @@
 									class="mt-1 cursor-pointer text-xs font-semibold uppercase text-muted-foreground hover:text-foreground"
 									onclick={() => (expanded = !expanded)}
 								>
-									{expanded ? t('common.less') : t('common.more')}
+									{expanded
+										? t("common.less")
+										: t("common.more")}
 								</button>
 							{/if}
 						</div>
@@ -1285,37 +1456,76 @@
 							<Button
 								class="gap-2"
 								onclick={() => playAll(null)}
-								disabled={!pl.items.length || preparing || resorting}
+								disabled={!pl.items.length ||
+									preparing ||
+									resorting}
 							>
-								<HugeiconsIcon icon={PlayIcon} class="h-4 w-4" />
-								{preparing || resorting ? t('common.sorting') : t('player.play')}
+								<HugeiconsIcon
+									icon={PlayIcon}
+									class="h-4 w-4"
+								/>
+								{preparing || resorting
+									? t("common.sorting")
+									: t("player.play")}
 							</Button>
 							<Button
 								variant="ghost"
 								size="icon"
-								aria-label={t('a11y.playlist_options')}
+								aria-label={t("a11y.playlist_options")}
 								onclick={openMenu}
 							>
-								<HugeiconsIcon icon={MoreVerticalIcon} class="h-5 w-5 text-muted-foreground" />
+								<HugeiconsIcon
+									icon={MoreVerticalIcon}
+									class="h-5 w-5 text-muted-foreground"
+								/>
 							</Button>
 							{#if !isOnRepeat && !isLocalList && pl?.items?.length}
-								{#if plDownloadState === 'downloading'}
-									<Button variant="ghost" size="icon" disabled title={t('download.downloading')} aria-label={t('download.downloading')}>
-										<HugeiconsIcon icon={Loading03Icon} class="h-5 w-5 animate-spin text-primary" />
+								{#if plDownloadState === "downloading"}
+									<Button
+										variant="ghost"
+										size="icon"
+										disabled
+										title={t("download.downloading")}
+										aria-label={t("download.downloading")}
+									>
+										<HugeiconsIcon
+											icon={Loading03Icon}
+											class="h-5 w-5 animate-spin text-primary"
+										/>
 									</Button>
-								{:else if plDownloadState === 'downloaded'}
-									<Button variant="ghost" size="icon" disabled title={t('download.downloaded')} aria-label={t('download.downloaded')}>
-										<HugeiconsIcon icon={CheckmarkCircle02Icon} class="h-5 w-5 text-emerald-500" />
+								{:else if plDownloadState === "downloaded"}
+									<Button
+										variant="ghost"
+										size="icon"
+										disabled
+										title={t("download.downloaded")}
+										aria-label={t("download.downloaded")}
+									>
+										<HugeiconsIcon
+											icon={CheckmarkCircle02Icon}
+											class="h-5 w-5 text-emerald-500"
+										/>
 									</Button>
 								{:else}
 									<Button
 										variant="ghost"
 										size="icon"
-										onclick={() => run(() => downloadPlaylistById(id, pl?.title))}
-										title={t('download.download_playlist')}
-										aria-label={t('download.download_playlist')}
+										onclick={() =>
+											run(() =>
+												downloadPlaylistById(
+													id,
+													pl?.title,
+												),
+											)}
+										title={t("download.download_playlist")}
+										aria-label={t(
+											"download.download_playlist",
+										)}
 									>
-										<HugeiconsIcon icon={Download04Icon} class="h-5 w-5 text-muted-foreground" />
+										<HugeiconsIcon
+											icon={Download04Icon}
+											class="h-5 w-5 text-muted-foreground"
+										/>
 									</Button>
 								{/if}
 							{/if}
@@ -1329,35 +1539,49 @@
 							<Button
 								variant="ghost"
 								size="sm"
-								class="gap-2 {sort === 'default' ? 'text-muted-foreground' : ''}"
+								class="gap-2 {sort === 'default'
+									? 'text-muted-foreground'
+									: ''}"
 								onclick={openSort}
 								disabled={!pl.items.length}
 							>
-								<HugeiconsIcon icon={Sorting01Icon} class="h-4 w-4" />
+								<HugeiconsIcon
+									icon={Sorting01Icon}
+									class="h-4 w-4"
+								/>
 								{sortLabel}
 							</Button>
 							<Button
 								variant="ghost"
 								size="icon-sm"
-								class={desc ? '' : 'text-muted-foreground'}
-								aria-label={t('sort.direction', { dir: desc ? t('sort.descending') : t('sort.ascending') })}
+								class={desc ? "" : "text-muted-foreground"}
+								aria-label={t("sort.direction", {
+									dir: desc
+										? t("sort.descending")
+										: t("sort.ascending"),
+								})}
 								onclick={toggleDesc}
 								disabled={!pl.items.length}
 							>
-								<HugeiconsIcon icon={ArrowUpDownIcon} class="h-4 w-4" />
+								<HugeiconsIcon
+									icon={ArrowUpDownIcon}
+									class="h-4 w-4"
+								/>
 							</Button>
 							<Button
 								variant="ghost"
 								size="icon-sm"
 								class="text-muted-foreground"
-								aria-label={t('player.scroll_to_end')}
-								title={t('player.scroll_to_end')}
+								aria-label={t("player.scroll_to_end")}
+								title={t("player.scroll_to_end")}
 								onclick={scrollToEnd}
 								disabled={scrollingToEnd || !pl.items.length}
 							>
 								<HugeiconsIcon
 									icon={ArrowDownBigIcon}
-									class="h-4 w-4 {scrollingToEnd ? 'animate-pulse' : ''}"
+									class="h-4 w-4 {scrollingToEnd
+										? 'animate-pulse'
+										: ''}"
 								/>
 							</Button>
 						</div>
@@ -1366,7 +1590,7 @@
 				<div class="absolute right-6 top-6">
 					<TrackFilter
 						bind:value={query}
-						placeholder={t('common.search_this_playlist')}
+						placeholder={t("common.search_this_playlist")}
 						onfocus={() => (searchOpened = true)}
 					/>
 				</div>
@@ -1383,18 +1607,31 @@
 				{#if shown.length}
 					<!-- Its width decides which columns fit (`fitColumns`). -->
 					<div bind:clientWidth={listPx}>
-						<TrackColumns available={availCols} columns={cols} selecting={selection.active} />
+						<TrackColumns
+							available={availCols}
+							columns={cols}
+							selecting={selection.active}
+						/>
 						<!-- The padding stands in for the rows outside the window, so the scrollbar is the
 						     length of the whole playlist even though only ~30 rows exist.
 						     data-rows: what the scroller measures row 0's position from. -->
-						<div data-rows style="padding-top:{win.padTop}px;padding-bottom:{win.padBottom}px">
-							{#each shown.slice(win.start, win.end) as item, i (JSON.stringify([item.video_id, win.start + i]))}
+						<div
+							data-rows
+							style="padding-top:{win.padTop}px;padding-bottom:{win.padBottom}px"
+						>
+							{#each shown.slice(win.start, win.end) as item, i (JSON.stringify( [item.video_id, win.start + i], ))}
 								{@const n = win.start + i}
 								<!-- data-row: what the scroller measures a row's real height from. -->
 								<div
 									role="listitem"
-									class="relative {canReorder ? 'select-none' : ''} {dragFrom === n ? 'opacity-40' : ''}"
-									draggable={canReorder && !moving && !!item.set_video_id}
+									class="relative {canReorder
+										? 'select-none'
+										: ''} {dragFrom === n
+										? 'opacity-40'
+										: ''}"
+									draggable={canReorder &&
+										!moving &&
+										!!item.set_video_id}
 									ondragstart={(e) => onDragStart(e, n)}
 									ondragover={(e) => onDragOver(e, n)}
 									ondrop={onDrop}
@@ -1428,20 +1665,36 @@
 					</div>
 				{:else if filtering}
 					<p class="p-4 text-sm text-muted-foreground">
-						{t('library.no_tracks_match_loading', {
+						{t("library.no_tracks_match_loading", {
 							query: applied.trim(),
-							loading: pl.continuation && !moreError ? t('library.still_loading') : ''
+							loading:
+								pl.continuation && !moreError
+									? t("library.still_loading")
+									: "",
 						})}
 					</p>
 				{:else}
-					<p class="p-4 text-sm text-muted-foreground">{t('library.empty_playlist')}</p>
+					<p class="p-4 text-sm text-muted-foreground">
+						{t("library.empty_playlist")}
+					</p>
 					<!-- One of yours, so say how to fill it: the add lives on every song's menu, which is
 					     nowhere near this page. -->
 					{#if editable}
 						<div class="flex flex-wrap items-center gap-3 px-4">
-							<p class="text-sm text-muted-foreground">{t('library.empty_playlist_hint')}</p>
-							<Button variant="outline" size="sm" class="gap-2" href="/search">
-								<HugeiconsIcon icon={Search01Icon} class="h-4 w-4" /> {t('nav.search')}
+							<p class="text-sm text-muted-foreground">
+								{t("library.empty_playlist_hint")}
+							</p>
+							<Button
+								variant="outline"
+								size="sm"
+								class="gap-2"
+								href="/search"
+							>
+								<HugeiconsIcon
+									icon={Search01Icon}
+									class="h-4 w-4"
+								/>
+								{t("nav.search")}
 							</Button>
 						</div>
 					{/if}
@@ -1449,14 +1702,23 @@
 				{#if pl.continuation}
 					{#if moreError}
 						<div class="p-3 text-center">
-							<Button variant="outline" size="sm" onclick={() => loadMore()} disabled={loadingMore}>
-								{loadingMore ? t('common.loading') : t('common.try_again')}
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={() => loadMore()}
+								disabled={loadingMore}
+							>
+								{loadingMore
+									? t("common.loading")
+									: t("common.try_again")}
 							</Button>
 						</div>
 					{:else}
 						<div aria-busy={loadingMore}>
 							{#if loadingMore}
-								<div class="flex justify-center py-6"><VibratunesLoader class="size-10" /></div>
+								<div class="flex justify-center py-6">
+									<VibratunesLoader class="size-10" />
+								</div>
 							{/if}
 						</div>
 					{/if}
@@ -1481,7 +1743,10 @@
 		</div>
 		<!-- Not while selecting: the selection bar sits in the same spot. -->
 		{#if away && !selection.active && appearance.nowPlayingPill}
-			<NowPlayingPill above={playingY < sc.scrollTop} onclick={toPlaying} />
+			<NowPlayingPill
+				above={playingY < sc.scrollTop}
+				onclick={toPlaying}
+			/>
 		{/if}
 	{/if}
 </div>
@@ -1490,7 +1755,7 @@
 	<button
 		class="fixed inset-0 z-40 cursor-default"
 		onclick={() => (sortOpen = false)}
-		aria-label={t('a11y.close_menu')}
+		aria-label={t("a11y.close_menu")}
 	></button>
 	<div
 		class="fixed z-50 min-w-44 animate-in rounded-lg border bg-popover p-1 text-popover-foreground shadow-xl duration-150 fade-in-0 zoom-in-95"
@@ -1522,7 +1787,7 @@
 			e.preventDefault();
 			menuOpen = false;
 		}}
-		aria-label={t('a11y.close_menu')}
+		aria-label={t("a11y.close_menu")}
 	></button>
 	<div
 		class="fixed z-50 min-w-52 animate-in rounded-lg border bg-popover p-1 text-popover-foreground shadow-xl duration-150 fade-in-0 zoom-in-95"
@@ -1534,30 +1799,34 @@
 			onclick={() => run(shufflePlay)}
 			disabled={!pl?.items.length}
 		>
-			<HugeiconsIcon icon={ShuffleIcon} class="h-4 w-4" /> {t('player.shuffle_play')}
+			<HugeiconsIcon icon={ShuffleIcon} class="h-4 w-4" />
+			{t("player.shuffle_play")}
 		</button>
 		<button
 			class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 			onclick={() => run(() => queue(true))}
 			disabled={!pl?.items.length}
 		>
-			<HugeiconsIcon icon={ArrowUpNarrowWideIcon} class="h-4 w-4" /> {t('player.play_next')}
+			<HugeiconsIcon icon={ArrowUpNarrowWideIcon} class="h-4 w-4" />
+			{t("player.play_next")}
 		</button>
 		<button
 			class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 			onclick={() => run(() => queue(false))}
 			disabled={!pl?.items.length}
 		>
-			<HugeiconsIcon icon={ArrowDownWideNarrowIcon} class="h-4 w-4" /> {t('player.add_to_queue')}
+			<HugeiconsIcon icon={ArrowDownWideNarrowIcon} class="h-4 w-4" />
+			{t("player.add_to_queue")}
 		</button>
 		<!-- On Repeat is built from local play counts, and a playlist on this machine is no YouTube
 		     playlist either: neither has a radio to seed. -->
 		{#if !isOnRepeat && !isLocalList}
 			<button
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
-				onclick={() => run(() => startRadio('playlist', id, pl?.title))}
+				onclick={() => run(() => startRadio("playlist", id, pl?.title))}
 			>
-				<HugeiconsIcon icon={Radio02Icon} class="h-4 w-4" /> {t('player.start_radio')}
+				<HugeiconsIcon icon={Radio02Icon} class="h-4 w-4" />
+				{t("player.start_radio")}
 			</button>
 		{/if}
 		<!-- Copies the tracks into another of your playlists. On Repeat is built from local play
@@ -1568,21 +1837,24 @@
 				onclick={saveToPlaylist}
 				disabled={copying || !pl?.items.length}
 			>
-				<HugeiconsIcon icon={PlayListAddIcon} class="h-4 w-4" /> {t('player.save_to_playlist')}
+				<HugeiconsIcon icon={PlayListAddIcon} class="h-4 w-4" />
+				{t("player.save_to_playlist")}
 			</button>
 		{/if}
 		<button
 			class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 			onclick={() => run(() => addPick(asItem()))}
 		>
-			<HugeiconsIcon icon={DashboardSquare02Icon} class="h-4 w-4" /> {t('player.add_to_shortcuts')}
+			<HugeiconsIcon icon={DashboardSquare02Icon} class="h-4 w-4" />
+			{t("player.add_to_shortcuts")}
 		</button>
 		{#if !isOnRepeat && !isLocalList}
 			<button
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={() => run(() => openShare(asItem()))}
 			>
-				<HugeiconsIcon icon={Share08Icon} class="h-4 w-4" /> {t('player.share')}
+				<HugeiconsIcon icon={Share08Icon} class="h-4 w-4" />
+				{t("player.share")}
 			</button>
 		{/if}
 
@@ -1598,12 +1870,17 @@
 					showAlt={savedHere}
 					class="h-4 w-4"
 				/>
-				{savedHere ? t('library.remove_from_library') : t('library.save_to_library')}
+				{savedHere
+					? t("library.remove_from_library")
+					: t("library.save_to_library")}
 			</button>
 		{:else if inAccount && !isOnRepeat && !isLiked && !editable}
 			{#if ownedByUser(asItem())}
-				<div class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground">
-					<HugeiconsIcon icon={BookmarkCheck02Icon} class="h-4 w-4" /> {t('library.in_library')}
+				<div
+					class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground"
+				>
+					<HugeiconsIcon icon={BookmarkCheck02Icon} class="h-4 w-4" />
+					{t("library.in_library")}
 				</div>
 			{:else}
 				<button
@@ -1611,15 +1888,21 @@
 					onclick={() => run(unsaveFromLibrary)}
 				>
 					<HugeiconsIcon icon={BookmarkMinus02Icon} class="h-4 w-4" />
-					{t('library.remove_from_library')}
+					{t("library.remove_from_library")}
 				</button>
 			{/if}
 		{/if}
 		{#if spotify && (pl?.owned || isLocalList)}
-			<label class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10">
+			<label
+				class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
+			>
 				<HugeiconsIcon icon={SpotifyIcon} class="h-4 w-4" />
-				<span class="flex-1">{t('import.keep_updated')}</span>
-				<Switch size="sm" checked={spotify.auto} onCheckedChange={setAutoUpdate} />
+				<span class="flex-1">{t("import.keep_updated")}</span>
+				<Switch
+					size="sm"
+					checked={spotify.auto}
+					onCheckedChange={setAutoUpdate}
+				/>
 			</label>
 		{/if}
 		{#if editable}
@@ -1627,13 +1910,15 @@
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent/10"
 				onclick={() => run(() => (editing = true))}
 			>
-				<HugeiconsIcon icon={PencilEdit02Icon} class="h-4 w-4" /> {t('player.edit_playlist')}
+				<HugeiconsIcon icon={PencilEdit02Icon} class="h-4 w-4" />
+				{t("player.edit_playlist")}
 			</button>
 			<button
 				class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-destructive hover:bg-destructive/10"
 				onclick={() => run(() => (confirmingDelete = true))}
 			>
-				<HugeiconsIcon icon={Delete02Icon} class="h-4 w-4" /> {t('player.delete_playlist')}
+				<HugeiconsIcon icon={Delete02Icon} class="h-4 w-4" />
+				{t("player.delete_playlist")}
 			</button>
 		{/if}
 	</div>
@@ -1655,25 +1940,42 @@
 {#if editable}
 	<!-- Closing it mid-request is refused: the delete is already on its way, and a dialog that
 	     vanished would leave its answer (an error toast, or the jump to Library) unexplained. -->
-	<AlertDialog.Root bind:open={() => confirmingDelete, (v) => !deleting && (confirmingDelete = v)}>
+	<AlertDialog.Root
+		bind:open={
+			() => confirmingDelete, (v) => !deleting && (confirmingDelete = v)
+		}
+	>
 		<AlertDialog.Content>
 			<AlertDialog.Header>
 				<AlertDialog.Media class="bg-destructive/10 text-destructive">
 					<HugeiconsIcon icon={Delete02Icon} />
 				</AlertDialog.Media>
-				<AlertDialog.Title>{t('library.delete_playlist_confirm')}</AlertDialog.Title>
+				<AlertDialog.Title
+					>{t("library.delete_playlist_confirm")}</AlertDialog.Title
+				>
 				<AlertDialog.Description>
-					{t(isLocalList ? 'library.delete_playlist_desc_local' : 'library.delete_playlist_desc', {
-						title: pl?.title ?? t('common.playlist_singular')
-					})}
+					{t(
+						isLocalList
+							? "library.delete_playlist_desc_local"
+							: "library.delete_playlist_desc",
+						{
+							title: pl?.title ?? t("common.playlist_singular"),
+						},
+					)}
 				</AlertDialog.Description>
 			</AlertDialog.Header>
 			<AlertDialog.Footer>
-				<AlertDialog.Cancel disabled={deleting}>{t('common.cancel')}</AlertDialog.Cancel>
+				<AlertDialog.Cancel disabled={deleting}
+					>{t("common.cancel")}</AlertDialog.Cancel
+				>
 				<!-- bits-ui's Action is a plain button (only Cancel closes the dialog), which is what
 				     keeps it open until the request answers. -->
-				<AlertDialog.Action variant="destructive" onclick={deleteThisPlaylist} disabled={deleting}>
-					{deleting ? t('common.loading') : t('common.delete')}
+				<AlertDialog.Action
+					variant="destructive"
+					onclick={deleteThisPlaylist}
+					disabled={deleting}
+				>
+					{deleting ? t("common.loading") : t("common.delete")}
 				</AlertDialog.Action>
 			</AlertDialog.Footer>
 		</AlertDialog.Content>

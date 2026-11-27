@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { HugeiconsIcon } from "@hugeicons/svelte";
 	import {
 		PreviousIcon,
 		NextIcon,
@@ -20,13 +20,13 @@
 		ArrowDown01Icon,
 		PreferenceVerticalIcon,
 		GoBackward15SecIcon,
-		GoForward15SecIcon
-	} from '@hugeicons/core-free-icons';
-	import LogoMark from './LogoMark.svelte';
-	import { fade } from 'svelte/transition';
-	import { goto } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
-	import * as api from '$lib/api';
+		GoForward15SecIcon,
+	} from "@hugeicons/core-free-icons";
+	import LogoMark from "./LogoMark.svelte";
+	import { fade } from "svelte/transition";
+	import { goto } from "$app/navigation";
+	import { Button } from "$lib/components/ui/button";
+	import * as api from "$lib/api";
 	import {
 		np,
 		playback,
@@ -39,19 +39,19 @@
 		toggleMute,
 		toggleNowPlayingRating,
 		ui,
-		wheelVolume
-	} from '$lib/player.svelte';
-	import { thumb } from '$lib/thumb';
-	import { appearance } from '$lib/theme.svelte';
-	import ArtistLine from './ArtistLine.svelte';
-	import M3SeekWave from './M3SeekWave.svelte';
-	import Marquee from './Marquee.svelte';
-	import SpeedPicker from './SpeedPicker.svelte';
-	import TrackMenu from './TrackMenu.svelte';
-	import DevicePicker from './DevicePicker.svelte';
-	import { link } from '$lib/link.svelte';
-	import { currentLocale, t } from '$lib/i18n.svelte';
-	import LiveBadge from './LiveBadge.svelte';
+		wheelVolume,
+	} from "$lib/player.svelte";
+	import { thumb } from "$lib/thumb";
+	import { appearance } from "$lib/theme.svelte";
+	import ArtistLine from "./ArtistLine.svelte";
+	import M3SeekWave from "./M3SeekWave.svelte";
+	import Marquee from "./Marquee.svelte";
+	import SpeedPicker from "./SpeedPicker.svelte";
+	import TrackMenu from "./TrackMenu.svelte";
+	import DevicePicker from "./DevicePicker.svelte";
+	import { link } from "$lib/link.svelte";
+	import { currentLocale, t } from "$lib/i18n.svelte";
+	import LiveBadge from "./LiveBadge.svelte";
 
 	let {
 		onToggleQueue,
@@ -59,7 +59,7 @@
 		onToggleLyrics,
 		lyricsOpen,
 		onToggleComments,
-		commentsOpen
+		commentsOpen,
 	}: {
 		onToggleQueue: () => void;
 		queueOpen: boolean;
@@ -74,27 +74,29 @@
 	let justLiked = $state(false);
 
 	function toggleLike() {
-		if (playback.rating !== 'like') justLiked = true;
+		if (playback.rating !== "like") justLiked = true;
 		toggleNowPlayingRating();
 	}
 
 	const fmt = (secs: number) => {
-		if (!secs || secs < 0) return '0:00';
+		if (!secs || secs < 0) return "0:00";
 		const t = Math.floor(secs);
 		const h = Math.floor(t / 3600);
 		const m = Math.floor((t % 3600) / 60);
 		const s = t % 60;
-		const mm = h ? m.toString().padStart(2, '0') : `${m}`;
-		return `${h ? `${h}:` : ''}${mm}:${s.toString().padStart(2, '0')}`;
+		const mm = h ? m.toString().padStart(2, "0") : `${m}`;
+		return `${h ? `${h}:` : ""}${mm}:${s.toString().padStart(2, "0")}`;
 	};
 
 	const shuffleOn = $derived(playback.queue.shuffle ?? false);
 	// Lit like shuffle while any effect is on: a speed set last week and forgotten is the case to
 	// catch, since the song then just sounds wrong.
 	const effectsOn = $derived(
-		playback.speed !== 1 || playback.semitones !== 0 || playback.reverb.enabled
+		playback.speed !== 1 ||
+			playback.semitones !== 0 ||
+			playback.reverb.enabled,
 	);
-	const repeat = $derived(playback.queue.repeat ?? 'off');
+	const repeat = $derived(playback.queue.repeat ?? "off");
 	// A podcast episode trades shuffle for speed and gets the 15-second skips either side of play.
 	const episode = $derived(!!playback.now?.isEpisode);
 
@@ -106,7 +108,7 @@
 		return !!cur?.autoplay && cur.video_id === playback.now?.videoId;
 	});
 
-	// The ⋮ menu needs the full SongItem — NowPlaying carries no album_id. Take it from the queue
+	// The ⋮ menu needs the full SongItem - NowPlaying carries no album_id. Take it from the queue
 	// row, matched on videoId so a mid-advance mismatch can't point the menu at the wrong song.
 	const currentSong = $derived.by(() => {
 		const cur = playback.queue.items[playback.queue.currentIndex];
@@ -116,21 +118,28 @@
 	// The title links to the song's album (there is no per-song page). Local files carry no
 	// album_id, so their title stays plain text.
 	const albumId = $derived(
-		currentSong && !api.isLocalId(currentSong.video_id) ? currentSong.album_id : undefined
+		currentSong && !api.isLocalId(currentSong.video_id)
+			? currentSong.album_id
+			: undefined,
 	);
 
 	// Seek: while dragging, hold a local value so incoming mpv position ticks can't yank the thumb
 	// back under the pointer; only invoke the (expensive) seek on release.
 	let seekDrag = $state<number | null>(null);
 	// Display playback seconds at the selected tempo; mpv seeks still take track seconds.
-	const shownPosition = $derived((seekDrag ?? playback.position) / playback.speed);
+	const shownPosition = $derived(
+		(seekDrag ?? playback.position) / playback.speed,
+	);
 	const shownDuration = $derived(playback.duration / playback.speed);
 	const seekPct = $derived(
-		shownDuration > 0 ? Math.min(1, Math.max(0, shownPosition / shownDuration)) : 0
+		shownDuration > 0
+			? Math.min(1, Math.max(0, shownPosition / shownDuration))
+			: 0,
 	);
 
 	function onSeekInput(e: Event) {
-		seekDrag = Number((e.target as HTMLInputElement).value) * playback.speed;
+		seekDrag =
+			Number((e.target as HTMLInputElement).value) * playback.speed;
 	}
 	function onSeekCommit(e: Event) {
 		const v = Number((e.target as HTMLInputElement).value) * playback.speed;
@@ -139,15 +148,19 @@
 		api.seek(v);
 	}
 
-	const onVolume = (e: Event) => dragVolume(Number((e.target as HTMLInputElement).value));
-	const onVolumeCommit = (e: Event) => commitVolume(Number((e.target as HTMLInputElement).value));
+	const onVolume = (e: Event) =>
+		dragVolume(Number((e.target as HTMLInputElement).value));
+	const onVolumeCommit = (e: Event) =>
+		commitVolume(Number((e.target as HTMLInputElement).value));
 	// "60 %": the number in the locale's digits, then a space the line can't break at (#609).
 	const volumePct = $derived(
-		`${new Intl.NumberFormat(currentLocale.id).format(Math.round(playback.volume))}\u00a0%`
+		`${new Intl.NumberFormat(currentLocale.id).format(Math.round(playback.volume))}\u00a0%`,
 	);
 
 	const isControl = (t: EventTarget | null) =>
-		!!(t as HTMLElement | null)?.closest?.('button, a, input, [role="button"]');
+		!!(t as HTMLElement | null)?.closest?.(
+			'button, a, input, [role="button"]',
+		);
 
 	// Dragging a slider past its end and releasing outside it retargets the click at the bar (the
 	// click lands on the common ancestor of press and release), which used to toggle the view.
@@ -159,7 +172,12 @@
 	// cursor, because this is the whole bar, not a button, and every real button keeps its own click.
 	// Settings can switch it off for whoever keeps tripping it on a missed control.
 	function onBarClick(e: MouseEvent) {
-		if (!appearance.emptyClickTogglesPlayer || pressedControl || isControl(e.target)) return;
+		if (
+			!appearance.emptyClickTogglesPlayer ||
+			pressedControl ||
+			isControl(e.target)
+		)
+			return;
 		np.open = !np.open;
 	}
 </script>
@@ -169,20 +187,30 @@
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions, a11y_no_noninteractive_element_interactions -->
 <footer
 	data-player-bar
-	data-playing={playback.paused ? 'false' : 'true'}
+	data-playing={playback.paused ? "false" : "true"}
 	onpointerdown={(e) => (pressedControl = isControl(e.target))}
 	onclick={onBarClick}
 	class="relative flex items-center gap-2 border-t bg-card px-2 py-2 sm:gap-4 sm:px-4 sm:py-3"
 >
 	<!-- Mobile top progress line when mini player is active (< sm) -->
 	{#if !np.open}
-		<div class="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-muted/60 sm:hidden">
-			<div class="h-full bg-primary transition-all duration-150" style="width:{seekPct * 100}%"></div>
+		<div
+			class="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-muted/60 sm:hidden"
+		>
+			<div
+				class="h-full bg-primary transition-all duration-150"
+				style="width:{seekPct * 100}%"
+			></div>
 		</div>
 	{/if}
 
 	<!-- Now playing info. On mobile, shown when mini player is active (!np.open); hidden when NowPlaying is open -->
-	<div class="{np.open ? 'hidden sm:flex' : 'flex'} min-w-0 flex-1 items-center gap-2.5 sm:gap-3" data-ctx>
+	<div
+		class="{np.open
+			? 'hidden sm:flex'
+			: 'flex'} min-w-0 flex-1 items-center gap-2.5 sm:gap-3"
+		data-ctx
+	>
 		{#key playback.now?.videoId}
 			{#if playback.now?.thumbnail}
 				<img
@@ -206,7 +234,7 @@
 			<div class="flex items-center gap-1.5">
 				{#snippet title()}
 					<Marquee
-						text={playback.now?.title ?? t('player.not_playing')}
+						text={playback.now?.title ?? t("player.not_playing")}
 						class="text-sm font-medium"
 					/>
 				{/snippet}
@@ -218,7 +246,8 @@
 				{#if albumId}
 					<button
 						class="min-w-0 cursor-pointer text-left hover:[&_span]:underline"
-						onclick={() => goto(`/album/${encodeURIComponent(albumId)}`)}
+						onclick={() =>
+							goto(`/album/${encodeURIComponent(albumId)}`)}
 					>
 						{@render title()}
 					</button>
@@ -228,16 +257,19 @@
 				{#if autoplayTrack}
 					<span
 						class="shrink-0 text-muted-foreground"
-						title={t('player.autoplay_notice')}
+						title={t("player.autoplay_notice")}
 						in:fade={{ duration: 200 }}
 					>
-						<HugeiconsIcon icon={InfinityIcon} class="h-3.5 w-3.5" />
+						<HugeiconsIcon
+							icon={InfinityIcon}
+							class="h-3.5 w-3.5"
+						/>
 					</span>
 				{/if}
 			</div>
 			<ArtistLine
 				runs={playback.now?.artistRuns}
-				text={playback.now?.artists ?? ''}
+				text={playback.now?.artists ?? ""}
 				marquee
 				class="block max-w-full text-xs text-muted-foreground"
 			/>
@@ -255,7 +287,7 @@
 						size="icon-sm"
 						class="hidden lg:inline-flex"
 						onclick={toggleLike}
-						aria-label={t('common.like')}
+						aria-label={t("common.like")}
 					>
 						<span
 							class="inline-flex"
@@ -264,7 +296,9 @@
 						>
 							<HugeiconsIcon
 								icon={FavouriteIcon}
-								class="h-4 w-4 {playback.rating === 'like' ? 'fill-current text-primary' : 'text-muted-foreground'}"
+								class="h-4 w-4 {playback.rating === 'like'
+									? 'fill-current text-primary'
+									: 'text-muted-foreground'}"
 							/>
 						</span>
 					</Button>
@@ -284,13 +318,16 @@
 								artists: now.artists,
 								artist_id: now.artistId,
 								thumbnail: now.thumbnail,
-								duration: now.duration
-							}
+								duration: now.duration,
+							},
 						);
 					}}
-					aria-label={t('player.save_to_playlist')}
+					aria-label={t("player.save_to_playlist")}
 				>
-					<HugeiconsIcon icon={Add01Icon} class="h-4 w-4 text-muted-foreground" />
+					<HugeiconsIcon
+						icon={Add01Icon}
+						class="h-4 w-4 text-muted-foreground"
+					/>
 				</Button>
 				{#if currentSong}
 					<TrackMenu
@@ -316,7 +353,9 @@
 					e.stopPropagation();
 					api.togglePause();
 				}}
-				aria-label={playback.paused ? t('player.play') : t('player.pause')}
+				aria-label={playback.paused
+					? t("player.play")
+					: t("player.pause")}
 				class="h-9 w-9"
 			>
 				<HugeiconsIcon
@@ -333,7 +372,7 @@
 					e.stopPropagation();
 					api.nextTrack();
 				}}
-				aria-label={t('player.next')}
+				aria-label={t("player.next")}
 				class="h-9 w-9"
 			>
 				<HugeiconsIcon icon={NextIcon} class="h-5 w-5" />
@@ -342,7 +381,11 @@
 	{/if}
 
 	<!-- Transport: on mobile, shown when NowPlaying is open (np.open) or on desktop always (sm:flex) -->
-	<div class="{np.open ? 'flex' : 'hidden sm:flex'} flex-[1.5] flex-col items-center gap-1">
+	<div
+		class="{np.open
+			? 'flex'
+			: 'hidden sm:flex'} flex-[1.5] flex-col items-center gap-1"
+	>
 		<div class="flex items-center gap-1">
 			{#if episode}
 				<SpeedPicker
@@ -353,16 +396,23 @@
 					variant="ghost"
 					size="icon-sm"
 					onclick={() => api.toggleShuffle()}
-					aria-label={t('player.shuffle')}
+					aria-label={t("player.shuffle")}
 					aria-pressed={shuffleOn}
 				>
 					<HugeiconsIcon
 						icon={ShuffleIcon}
-						class="h-4 w-4 {shuffleOn ? 'text-primary' : 'text-muted-foreground'}"
+						class="h-4 w-4 {shuffleOn
+							? 'text-primary'
+							: 'text-muted-foreground'}"
 					/>
 				</Button>
 			{/if}
-			<Button variant="ghost" size="icon-sm" onclick={() => api.prevTrack()} aria-label={t('player.previous')}>
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				onclick={() => api.prevTrack()}
+				aria-label={t("player.previous")}
+			>
 				<HugeiconsIcon icon={PreviousIcon} class="h-5 w-5" />
 			</Button>
 			{#if episode}
@@ -370,7 +420,7 @@
 					variant="ghost"
 					size="icon-sm"
 					onclick={() => skipBy(-SKIP_SECS)}
-					aria-label={t('player.skip_back', { seconds: SKIP_SECS })}
+					aria-label={t("player.skip_back", { seconds: SKIP_SECS })}
 				>
 					<HugeiconsIcon icon={GoBackward15SecIcon} class="h-5 w-5" />
 				</Button>
@@ -381,45 +431,61 @@
 				data-play-button
 				class="rounded-full"
 				onclick={() => api.togglePause()}
-				aria-label={playback.paused ? t('player.play') : t('player.pause')}
+				aria-label={playback.paused
+					? t("player.play")
+					: t("player.pause")}
 			>
-				<!-- HugeiconsIcon only re-renders `altIcon`/`showAlt`, not `icon` (frozen at mount) —
+				<!-- HugeiconsIcon only re-renders `altIcon`/`showAlt`, not `icon` (frozen at mount) -
 			     so toggle via showAlt, not a ternary on `icon`. -->
-			<HugeiconsIcon
-				icon={PauseIcon}
-				altIcon={PlayIcon}
-				showAlt={playback.paused}
-				class="h-5 w-5"
-			/>
+				<HugeiconsIcon
+					icon={PauseIcon}
+					altIcon={PlayIcon}
+					showAlt={playback.paused}
+					class="h-5 w-5"
+				/>
 			</Button>
 			{#if episode}
 				<Button
 					variant="ghost"
 					size="icon-sm"
 					onclick={() => skipBy(SKIP_SECS)}
-					aria-label={t('player.skip_forward', { seconds: SKIP_SECS })}
+					aria-label={t("player.skip_forward", {
+						seconds: SKIP_SECS,
+					})}
 				>
 					<HugeiconsIcon icon={GoForward15SecIcon} class="h-5 w-5" />
 				</Button>
 			{/if}
-			<Button variant="ghost" size="icon-sm" onclick={() => api.nextTrack()} aria-label={t('player.next')}>
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				onclick={() => api.nextTrack()}
+				aria-label={t("player.next")}
+			>
 				<HugeiconsIcon icon={NextIcon} class="h-5 w-5" />
 			</Button>
 			<Button
 				variant="ghost"
 				size="icon-sm"
 				onclick={cycleRepeat}
-				aria-label={t('player.repeat_state', {
-					state: repeat === 'off' ? t('player.repeat_off') : repeat === 'one' ? t('player.repeat_one') : t('player.repeat_all')
+				aria-label={t("player.repeat_state", {
+					state:
+						repeat === "off"
+							? t("player.repeat_off")
+							: repeat === "one"
+								? t("player.repeat_one")
+								: t("player.repeat_all"),
 				})}
-				aria-pressed={repeat !== 'off'}
+				aria-pressed={repeat !== "off"}
 			>
-				<!-- icon swap via altIcon/showAlt — `icon` is frozen at mount (see play/pause above) -->
+				<!-- icon swap via altIcon/showAlt - `icon` is frozen at mount (see play/pause above) -->
 				<HugeiconsIcon
 					icon={RepeatIcon}
 					altIcon={RepeatOne01Icon}
-					showAlt={repeat === 'one'}
-					class="h-4 w-4 {repeat !== 'off' ? 'text-primary' : 'text-muted-foreground'}"
+					showAlt={repeat === "one"}
+					class="h-4 w-4 {repeat !== 'off'
+						? 'text-primary'
+						: 'text-muted-foreground'}"
 				/>
 			</Button>
 		</div>
@@ -430,10 +496,14 @@
 				<LiveBadge />
 			</div>
 		{:else}
-			<div class="flex w-full max-w-md items-center gap-2 text-xs text-muted-foreground">
+			<div
+				class="flex w-full max-w-md items-center gap-2 text-xs text-muted-foreground"
+			>
 				<!-- Fixed slots, or the seek bar twitches as the position ticks: DM Sans has no tabular
 				     figures, so `tabular-nums` does nothing there (#463). -->
-				<span class="min-w-[5ch] text-right tabular-nums">{fmt(shownPosition)}</span>
+				<span class="min-w-[5ch] text-right tabular-nums"
+					>{fmt(shownPosition)}</span
+				>
 				<div
 					class="m3-seek relative flex flex-1 items-center"
 					style="--pct:{seekPct * 100}%"
@@ -453,27 +523,39 @@
 						value={shownPosition}
 						oninput={onSeekInput}
 						onchange={onSeekCommit}
-						aria-label={t('player.seek')}
+						aria-label={t("player.seek")}
 					/>
 				</div>
-				<span class="min-w-[5ch] tabular-nums">{fmt(shownDuration)}</span>
+				<span class="min-w-[5ch] tabular-nums"
+					>{fmt(shownDuration)}</span
+				>
 			</div>
 		{/if}
 	</div>
 
 	<!-- Volume + queue -->
-	<div class="{np.open ? 'flex' : 'hidden sm:flex'} flex-1 items-center justify-end gap-1 sm:gap-2">
+	<div
+		class="{np.open
+			? 'flex'
+			: 'hidden sm:flex'} flex-1 items-center justify-end gap-1 sm:gap-2"
+	>
 		<!-- Volume is the first control to drop on a narrow window (OS volume still works). It is
 		     this desktop's, so it goes while the bar controls a linked device. -->
-		<div class="group/vol relative hidden items-center gap-1 {link.remote ? '' : 'md:flex'}">
+		<div
+			class="group/vol relative hidden items-center gap-1 {link.remote
+				? ''
+				: 'md:flex'}"
+		>
 			<Button
 				variant="ghost"
 				size="icon-sm"
 				class="text-muted-foreground"
 				onclick={toggleMute}
-				aria-label={playback.volume === 0 ? t('player.unmute') : t('player.mute')}
+				aria-label={playback.volume === 0
+					? t("player.unmute")
+					: t("player.mute")}
 			>
-				<!-- icon swap via altIcon/showAlt — `icon` is frozen at mount (see play/pause above) -->
+				<!-- icon swap via altIcon/showAlt - `icon` is frozen at mount (see play/pause above) -->
 				<HugeiconsIcon
 					icon={VolumeHighIcon}
 					altIcon={VolumeMute02Icon}
@@ -491,7 +573,7 @@
 				oninput={onVolume}
 				onchange={onVolumeCommit}
 				onwheel={wheelVolume}
-				aria-label={t('player.volume')}
+				aria-label={t("player.volume")}
 				aria-valuetext={volumePct}
 			/>
 			<!-- The level as a number while the slider is in use (#609), hidden the rest of the time so
@@ -505,52 +587,55 @@
 		</div>
 		<!-- One cluster, so they sit tighter to each other than to the volume slider. -->
 		<div class="flex items-center gap-0.5">
-			{#if link.status !== 'off'}<DevicePicker />{/if}
+			{#if link.status !== "off"}<DevicePicker />{/if}
 			<!-- Speed, pitch and reverb are this desktop's player's; hidden while it controls a linked device. -->
 			{#if !link.remote}
-			<Button
-				variant={ui.tempoPitchOpen ? 'secondary' : 'ghost'}
-				size="icon-sm"
-				onclick={() => (ui.tempoPitchOpen = !ui.tempoPitchOpen)}
-				aria-label={t('dialogs.tempo_pitch.title')}
-				aria-expanded={ui.tempoPitchOpen}
-			>
-				<HugeiconsIcon
-					icon={PreferenceVerticalIcon}
-					class="h-5 w-5 {effectsOn ? 'text-primary' : ''}"
-				/>
-			</Button>
+				<Button
+					variant={ui.tempoPitchOpen ? "secondary" : "ghost"}
+					size="icon-sm"
+					onclick={() => (ui.tempoPitchOpen = !ui.tempoPitchOpen)}
+					aria-label={t("dialogs.tempo_pitch.title")}
+					aria-expanded={ui.tempoPitchOpen}
+				>
+					<HugeiconsIcon
+						icon={PreferenceVerticalIcon}
+						class="h-5 w-5 {effectsOn ? 'text-primary' : ''}"
+					/>
+				</Button>
 			{/if}
 			<Button
-				variant={lyricsOpen ? 'secondary' : 'ghost'}
+				variant={lyricsOpen ? "secondary" : "ghost"}
 				size="icon-sm"
 				class="relative"
 				onclick={onToggleLyrics}
-				aria-label={t('player.lyrics')}
-				title={playback.karaoke ? t('karaoke.lyrics_hint') : undefined}
+				aria-label={t("player.lyrics")}
+				title={playback.karaoke ? t("karaoke.lyrics_hint") : undefined}
 			>
 				<HugeiconsIcon icon={Mic01Icon} class="h-5 w-5" />
 				<!-- Karaoke's switch is in the lyrics footer; the dot says it's on, and where. -->
 				{#if playback.karaoke}
-					<span class="absolute right-1 top-1 size-1.5 rounded-full bg-primary" aria-hidden="true"></span>
+					<span
+						class="absolute right-1 top-1 size-1.5 rounded-full bg-primary"
+						aria-hidden="true"
+					></span>
 				{/if}
 			</Button>
 			<!-- A local file has no YouTube comment thread to open. -->
 			{#if playback.now && !api.isLocalId(playback.now.videoId)}
 				<Button
-					variant={commentsOpen ? 'secondary' : 'ghost'}
+					variant={commentsOpen ? "secondary" : "ghost"}
 					size="icon-sm"
 					onclick={onToggleComments}
-					aria-label={t('player.comments')}
+					aria-label={t("player.comments")}
 				>
 					<HugeiconsIcon icon={Comment01Icon} class="h-5 w-5" />
 				</Button>
 			{/if}
 			<Button
-				variant={queueOpen ? 'secondary' : 'ghost'}
+				variant={queueOpen ? "secondary" : "ghost"}
 				size="icon-sm"
 				onclick={onToggleQueue}
-				aria-label={t('player.queue')}
+				aria-label={t("player.queue")}
 			>
 				<HugeiconsIcon icon={Queue01Icon} class="h-5 w-5" />
 			</Button>
@@ -560,10 +645,12 @@
 				variant="ghost"
 				size="icon-sm"
 				onclick={() => (np.open = !np.open)}
-				aria-label={np.open ? t('player.minimize_player') : t('player.open_player')}
+				aria-label={np.open
+					? t("player.minimize_player")
+					: t("player.open_player")}
 				aria-expanded={np.open}
 			>
-				<!-- icon swap via altIcon/showAlt — `icon` is frozen at mount (see play/pause above) -->
+				<!-- icon swap via altIcon/showAlt - `icon` is frozen at mount (see play/pause above) -->
 				<HugeiconsIcon
 					icon={ArrowUp01Icon}
 					altIcon={ArrowDown01Icon}

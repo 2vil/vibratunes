@@ -1,6 +1,6 @@
 // Shared reactive app state (playback + auth), set up ONCE by the root layout. Components import
 // `playback`/`auth` and read them reactively; the Rust side drives them via Tauri events.
-// context/11 UI contract — this module only calls commands / subscribes to events.
+// context/11 UI contract - this module only calls commands / subscribes to events.
 import { browser } from '$app/environment';
 import * as api from './api';
 import type {
@@ -40,7 +40,7 @@ export const playback = $state({
 	// Session-only: mpv starts without it every launch.
 	karaoke: false,
 	reverb: { ...api.DEFAULT_REVERB },
-	// Rating of the current track — seeded from its real `likeStatus` on each change, then
+	// Rating of the current track - seeded from its real `likeStatus` on each change, then
 	// optimistic on toggle. Owned here rather than in `ratings` below because the mini player is a
 	// separate webview with its own module instance: the backend reseed is what keeps them agreeing.
 	rating: 'indifferent' as Rating
@@ -371,7 +371,7 @@ export function videoUrlFor(videoId: string): Promise<string | null> {
  *  one instead of failing the same way. */
 export function forgetVideoUrl(videoId: string) {
 	videoUrls.delete(videoId);
-	api.forgetVideoStream(videoId).catch(() => {});
+	api.forgetVideoStream(videoId).catch(() => { });
 }
 
 /** No-op when the user has turned the auto-open off (#64): playback starts, the view stays put. */
@@ -388,7 +388,7 @@ export function playSong(song: SongItem) {
 export const auth = $state({
 	account: null as Account | null,
 	// Bumped on every sign-in/out. The root layout keys the page on it, so the current route
-	// remounts and refetches — home/browse data is per-account and otherwise stays stale until
+	// remounts and refetches - home/browse data is per-account and otherwise stays stale until
 	// the user navigates away and back.
 	epoch: 0
 });
@@ -648,16 +648,16 @@ export async function loadSavedIndex() {
 			.then((ids) => {
 				if (generation === libraryGeneration) savedIn.readOnly = ids;
 			})
-			.catch(() => {});
+			.catch(() => { });
 	await applyReadOnly();
 	await api
 		.playlistIndex()
 		.then(apply)
-		.catch(() => {});
+		.catch(() => { });
 	await api
 		.syncPlaylistIndex()
 		.then(apply)
-		.catch(() => {});
+		.catch(() => { });
 	await applyReadOnly();
 }
 
@@ -748,7 +748,7 @@ export const blocked = $state({ artists: [] as api.BlockedArtist[] });
 export const loadBlocked = () =>
 	api.getBlockedArtists()
 		.then((l) => (blocked.artists = l))
-		.catch(() => {});
+		.catch(() => { });
 
 /** Block an artist. Rust also drops their upcoming tracks and skips off them if one is playing. */
 export async function blockArtist(id: string | undefined, name: string) {
@@ -784,7 +784,7 @@ if (browser) {
 	try {
 		Object.assign(personal, pl.hydrate(JSON.parse(localStorage.getItem(PERSONAL_KEY) ?? 'null')));
 	} catch {
-		// Unreadable blob — start clean rather than break startup.
+		// Unreadable blob - start clean rather than break startup.
 	}
 }
 
@@ -804,7 +804,7 @@ export function addPick(item: BrowseItem) {
 	toast.success(t(added ? 'toasts.added_to_shortcuts' : 'toasts.already_in_shortcuts'));
 }
 
-/** Drop landed: move (or add) a tile so it sits before `beforeId` — null appends. No toast: the
+/** Drop landed: move (or add) a tile so it sits before `beforeId` - null appends. No toast: the
  *  grid rearranging under the cursor is its own feedback. */
 export function placePick(item: BrowseItem, beforeId: string | null) {
 	pl.placePick(personal, item, beforeId);
@@ -1159,7 +1159,7 @@ export function commitVolume(v: number) {
 	api.setVolume(v);
 	// Persisted here rather than in Rust's `set_volume`: a drag calls that once per frame and every
 	// settings write is an fsync. A commit is one per gesture, and it's the level to reopen at.
-	api.setSetting('volume', String(v)).catch(() => {});
+	api.setSetting('volume', String(v)).catch(() => { });
 }
 
 /**
@@ -1274,7 +1274,7 @@ export function playAt(videoId: string, secs: number, title?: string) {
 	startRadio('song', videoId, title, secs);
 }
 
-// Mute *is* volume 0 — no separate flag, so dragging the slider off zero un-mutes for free and the
+// Mute *is* volume 0 - no separate flag, so dragging the slider off zero un-mutes for free and the
 // icon can't disagree with what you hear. Remembers the level to come back to; falls back to 100
 // when the user dragged to zero themselves (nothing was remembered).
 let preMute = 100;
@@ -1354,12 +1354,12 @@ async function dropDisliked(videoId: string, isNow: boolean) {
 	// Removals first, and only above the playing row, so `currentIndex` never shifts under us and
 	// the skip lands on a track that survived. Sequential: each one renumbers the backend's queue.
 	for (let i = items.length - 1; i > currentIndex; i--) {
-		if (items[i]?.video_id === videoId) await api.removeFromQueue(i).catch(() => {});
+		if (items[i]?.video_id === videoId) await api.removeFromQueue(i).catch(() => { });
 	}
 	if (isNow) api.nextTrack().catch((e) => toast.error(String(e)));
 }
 
-// Library membership for songs, overriding what the row was fetched with — the same trick as
+// Library membership for songs, overriding what the row was fetched with - the same trick as
 // `ratings` above and for the same reason: one song shows up in a list, its ⋯ menu and the queue at
 // once, and all three have to agree the moment one of them writes.
 const songLibrary = $state<Record<string, boolean>>({});
@@ -1407,7 +1407,7 @@ export function songLibraryPending(song: SongItem): boolean {
 
 /** The token for the direction this song can move in, if the row carried one. A menu that offered
  *  only one way (see `LibraryToggle`) runs out after that one write, and the row hides the action
- *  until the list is fetched again — better than a button that answers "token expired". */
+ *  until the list is fetched again - better than a button that answers "token expired". */
 export function songLibraryToken(song: SongItem): string | undefined {
 	const library = libraryOf(song);
 	return inSongLibrary(song) ? library?.remove_token : library?.add_token;
@@ -1866,7 +1866,7 @@ export function openAddManyToPlaylist(songs: SongItem[]) {
 	ui.addSongs = songs.length ? songs : null;
 }
 
-// Last successful add-to-playlist — the open playlist page appends these optimistically.
+// Last successful add-to-playlist - the open playlist page appends these optimistically.
 export const lastPlaylistAdd = $state({ playlistId: '', songs: [] as SongItem[], epoch: 0 });
 
 // Last successful removal from a playlist made from somewhere that is *not* that playlist's page
@@ -1882,7 +1882,7 @@ export function notePlaylistRemove(playlistId: string, setVideoId: string) {
 export function notePlaylistAdd(playlistId: string, songs: SongItem[]) {
 	lastPlaylistAdd.playlistId = playlistId;
 	// Strip per-context fields: set_video_id belongs to the source playlist, the queue markers to
-	// the queue — none apply to the row's new home.
+	// the queue - none apply to the row's new home.
 	lastPlaylistAdd.songs = songs.map((s) => ({
 		...s,
 		set_video_id: undefined,
@@ -1911,11 +1911,11 @@ if (typeof window !== 'undefined' && !onlineListenerRegistered) {
  * Wire the Tauri event listeners once and seed initial state. Returns a teardown fn.
  *
  * `mini` is the floating-widget window (mini.rs): it runs this same module, and the events are
- * emitted app-wide so it gets playback for free — but it has no library, no local tab, no account
+ * emitted app-wide so it gets playback for free - but it has no library, no local tab, no account
  * menu and no Listen Together UI, so it skips those fetches rather than duplicating the app's.
  */
 export function initApp(mini = false): () => void {
-	if (started) return () => {};
+	if (started) return () => { };
 	started = true;
 	let receivedEffects = false;
 	const subs = [
@@ -1978,7 +1978,7 @@ export function initApp(mini = false): () => void {
 				// Missed an event. Cheaper to refetch once than to guess at what we are missing.
 				api.getQueue()
 					.then((full) => (playback.queue = full))
-					.catch(() => {});
+					.catch(() => { });
 				return;
 			}
 			playback.queue = {
@@ -2027,10 +2027,10 @@ export function initApp(mini = false): () => void {
 				if (karaokeModels[m]?.installed) {
 					api.karaokeModelGet().then((sel) => {
 						if (sel) karaokeSelection.model = sel;
-					}).catch(() => {});
+					}).catch(() => { });
 					api.karaokeModelStatus(m).then((st) => {
 						if (st) karaokeModels[m].installed = st.installed;
-					}).catch(() => {});
+					}).catch(() => { });
 				} else {
 					karaokeConsent.model = m;
 					karaokeConsent.enableAfter = true;
@@ -2113,7 +2113,7 @@ export function initApp(mini = false): () => void {
 		api.onPlaybackError((msg) => toast.error(msg)),
 		api.onPlaybackNotice((msg) => toast(msg)), // auto-skipped an unplayable track
 		api.onCoverError((msg) => toast.error(msg)), // playlist artwork YouTube wouldn't take
-		api.onLocalChanged(forgetLocal), // a local file turned out to be gone — drop it everywhere
+		api.onLocalChanged(forgetLocal), // a local file turned out to be gone - drop it everywhere
 		api.onAuthChanged((a) => {
 			auth.account = a;
 			resetLibraryForAccount();
@@ -2144,12 +2144,12 @@ export function initApp(mini = false): () => void {
 	const teardown = () => subs.forEach((u) => u.then((f) => f()));
 	api.getQueue()
 		.then((q) => (playback.queue = q))
-		.catch(() => {});
+		.catch(() => { });
 	api.karaokeModelGet()
 		.then((sel) => {
 			if (sel) karaokeSelection.model = sel;
 		})
-		.catch(() => {});
+		.catch(() => { });
 	void refreshKaraokeModels();
 	// The events above are fire-and-forget, and this window missed every one that already fired:
 	// on a cold start the backend restores the queue before the UI subscribes, and the mini player
@@ -2168,7 +2168,7 @@ export function initApp(mini = false): () => void {
 			playback.positionAt = performance.now();
 			playback.duration = s.duration;
 		})
-		.catch(() => {});
+		.catch(() => { });
 	if (mini) return teardown;
 	api.getSettings()
 		.then((s) => {
@@ -2187,7 +2187,7 @@ export function initApp(mini = false): () => void {
 				pushLocaleToRust(currentLocale.id).then(refreshLanguage);
 			}
 		})
-		.catch(() => {});
+		.catch(() => { });
 	api.getAccount()
 		.then((a) => {
 			auth.account = a;
@@ -2206,13 +2206,13 @@ export function initApp(mini = false): () => void {
 			// playlists on this machine.
 			loadSavedIndex();
 		})
-		.catch(() => {});
+		.catch(() => { });
 	// Scan the local folders once at startup: it seeds the Library's Local tab and, more to the
 	// point, prunes shortcuts for music that was deleted while the app was closed.
 	scanLocal();
 	loadBlocked();
 	// Seed the Listen Together state (server URL, any active room after a UI reload).
-	api.ltGetState().then(applyLtState).catch(() => {});
-	api.linkState().then(applyLinkState).catch(() => {});
+	api.ltGetState().then(applyLtState).catch(() => { });
+	api.linkState().then(applyLinkState).catch(() => { });
 	return teardown;
 }
